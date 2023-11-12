@@ -15,7 +15,7 @@ void Window::update()
 	}
 
 	mWindow->clear();
-	for (auto& shape : mCells) mWindow->draw(*shape.first);
+	for (auto& cell : mCells) mWindow->draw(*cell.second.shape);
 	for (auto& shape : mShapes) mWindow->draw(*shape);
 	mWindow->display();
 }
@@ -25,30 +25,34 @@ void Window::addShape(sf::Shape* shape)
 	mShapes.push_back(shape);
 }
 
-void Window::addCell(sf::Shape* shape)
+void Window::addCell(std::pair<int, int> pos, sf::Shape* shape)
 {
-	mCells[shape] = true;
+	struct cell newCell;
+	newCell.shape = shape;
+	newCell.player = 0;
+
+	mCells[pos] = newCell;
 }
 
 void Window::checkCollision(sf::Event e)
 {
 	sf::Vector2f pos = sf::Vector2f(sf::Mouse::getPosition(*mWindow));
 
-	for (auto& shape : mCells)
+	for (auto& cell : mCells)
 	{
-		if (!shape.second) continue; //If the shape has already been selected
-		sf::FloatRect bounds = shape.first->getGlobalBounds();
+		if (cell.second.player != 0) continue; //If the shape has already been selected
+		sf::FloatRect bounds = cell.second.shape->getGlobalBounds();
 
 		if (bounds.contains(pos))
 		{
-			shape.second = false; //Shape has now been selected
-			addPlayer(bounds.getPosition());
+			cell.second.player = mTurn % 2 == 0 ? 2 : 1; //Shape has now been selected
+			addPlayerShape(bounds.getPosition());
 			return;
 		}
 	}
 }
 
-void Window::addPlayer(sf::Vector2f position)
+void Window::addPlayerShape(sf::Vector2f position)
 {
 	sf::CircleShape* shape = new sf::CircleShape(75);
 	shape->setPosition(position);

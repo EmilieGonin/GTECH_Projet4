@@ -7,6 +7,7 @@ public:
 	static Game* Instance();
 	void init();
 	void update();
+	bool hasWin();
 
 	inline bool isOpen() { return mWindow->isOpen(); };
 
