@@ -14,10 +14,13 @@ void Window::update()
 		if (event.type == sf::Event::MouseButtonReleased) checkCollision(event);
 	}
 
-	mWindow->clear();
-	for (auto& cell : mCells) mWindow->draw(*cell.second.shape);
-	for (auto& shape : mShapes) mWindow->draw(*shape);
-	mWindow->display();
+	if (!endGame)
+	{
+		mWindow->clear();
+		for (auto& cell : mCells) mWindow->draw(*cell.second.shape);
+		for (auto& shape : mShapes) mWindow->draw(*shape);
+		mWindow->display();
+	}
 }
 
 void Window::addShape(sf::Shape* shape)
@@ -34,20 +37,30 @@ void Window::addCell(std::pair<int, int> pos, sf::Shape* shape)
 	mCells[pos] = newCell;
 }
 
+void Window::Finito()
+{
+	endGame = true;
+	if (mTurn % 2 == 0)	mWindow->setTitle("Red Win !");
+	else mWindow->setTitle("Green Win !");
+}
+
 void Window::checkCollision(sf::Event e)
 {
-	sf::Vector2f pos = sf::Vector2f(sf::Mouse::getPosition(*mWindow));
-
-	for (auto& cell : mCells)
+	if (!endGame)
 	{
-		if (cell.second.player != 0) continue; //If the shape has already been selected
-		sf::FloatRect bounds = cell.second.shape->getGlobalBounds();
+		sf::Vector2f pos = sf::Vector2f(sf::Mouse::getPosition(*mWindow));
 
-		if (bounds.contains(pos))
+		for (auto& cell : mCells)
 		{
-			cell.second.player = mTurn % 2 == 0 ? 2 : 1; //Shape has now been selected
-			addPlayerShape(bounds.getPosition());
-			return;
+			if (cell.second.player != 0) continue; //If the shape has already been selected
+			sf::FloatRect bounds = cell.second.shape->getGlobalBounds();
+
+			if (bounds.contains(pos))
+			{
+				cell.second.player = mTurn % 2 == 0 ? 2 : 1; //Shape has now been selected
+				addPlayerShape(bounds.getPosition());
+				return;
+			}
 		}
 	}
 }
@@ -57,10 +70,8 @@ void Window::addPlayerShape(sf::Vector2f position)
 	sf::CircleShape* shape = new sf::CircleShape(75);
 	shape->setPosition(position);
 
-	if (mTurn % 2 == 0)
-	{
-		shape->setFillColor(sf::Color::Green);
-	} else shape->setFillColor(sf::Color::Red);
+	if (mTurn % 2 == 0)shape->setFillColor(sf::Color::Green);
+	else shape->setFillColor(sf::Color::Red);
 
 	addShape(shape);
 	mTurn++;

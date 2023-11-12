@@ -18,6 +18,7 @@ public:
 	inline std::map<std::pair<int, int>, struct cell> getCells() { return mCells; };
 	inline int getTurn() { return mTurn; };
 	inline bool isOpen() { return mWindow->isOpen(); };
+	void Finito();
 
 private:
 	sf::RenderWindow* mWindow;
@@ -27,4 +28,5 @@ private:
 	void checkCollision(sf::Event);
 	void addPlayerShape(sf::Vector2f);
 	int mTurn = 1;
+	bool endGame = false;;
 };

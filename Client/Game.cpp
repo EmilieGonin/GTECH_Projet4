@@ -1,4 +1,5 @@
 #include "Game.h"
+#include "SFML/Graphics/Color.hpp"
 
 Game* Game::mInstance = nullptr;
 Window* Game::mWindow = nullptr;
@@ -25,13 +26,14 @@ void Game::init()
 
 	for (size_t i = 1; i <= cellNumber; i++)
 	{
+
 		sf::RectangleShape* shape = new sf::RectangleShape(sf::Vector2f(cellSize, cellSize));
-		shape->setPosition(sf::Vector2f(cellSize * line, cellSize * column));
+		shape->setPosition(sf::Vector2f(cellSize * line + 150, cellSize * column + 150));
 
 		if (i % 2 == 0)
 		{
 			shape->setFillColor(sf::Color::White);
-		} else shape->setFillColor(sf::Color::Black);
+		} else shape->setFillColor(sf::Color::Blue);
 
 		mWindow->addCell({ line, column }, shape);
 
@@ -42,7 +44,8 @@ void Game::init()
 
 void Game::update()
 {
-	if (!hasWin()) mWindow->update();
+	mWindow->update();
+	if (hasWin()) mWindow->Finito();
 }
 
 bool Game::hasWin()
