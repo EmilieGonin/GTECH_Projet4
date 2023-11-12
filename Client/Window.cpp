@@ -42,7 +42,22 @@ void Window::checkCollision(sf::Event e)
 		if (bounds.contains(pos))
 		{
 			shape.second = false; //Shape has now been selected
+			addPlayer(bounds.getPosition());
 			return;
 		}
 	}
+}
+
+void Window::addPlayer(sf::Vector2f position)
+{
+	sf::CircleShape* shape = new sf::CircleShape(75);
+	shape->setPosition(position);
+
+	if (mTurn % 2 == 0)
+	{
+		shape->setFillColor(sf::Color::Green);
+	} else shape->setFillColor(sf::Color::Red);
+
+	addShape(shape);
+	mTurn++;
 }

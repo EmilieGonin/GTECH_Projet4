@@ -30,8 +30,8 @@ void Game::init()
 
 		if (i % 2 == 0)
 		{
-			shape->setFillColor(sf::Color::Green);
-		} else shape->setFillColor(sf::Color::Red);
+			shape->setFillColor(sf::Color::White);
+		} else shape->setFillColor(sf::Color::Black);
 
 		line++;
 		if (i % 3 == 0) line = 0, column++;

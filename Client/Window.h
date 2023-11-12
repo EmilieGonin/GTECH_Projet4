@@ -16,6 +16,8 @@ private:
 	sf::RenderWindow* mWindow;
 	std::vector<sf::Shape*> mShapes;
 	std::map<sf::Shape*, bool> mCells;
+	int mTurn = 1;
 
 	void checkCollision(sf::Event);
+	void addPlayer(sf::Vector2f);
 };
