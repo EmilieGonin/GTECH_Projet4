@@ -1,18 +1,13 @@
 #include <SFML/Graphics.hpp>
-#include "Client.h"
-#include "Window.h"
+#include "Game.h"
 
 int main()
 {
-    Window window;
-
-    //Add shape
-    sf::CircleShape shape(100.f);
-    shape.setFillColor(sf::Color::Green);
-    window.addShape(&shape);
+    Game* game = Game::Instance();
+    game->init();
 
     //Loop
-    while (window.isOpen()) window.update();
+    while (game->isOpen()) game->update();
 
     return 0;
 }
