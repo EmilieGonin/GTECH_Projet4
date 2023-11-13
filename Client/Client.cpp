@@ -10,7 +10,7 @@
 
 #pragma comment(lib, "Ws2_32.lib")
 
-#define DEFAULT_PORT "27015"
+#define DEFAULT_PORT "1027"
 #define ADDRESS "localhost"
 #define DEFAULT_BUFLEN 512
 
@@ -31,7 +31,7 @@ int main(int ac, char const* av[])
 	address.ai_socktype = SOCK_STREAM;
 	address.ai_protocol = IPPROTO_TCP;
 
-	if (res = WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
+ 	if (res = WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
 	{
 		printf("WSAStartup failed: %d\n", res);
 		return 1;
