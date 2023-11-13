@@ -16,3 +16,9 @@ private:
 	static Game* mInstance;
 	static Window* mWindow;
 };
+
+//Game* game = Game::Instance();
+//game->init();
+
+//Loop
+//while (game->isOpen()) game->update();
