@@ -1,5 +1,5 @@
 #pragma once
-//#include <Window.h>
+#include "Window.h"
 
 class Game
 {
@@ -9,10 +9,10 @@ public:
 	void update();
 	bool hasWin();
 
-	//inline bool isOpen() { return mWindow->isOpen(); };
+	inline bool isOpen() { return mWindow->isOpen(); };
 
 private:
 	Game();
 	static Game* mInstance;
-	//static Window* mWindow;
+	static Window* mWindow;
 };

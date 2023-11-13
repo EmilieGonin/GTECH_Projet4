@@ -20,11 +20,11 @@
 
 int __cdecl main(void)
 {
-    //Game* game = Game::Instance();
-    //game->init();
+    Game* game = Game::Instance();
+    game->init();
 
     //Loop
-    //while (game->isOpen()) game->update();
+    while (game->isOpen()) game->update();
 
     WSADATA wsaData;
     int iResult;
