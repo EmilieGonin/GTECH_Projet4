@@ -41,7 +41,7 @@ private:
     void accepteClient();
 
     static LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-    LRESULT HandleWindowMessage(UINT uMsg, WPARAM wParam, LPARAM lParam);
+    //LRESULT HandleWindowMessage(UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 
 
@@ -63,14 +63,14 @@ private:
     std::vector<SOCKET> clients; // Liste des sockets des clients connectés
     std::mutex clientsMutex; // Mutex pour protéger l'accès à la liste des clients
 
-
+protected:
+    std::string mPort = "1027";
    
 
 
 public:
     Server();
     ~Server();
-    int start();
     // Ajoute d'autres méthodes et membres au besoin.
 
 };

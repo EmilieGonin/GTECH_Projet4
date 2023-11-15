@@ -5,17 +5,7 @@
 
 
 
-Server::Server() {}
-Server::~Server() {}
-
-
-int __cdecl main(void)
-{
-	Server server;
-	server.start();
-}
-
-int Server::start()
+Server::Server() 
 {
 	//game->init();
 	//while (game->isOpen()) game->update();
@@ -30,9 +20,15 @@ int Server::start()
 	closesocket(ClientSocket);
 	WSACleanup();
 
-	return 0;
 }
+Server::~Server() {}
 
+
+int __cdecl main(void)
+{
+	Server server;
+	//server.start();
+}
 
 
 void Server::initWSA()
@@ -52,7 +48,7 @@ void Server::initWSA()
 void Server::initSocket()
 {
 	// Resolve the server address and port
-	iResult = getaddrinfo(NULL, DEFAULT_PORT, &hints, &result);
+	iResult = getaddrinfo(NULL, mPort.c_str(), &hints, &result);
 	if (iResult != 0) {
 		printf("getaddrinfo failed with error: %d\n", iResult);
 		WSACleanup();
@@ -152,23 +148,23 @@ void Server::accepteClient()
 LRESULT Server::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) //static
 {
 	Server* pServer = reinterpret_cast<Server*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
-	pServer->HandleWindowMessage(uMsg, wParam, lParam);
+	//pServer->HandleWindowMessage(uMsg, wParam, lParam);
 
 	
 
 	return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
 
-LRESULT Server::HandleWindowMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) {
-	
-
-	switch (uMsg) 
-	{
-
-	}
-
-	return DefWindowProc(hWnd, uMsg, wParam, lParam);
-}
+//LRESULT Server::HandleWindowMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) {
+//	
+//
+//	switch (uMsg) 
+//	{
+//
+//	}
+//
+//	return DefWindowProc(hWnd, uMsg, wParam, lParam);
+//}
 
 void Server::handleClient(SOCKET clientSocket, const std::string& sessionID) {
 	do {
