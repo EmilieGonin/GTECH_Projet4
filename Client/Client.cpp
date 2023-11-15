@@ -15,7 +15,7 @@
 #define DEFAULT_PORT "1027"
 #define ADDRESS "localhost"
 #define DEFAULT_BUFLEN 512
-#define HEARTBEAT_INTERVAL 100 // Ou toute autre valeur que tu préfères, en millisecondes
+#define HEARTBEAT_INTERVAL 3000 // Ou toute autre valeur que tu préfères, en millisecondes
 
 void handleHeartbeat(SOCKET clientSocket);
 
@@ -86,7 +86,7 @@ int main(int ac, char const* av[])
 
 	printf("Bytes Sent: %ld\n", res);
 
-
+	
 	if (res = shutdown(ClientSocket, SD_SEND) == SOCKET_ERROR)
 	{
 		printf("shutdown failed: %d\n", WSAGetLastError());

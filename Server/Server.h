@@ -27,7 +27,7 @@
 class Server {
 
 private:
-    Game* game = Game::Instance();
+    //Game* game = Game::Instance();
     void shutdownClient(SOCKET clientSocket);
     std::string generateSessionID() const;
     void handleHeartbeats();
@@ -65,8 +65,7 @@ private:
     std::mutex heartbeatMutex; // Mutex pour protéger l'accès à la liste des clients
 
     // Fréquence des cœurs en millisecondes
-    const int HEARTBEAT_INTERVAL = 200; // par exemple, toutes les 5 secondes
-
+    const int HEARTBEAT_INTERVAL = 3000; 
 
 public:
     Server();

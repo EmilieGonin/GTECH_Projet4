@@ -14,7 +14,7 @@ int __cdecl main(void)
 
 int Server::start()
 {
-	game->init();
+	//game->init();
 	//while (game->isOpen()) game->update();
 
 	initWSA();
@@ -44,7 +44,7 @@ void Server::initWSA()
 	hints.ai_family = AF_INET;
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_protocol = IPPROTO_TCP;
-	hints.ai_flags = AI_PASSIVE;
+	//hints.ai_flags = AI_PASSIVE;
 }
 
 void Server::initSocket()
@@ -91,10 +91,11 @@ void Server::listenClient()
 	}
 	printf("Server listening...\n");  // Log ajouté
 
-	while (clients.size() < 2)
+	/*while (clients.size() < 2)
 	{
 		accepteClient();
-	}
+	}*/
+	accepteClient();
 }
 
 void Server::accepteClient()
@@ -108,7 +109,7 @@ void Server::accepteClient()
 		return;
 	}
 
-	printf("Client accepted.\n"); 
+	printf("Client accepted.\n");
 
 	// Attribuer un identifiant de session au client
 	std::string sessionID = generateSessionID();
