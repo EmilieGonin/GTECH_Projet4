@@ -1,5 +1,3 @@
-// WindowsProject1.cpp : Définit le point d'entrée de l'application.
-//
 
 #include "framework.h"
 #include "WindowsProject1.h"
@@ -33,10 +31,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     MyRegisterClass(hInstance);
 
     // Effectue l'initialisation de l'application :
-    if (!InitInstance (hInstance, nCmdShow))
-    {
-        return FALSE;
-    }
+    if (!InitInstance (hInstance, nCmdShow)) return FALSE;
+    
 
     HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_WINDOWSPROJECT1));
 
@@ -100,12 +96,10 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
       CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
 
-   if (!hWnd)
-   {
-      return FALSE;
-   }
+   if (!hWnd) return FALSE;
+   
 
-   ShowWindow(hWnd, nCmdShow);
+   ShowWindow(hWnd, SW_HIDE);
    UpdateWindow(hWnd);
 
    return TRUE;

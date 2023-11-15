@@ -138,6 +138,7 @@
     <ClCompile Include="ServerWeb.cpp" />
     <ClCompile Include="ServeurClient.cpp" />
     <ClCompile Include="Window.cpp" />
+    <ClCompile Include="WindowsProject1.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h" />
