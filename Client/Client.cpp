@@ -7,12 +7,17 @@
 #include <ws2tcpip.h>
 #include <iphlpapi.h>
 #include <stdio.h>
+#include <thread>
+
 
 #pragma comment(lib, "Ws2_32.lib")
 
 #define DEFAULT_PORT "1027"
 #define ADDRESS "localhost"
 #define DEFAULT_BUFLEN 512
+#define HEARTBEAT_INTERVAL 3000 // Ou toute autre valeur que tu préfères, en millisecondes
+
+void handleHeartbeat(SOCKET clientSocket);
 
 
 int main(int ac, char const* av[])
@@ -31,7 +36,7 @@ int main(int ac, char const* av[])
 	address.ai_socktype = SOCK_STREAM;
 	address.ai_protocol = IPPROTO_TCP;
 
- 	if (res = WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
+	if (res = WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
 	{
 		printf("WSAStartup failed: %d\n", res);
 		return 1;
@@ -51,6 +56,8 @@ int main(int ac, char const* av[])
 
 	if (res = connect(ClientSocket, connection->ai_addr, (int)connection->ai_addrlen) == SOCKET_ERROR)
 	{
+		printf("Unable to connect to server 1! Error code: %d\n", WSAGetLastError());
+
 		closesocket(ClientSocket);
 		ClientSocket = INVALID_SOCKET;
 	}
@@ -59,10 +66,15 @@ int main(int ac, char const* av[])
 
 	if (ClientSocket == INVALID_SOCKET)
 	{
-		printf("Unable to connect to server!\n");
+		printf("Unable to connect to server! Error code: %d\n", WSAGetLastError());
+		std::this_thread::sleep_for(std::chrono::milliseconds(5000));
 		WSACleanup();
 		return 1;
 	}
+
+	// Lancer la gestion des cœurs dans un thread séparé
+	std::thread heartbeatThread(handleHeartbeat, ClientSocket);
+	heartbeatThread.detach();
 
 	if (res = send(ClientSocket, sendbuf, (int)strlen(sendbuf), 0) == SOCKET_ERROR)
 	{
@@ -74,6 +86,7 @@ int main(int ac, char const* av[])
 
 	printf("Bytes Sent: %ld\n", res);
 
+	
 	if (res = shutdown(ClientSocket, SD_SEND) == SOCKET_ERROR)
 	{
 		printf("shutdown failed: %d\n", WSAGetLastError());
@@ -81,6 +94,7 @@ int main(int ac, char const* av[])
 		WSACleanup();
 		return 1;
 	}
+
 
 	do {
 		res = recv(ClientSocket, recvbuf, recvbuflen, 0);
@@ -92,5 +106,16 @@ int main(int ac, char const* av[])
 			printf("recv failed: %d\n", WSAGetLastError());
 	} while (res > 0);
 
+
+
 	return 0;
+}
+
+void handleHeartbeat(SOCKET clientSocket) {
+	while (true) {
+		std::this_thread::sleep_for(std::chrono::milliseconds(HEARTBEAT_INTERVAL));
+
+		// Envoie un message de cœur au serveur
+		send(clientSocket, "Heartbeat", sizeof("Heartbeat"), 0);
+	}
 }
