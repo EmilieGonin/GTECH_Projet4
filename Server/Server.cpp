@@ -1,5 +1,8 @@
-#include "Server.h"
+ï»¿#include "Server.h"
 #include <thread>
+#include <windows.h>
+#include "../WindowsProject1/framework.h"
+
 
 
 Server::Server() {}
@@ -17,9 +20,9 @@ int Server::start()
 	//game->init();
 	//while (game->isOpen()) game->update();
 
+	initHWND();
 	initWSA();
 	initSocket();
-
 	listenClient();
 	closesocket(ListenSocket);
 
@@ -44,7 +47,6 @@ void Server::initWSA()
 	hints.ai_family = AF_INET;
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_protocol = IPPROTO_TCP;
-	//hints.ai_flags = AI_PASSIVE;
 }
 
 void Server::initSocket()
@@ -65,11 +67,38 @@ void Server::initSocket()
 	}
 }
 
+int Server::initHWND()
+{
+	WNDCLASS wc = { 0 };
+	wc.lpfnWndProc = &Server::WindowProc; 
+	wc.lpfnWndProc = WindowProc;
+	wc.hInstance = GetModuleHandle(NULL);
+	wc.lpszClassName = "AsyncSelectWindowClass";
+
+	if (!RegisterClass(&wc)) {
+		printf("RegisterClass failed: %d\n", GetLastError());
+		return 1;
+	}
+
+	hWnd = CreateWindowEx(0, "AsyncSelectWindowClass", "AsyncSelectWindow", 0, 0, 0, 0, 0, HWND_MESSAGE, NULL, GetModuleHandle(NULL), NULL);
+	if (hWnd == NULL) {
+		printf("CreateWindowEx failed: %d\n", GetLastError());
+		return 1;
+	}
+
+	SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
+
+	ShowWindow(hWnd, SW_HIDE);
+	UpdateWindow(hWnd);
+}
+
+
+
+
+
 void Server::listenClient()
 {
-	std::thread heartbeatThread(&Server::handleHeartbeats, this);
-	heartbeatThread.detach();
-
+	
 	iResult = bind(ListenSocket, result->ai_addr, static_cast<int>(result->ai_addrlen));
 	if (iResult == SOCKET_ERROR) {
 		printf("bind failed with error: %d\n", WSAGetLastError());
@@ -78,7 +107,7 @@ void Server::listenClient()
 		WSACleanup();
 		return;
 	}
-	printf("Bind successful.\n");  // Log ajouté
+	printf("Bind successful.\n");  
 
 	freeaddrinfo(result);
 
@@ -89,17 +118,16 @@ void Server::listenClient()
 		WSACleanup();
 		return;
 	}
-	printf("Server listening...\n");  // Log ajouté
+	printf("Server listening...\n");  
 
-	/*while (clients.size() < 2)
-	{
-		accepteClient();
-	}*/
 	accepteClient();
 }
 
 void Server::accepteClient()
 {
+
+	//WSAAsyncSelect(ClientSocket, hWnd, WM_SERVER_SOCKET, FD_READ | FD_ACCEPT | FD_CLOSE);
+
 	// Accept a client socket
 	ClientSocket = accept(ListenSocket, NULL, NULL);
 	if (ClientSocket == INVALID_SOCKET) {
@@ -118,11 +146,28 @@ void Server::accepteClient()
 	std::lock_guard<std::mutex> lock(clientsMutex);
 	clients.push_back(ClientSocket);
 
-	// Ajouter le client à la liste des cœurs
-	std::lock_guard<std::mutex> heartbeatLock(heartbeatMutex);
-	heartbeatClients.push_back({ ClientSocket, sessionID, std::chrono::steady_clock::now() });
-
 	handleClient(ClientSocket, sessionID);
+}
+
+LRESULT Server::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) //static
+{
+	Server* pServer = reinterpret_cast<Server*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
+	pServer->HandleWindowMessage(uMsg, wParam, lParam);
+
+	
+
+	return DefWindowProc(hWnd, uMsg, wParam, lParam);
+}
+
+LRESULT Server::HandleWindowMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) {
+	
+
+	switch (uMsg) 
+	{
+
+	}
+
+	return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
 
 void Server::handleClient(SOCKET clientSocket, const std::string& sessionID) {
@@ -155,14 +200,6 @@ void Server::handleClient(SOCKET clientSocket, const std::string& sessionID) {
 			WSACleanup();
 		}
 
-		// Met à jour le temps du dernier cœur pour le client
-		std::lock_guard<std::mutex> heartbeatLock(heartbeatMutex);
-		auto it = std::find_if(heartbeatClients.begin(), heartbeatClients.end(),
-			[clientSocket](const HeartbeatInfo& info) { return info.socket == clientSocket; });
-		if (it != heartbeatClients.end()) {
-			it->lastHeartbeatTime = std::chrono::steady_clock::now();
-		}
-
 	} while (iResult > 0);
 }
 
@@ -186,37 +223,12 @@ void Server::shutdownClient(SOCKET clientSocket)
 }
 
 std::string Server::generateSessionID() const {
-	// Implémente une logique pour générer un identifiant de session unique
-	// Dans un contexte de production, tu pourrais utiliser une bibliothèque dédiée à la génération d'UUID ou d'autres méthodes de génération d'identifiants uniques.
-	// Pour cette démo, un simple timestamp pourrait suffire.
+	// ImplÃ©mente une logique pour gÃ©nÃ©rer un identifiant de session unique
+	// Dans un contexte de production, tu pourrais utiliser une bibliothÃ¨que dÃ©diÃ©e Ã  la gÃ©nÃ©ration d'UUID ou d'autres mÃ©thodes de gÃ©nÃ©ration d'identifiants uniques.
+	// Pour cette dÃ©mo, un simple timestamp pourrait suffire.
 	auto now = std::chrono::system_clock::now();
 	auto timestamp = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count();
 
 	return "SessionID_" + std::to_string(timestamp);
 }
 
-void Server::handleHeartbeats() {
-	while (true) {
-		std::this_thread::sleep_for(std::chrono::milliseconds(HEARTBEAT_INTERVAL));
-
-		// Vérifie les cœurs et déconnecte les clients qui n'ont pas répondu
-		std::lock_guard<std::mutex> heartbeatLock(heartbeatMutex);
-		auto currentTime = std::chrono::steady_clock::now();
-
-		for (auto it = heartbeatClients.begin(); it != heartbeatClients.end();) {
-			auto timeElapsed = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - it->lastHeartbeatTime).count();
-			if (timeElapsed > HEARTBEAT_INTERVAL * 2) { // Si le temps écoulé est supérieur à deux fois l'intervalle de cœur
-				printf("Client %s has disconnected due to lack of heartbeat.\n", it->sessionID.c_str());
-
-				// Retirer le client des listes
-				closesocket(it->socket);
-				clients.erase(std::remove_if(clients.begin(), clients.end(),
-					[socket = it->socket](SOCKET s) { return s == socket; }), clients.end());
-				it = heartbeatClients.erase(it);
-			}
-			else {
-				++it;
-			}
-		}
-	}
-}

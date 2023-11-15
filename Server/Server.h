@@ -3,6 +3,9 @@
 #undef UNICODE
 
 #define WIN32_LEAN_AND_MEAN
+#define WM_SOCKET_EVENT (WM_USER + 1)
+#define FD_READ_EVENT   FD_READ | FD_WRITE | FD_OOB | FD_ACCEPT | FD_CONNECT | FD_CLOSE
+
 
 #include "SFML/Graphics.hpp"
 
@@ -30,12 +33,19 @@ private:
     //Game* game = Game::Instance();
     void shutdownClient(SOCKET clientSocket);
     std::string generateSessionID() const;
-    void handleHeartbeats();
     void handleClient(SOCKET clientSocket, const std::string& sessionID);
     void initWSA();
     void initSocket();
+    int initHWND();
     void listenClient();
     void accepteClient();
+
+    static LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+    LRESULT HandleWindowMessage(UINT uMsg, WPARAM wParam, LPARAM lParam);
+
+
+
+    HWND hWnd;
 
     WSADATA wsaData;
     int iResult;
@@ -54,18 +64,8 @@ private:
     std::mutex clientsMutex; // Mutex pour protéger l'accès à la liste des clients
 
 
-    struct HeartbeatInfo {
-        SOCKET socket;
-        std::string sessionID;
-        std::chrono::steady_clock::time_point lastHeartbeatTime;
-    };
+   
 
-    // Liste des clients avec informations de cœur
-    std::vector<HeartbeatInfo> heartbeatClients;
-    std::mutex heartbeatMutex; // Mutex pour protéger l'accès à la liste des clients
-
-    // Fréquence des cœurs en millisecondes
-    const int HEARTBEAT_INTERVAL = 3000; 
 
 public:
     Server();
