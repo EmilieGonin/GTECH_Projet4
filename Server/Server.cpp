@@ -67,9 +67,6 @@ void Server::initSocket()
 
 void Server::listenClient()
 {
-	std::thread heartbeatThread(&Server::handleHeartbeats, this);
-	heartbeatThread.detach();
-
 	iResult = bind(ListenSocket, result->ai_addr, static_cast<int>(result->ai_addrlen));
 	if (iResult == SOCKET_ERROR) {
 		printf("bind failed with error: %d\n", WSAGetLastError());
@@ -118,10 +115,6 @@ void Server::accepteClient()
 	std::lock_guard<std::mutex> lock(clientsMutex);
 	clients.push_back(ClientSocket);
 
-	// Ajouter le client à la liste des cœurs
-	std::lock_guard<std::mutex> heartbeatLock(heartbeatMutex);
-	heartbeatClients.push_back({ ClientSocket, sessionID, std::chrono::steady_clock::now() });
-
 	handleClient(ClientSocket, sessionID);
 }
 
@@ -129,7 +122,7 @@ void Server::handleClient(SOCKET clientSocket, const std::string& sessionID) {
 	do {
 
 		iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
-		if (iResult > 0)
+		if (iResult == 0)
 		{
 			printf("Bytes received: %s\n", sessionID.c_str(), recvbuf);
 
@@ -143,24 +136,16 @@ void Server::handleClient(SOCKET clientSocket, const std::string& sessionID) {
 			}
 			printf("Bytes sent: %d\n", iSendResult);
 		}
-		else if (iResult == 0)
+		/*else if (iResult == 0)
 		{
 			printf("Connection closing from server...\n");
 
-		}
+		}*/
 		else
 		{
 			printf("recv failed with error: %d\n", WSAGetLastError());
 			closesocket(ClientSocket);
 			WSACleanup();
-		}
-
-		// Met à jour le temps du dernier cœur pour le client
-		std::lock_guard<std::mutex> heartbeatLock(heartbeatMutex);
-		auto it = std::find_if(heartbeatClients.begin(), heartbeatClients.end(),
-			[clientSocket](const HeartbeatInfo& info) { return info.socket == clientSocket; });
-		if (it != heartbeatClients.end()) {
-			it->lastHeartbeatTime = std::chrono::steady_clock::now();
 		}
 
 	} while (iResult > 0);
@@ -193,30 +178,4 @@ std::string Server::generateSessionID() const {
 	auto timestamp = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count();
 
 	return "SessionID_" + std::to_string(timestamp);
-}
-
-void Server::handleHeartbeats() {
-	while (true) {
-		std::this_thread::sleep_for(std::chrono::milliseconds(HEARTBEAT_INTERVAL));
-
-		// Vérifie les cœurs et déconnecte les clients qui n'ont pas répondu
-		std::lock_guard<std::mutex> heartbeatLock(heartbeatMutex);
-		auto currentTime = std::chrono::steady_clock::now();
-
-		for (auto it = heartbeatClients.begin(); it != heartbeatClients.end();) {
-			auto timeElapsed = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - it->lastHeartbeatTime).count();
-			if (timeElapsed > HEARTBEAT_INTERVAL * 2) { // Si le temps écoulé est supérieur à deux fois l'intervalle de cœur
-				printf("Client %s has disconnected due to lack of heartbeat.\n", it->sessionID.c_str());
-
-				// Retirer le client des listes
-				closesocket(it->socket);
-				clients.erase(std::remove_if(clients.begin(), clients.end(),
-					[socket = it->socket](SOCKET s) { return s == socket; }), clients.end());
-				it = heartbeatClients.erase(it);
-			}
-			else {
-				++it;
-			}
-		}
-	}
 }
