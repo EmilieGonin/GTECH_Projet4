@@ -136,12 +136,17 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="JsonHandler.cpp" />
     <ClCompile Include="Server.cpp" />
+    <ClCompile Include="ServerWeb.cpp" />
+    <ClCompile Include="ServeurClient.cpp" />
     <ClCompile Include="Window.cpp" />
+    <ClCompile Include="WindowsProject1.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h" />
     <ClInclude Include="JsonHandler.h" />
     <ClInclude Include="Server.h" />
+    <ClInclude Include="ServerClient.h" />
+    <ClInclude Include="ServerWeb.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
