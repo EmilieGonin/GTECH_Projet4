@@ -30,7 +30,6 @@ private:
     //Game* game = Game::Instance();
     void shutdownClient(SOCKET clientSocket);
     std::string generateSessionID() const;
-    void handleHeartbeats();
     void handleClient(SOCKET clientSocket, const std::string& sessionID);
     void initWSA();
     void initSocket();
@@ -52,20 +51,6 @@ private:
 
     std::vector<SOCKET> clients; // Liste des sockets des clients connectés
     std::mutex clientsMutex; // Mutex pour protéger l'accès à la liste des clients
-
-
-    struct HeartbeatInfo {
-        SOCKET socket;
-        std::string sessionID;
-        std::chrono::steady_clock::time_point lastHeartbeatTime;
-    };
-
-    // Liste des clients avec informations de cœur
-    std::vector<HeartbeatInfo> heartbeatClients;
-    std::mutex heartbeatMutex; // Mutex pour protéger l'accès à la liste des clients
-
-    // Fréquence des cœurs en millisecondes
-    const int HEARTBEAT_INTERVAL = 3000; 
 
 public:
     Server();
