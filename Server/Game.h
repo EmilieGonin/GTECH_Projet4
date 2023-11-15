@@ -1,6 +1,11 @@
 #pragma once
 #include "Window.h"
 
+struct cell {
+	sf::Shape* shape;
+	int player;
+};
+
 class Game
 {
 public:
@@ -15,4 +20,5 @@ private:
 	Game();
 	static Game* mInstance;
 	static Window* mWindow;
+	std::map<std::pair<int, int>, struct cell> mCells;
 };
