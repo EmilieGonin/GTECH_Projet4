@@ -5,6 +5,7 @@
 #define WIN32_LEAN_AND_MEAN
 #define WM_SOCKET_EVENT (WM_USER + 1)
 #define FD_READ_EVENT   FD_READ | FD_WRITE | FD_OOB | FD_ACCEPT | FD_CONNECT | FD_CLOSE
+#define _WINSOCK_DEPRECATED_NO_WARNINGS
 
 
 #include "SFML/Graphics.hpp"
@@ -41,8 +42,11 @@ private:
     void accepteClient();
 
     static LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-    //LRESULT HandleWindowMessage(UINT uMsg, WPARAM wParam, LPARAM lParam);
+    LRESULT HandleWindowMessage(UINT uMsg, WPARAM wParam, LPARAM lParam);
 
+    void HandleReadEvent(WPARAM wParam);
+    void HandleAcceptEvent(WPARAM wParam);
+    void HandleCloseEvent(WPARAM wParam);
 
 
     HWND hWnd;

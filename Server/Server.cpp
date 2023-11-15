@@ -1,4 +1,4 @@
-﻿#include "Server.h"
+﻿#include "ServerClient.h"
 #include <thread>
 #include <windows.h>
 #include "../WindowsProject1/framework.h"
@@ -26,7 +26,7 @@ Server::~Server() {}
 
 int __cdecl main(void)
 {
-	Server server;
+	ServerClient mServerClient;
 	//server.start();
 }
 
@@ -122,16 +122,16 @@ void Server::listenClient()
 void Server::accepteClient()
 {
 
-	//WSAAsyncSelect(ClientSocket, hWnd, WM_SERVER_SOCKET, FD_READ | FD_ACCEPT | FD_CLOSE);
+	WSAAsyncSelect(ClientSocket, hWnd, ListenSocket, FD_READ | FD_ACCEPT | FD_CLOSE);
 
 	// Accept a client socket
-	ClientSocket = accept(ListenSocket, NULL, NULL);
+	/*ClientSocket = accept(ListenSocket, NULL, NULL);
 	if (ClientSocket == INVALID_SOCKET) {
 		printf("accept failed with error: %d\n", WSAGetLastError());
 		closesocket(ListenSocket);
 		WSACleanup();
 		return;
-	}
+	}*/
 
 	printf("Client accepted.\n");
 
@@ -148,23 +148,37 @@ void Server::accepteClient()
 LRESULT Server::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) //static
 {
 	Server* pServer = reinterpret_cast<Server*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
-	//pServer->HandleWindowMessage(uMsg, wParam, lParam);
-
+	if (pServer) return pServer->HandleWindowMessage(uMsg, wParam, lParam);
 	
+
+		switch (lParam) {
+		case FD_READ:
+			pServer->HandleReadEvent(wParam);
+			break;
+		case FD_ACCEPT:
+			pServer->HandleAcceptEvent(wParam);
+			break;
+		case FD_CLOSE:
+			pServer->HandleCloseEvent(wParam);
+			break;
+		default:
+			// Gérer d'autres événements si nécessaire
+			break;
+		}
 
 	return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
 
-//LRESULT Server::HandleWindowMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) {
-//	
-//
-//	switch (uMsg) 
-//	{
-//
-//	}
-//
-//	return DefWindowProc(hWnd, uMsg, wParam, lParam);
-//}
+LRESULT Server::HandleWindowMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) {
+	
+
+	switch (uMsg) 
+	{
+
+	}
+
+	return DefWindowProc(hWnd, uMsg, wParam, lParam);
+}
 
 void Server::handleClient(SOCKET clientSocket, const std::string& sessionID) {
 	do {
@@ -228,3 +242,14 @@ std::string Server::generateSessionID() const {
 	return "SessionID_" + std::to_string(timestamp);
 }
 
+void Server::HandleReadEvent(WPARAM wParam) {
+	// Traitement pour l'événement FD_READ
+}
+
+void Server::HandleAcceptEvent(WPARAM wParam) {
+	// Traitement pour l'événement FD_ACCEPT
+}
+
+void Server::HandleCloseEvent(WPARAM wParam) {
+	// Traitement pour l'événement FD_CLOSE
+}
