@@ -23,14 +23,6 @@ Server::Server()
 }
 Server::~Server() {}
 
-
-int __cdecl main(void)
-{
-	Server server;
-	//server.start();
-}
-
-
 void Server::initWSA()
 {
 	// Initialize Winsock
