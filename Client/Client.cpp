@@ -17,8 +17,6 @@
 #define DEFAULT_BUFLEN 512
 #define HEARTBEAT_INTERVAL 3000 // Ou toute autre valeur que tu préfères, en millisecondes
 
-void handleHeartbeat(SOCKET clientSocket);
-
 
 int main(int ac, char const* av[])
 {
@@ -72,10 +70,6 @@ int main(int ac, char const* av[])
 		return 1;
 	}
 
-	// Lancer la gestion des cœurs dans un thread séparé
-	std::thread heartbeatThread(handleHeartbeat, ClientSocket);
-	heartbeatThread.detach();
-
 	if (res = send(ClientSocket, sendbuf, (int)strlen(sendbuf), 0) == SOCKET_ERROR)
 	{
 		printf("send failed: %d\n", WSAGetLastError());
@@ -85,37 +79,28 @@ int main(int ac, char const* av[])
 	}
 
 	printf("Bytes Sent: %ld\n", res);
-
-	
-	if (res = shutdown(ClientSocket, SD_SEND) == SOCKET_ERROR)
-	{
-		printf("shutdown failed: %d\n", WSAGetLastError());
-		closesocket(ClientSocket);
-		WSACleanup();
-		return 1;
-	}
+	//std::this_thread::sleep_for(std::chrono::milliseconds(5000));
 
 
 	do {
 		res = recv(ClientSocket, recvbuf, recvbuflen, 0);
 		if (res > 0)
-			printf("Bytes received: %d\n", res);
+			printf("received: %s\n", recvbuf);
 		else if (res == 0)
 			printf("Connection closed\n");
 		else
 			printf("recv failed: %d\n", WSAGetLastError());
 	} while (res > 0);
 
+	/*if (res = shutdown(ClientSocket, SD_SEND) == SOCKET_ERROR)
+	{
+		printf("shutdown failed: %d\n", WSAGetLastError());
+		closesocket(ClientSocket);
+		WSACleanup();
+		return 1;
+	}*/
+
 
 
 	return 0;
-}
-
-void handleHeartbeat(SOCKET clientSocket) {
-	while (true) {
-		std::this_thread::sleep_for(std::chrono::milliseconds(HEARTBEAT_INTERVAL));
-
-		// Envoie un message de cœur au serveur
-		send(clientSocket, "Heartbeat", sizeof("Heartbeat"), 0);
-	}
 }
