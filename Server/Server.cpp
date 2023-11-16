@@ -1,15 +1,16 @@
-﻿#include "Server.h"
+﻿#include "ServerClient.h"
 #include <thread>
 #include <windows.h>
 #include "../WindowsProject1/framework.h"
 
 
+Server::Server()  {}
+Server::~Server() {}
 
-Server::Server() 
+void Server::init()
 {
 	//game->init();
 	//while (game->isOpen()) game->update();
-
 	initHWND();
 	initWSA();
 	initSocket();
@@ -19,9 +20,7 @@ Server::Server()
 	// cleanup
 	closesocket(ClientSocket);
 	WSACleanup();
-
 }
-Server::~Server() {}
 
 void Server::initWSA()
 {
@@ -80,10 +79,6 @@ int Server::initHWND()
 	UpdateWindow(hWnd);
 }
 
-
-
-
-
 void Server::listenClient()
 {
 	
@@ -113,9 +108,6 @@ void Server::listenClient()
 
 void Server::accepteClient()
 {
-
-	//WSAAsyncSelect(ClientSocket, hWnd, WM_SERVER_SOCKET, FD_READ | FD_ACCEPT | FD_CLOSE);
-
 	// Accept a client socket
 	ClientSocket = accept(ListenSocket, NULL, NULL);
 	if (ClientSocket == INVALID_SOCKET) {
@@ -124,8 +116,10 @@ void Server::accepteClient()
 		WSACleanup();
 		return;
 	}
-
 	printf("Client accepted.\n");
+
+
+	WSAAsyncSelect(ClientSocket, hWnd, WM_SOCKET, FD_READ | FD_ACCEPT | FD_CLOSE);
 
 	// Attribuer un identifiant de session au client
 	std::string sessionID = generateSessionID();
@@ -135,28 +129,55 @@ void Server::accepteClient()
 	clients.push_back(ClientSocket);
 
 	handleClient(ClientSocket, sessionID);
+	
 }
 
 LRESULT Server::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) //static
 {
 	Server* pServer = reinterpret_cast<Server*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
-	//pServer->HandleWindowMessage(uMsg, wParam, lParam);
-
+	if (pServer) return pServer->HandleWindowMessage(uMsg, wParam, lParam);
 	
+	if (uMsg == WM_SOCKET) 
+	{
+		switch (lParam) {
+		case FD_READ:
+			pServer->HandleReadEvent(wParam);
+			break;
+		case FD_ACCEPT:
+			pServer->HandleAcceptEvent(wParam);
+			break;
+		case FD_CLOSE:
+			pServer->HandleCloseEvent(wParam);
+			break;
+		default:
+			// Gérer d'autres événements si nécessaire
+			break;
+		}
+		return 0; // Indique que le message a été traité
+	}
 
 	return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
 
-//LRESULT Server::HandleWindowMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) {
-//	
-//
-//	switch (uMsg) 
-//	{
-//
-//	}
-//
-//	return DefWindowProc(hWnd, uMsg, wParam, lParam);
-//}
+LRESULT Server::HandleWindowMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) 
+{	
+	int requestID = static_cast<int>(wParam);
+	std::string requestData(reinterpret_cast<const char*>(lParam));
+	if (requestData.find("close\"") != std::string::npos)
+	{
+		printf("close connexion since you asked it");
+		std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+
+	}
+
+
+	switch (uMsg) 
+	{
+
+	}
+
+	return DefWindowProc(hWnd, uMsg, wParam, lParam);
+}
 
 void Server::handleClient(SOCKET clientSocket, const std::string& sessionID) {
 	do {
@@ -164,7 +185,7 @@ void Server::handleClient(SOCKET clientSocket, const std::string& sessionID) {
 		iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
 		if (iResult > 0)
 		{
-			printf("Bytes received: %s\n", sessionID.c_str(), recvbuf);
+			printf("Bytes received: \n", recvbuf);
 
 			// Echo the buffer back to the sender
 			iSendResult = send(ClientSocket, recvbuf, iResult, 0);
@@ -181,14 +202,14 @@ void Server::handleClient(SOCKET clientSocket, const std::string& sessionID) {
 			printf("Connection closing from server...\n");
 
 		}
-		else
+		/*else
 		{
 			printf("recv failed with error: %d\n", WSAGetLastError());
 			closesocket(ClientSocket);
 			WSACleanup();
-		}
+		}*/
 
-	} while (iResult > 0);
+	} while (true);
 }
 
 void Server::shutdownClient(SOCKET clientSocket)
@@ -220,3 +241,23 @@ std::string Server::generateSessionID() const {
 	return "SessionID_" + std::to_string(timestamp);
 }
 
+void Server::HandleReadEvent(WPARAM wParam) 
+{
+	// Traitement pour l'événement FD_READ
+	printf("Read event\n" + wParam);
+
+}
+
+void Server::HandleAcceptEvent(WPARAM wParam) 
+{
+	// Traitement pour l'événement FD_ACCEPT
+	printf("Accept event\n" + wParam);
+
+}
+
+void Server::HandleCloseEvent(WPARAM wParam) 
+{
+	// Traitement pour l'événement FD_CLOSE
+	printf("Close event\n" + wParam);
+
+}

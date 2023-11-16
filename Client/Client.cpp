@@ -3,6 +3,9 @@
 Client::Client()
 {
 
+	const char* sendbuf = "1 close  1";
+	int recvbuflen = DEFAULT_BUFLEN;
+	char recvbuf[DEFAULT_BUFLEN];
 }
 
 Client::~Client()
@@ -75,7 +78,7 @@ int Client::connectClientServer()
 	connection = result;
 	ClientSocket = socket(connection->ai_family, connection->ai_socktype, connection->ai_protocol);
 
-	if (res = connect(ClientSocket, connection->ai_addr, (int)connection->ai_addrlen) == SOCKET_ERROR)
+	if ((res = connect(ClientSocket, connection->ai_addr, (int)connection->ai_addrlen)) == SOCKET_ERROR)
 	{
 		closesocket(ClientSocket);
 		ClientSocket = INVALID_SOCKET;
@@ -91,11 +94,15 @@ int Client::connectClientServer()
 	}
 }
 
+	printf( sendbuf);
+	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+
+	
 
 
 int Client::clientSendData()
 {
-	if (res = send(ClientSocket, sendbuf, (int)strlen(sendbuf), 0) == SOCKET_ERROR)
+	if ((res = send(ClientSocket, sendbuf, (int)strlen(sendbuf), 0)) == SOCKET_ERROR)
 	{
 		printf("send failed: %d\n", WSAGetLastError());
 		closesocket(ClientSocket);
@@ -122,9 +129,9 @@ int Client::clientDisconnect()
 			printf("Bytes received: %d\n", res);
 		else if (res == 0)
 			printf("Connection closed\n");
-		else
-			printf("recv failed: %d\n", WSAGetLastError());
-	} while (res > 0);
+		//else
+			//printf("recv failed: %d\n", WSAGetLastError());
+	} while (true);
 
 	return 0;
 }

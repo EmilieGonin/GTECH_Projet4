@@ -7,4 +7,5 @@
 class ServerClient : public Server {
 public:
 	ServerClient();
+	void init() override;
 };

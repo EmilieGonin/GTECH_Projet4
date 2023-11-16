@@ -2,5 +2,11 @@
 
 ServerClient::ServerClient()
 {
-	mPort = "1027";
+	
 };
+
+void ServerClient::init()
+{
+	mPort = "1027";
+	Server::init();
+}

@@ -5,6 +5,7 @@
 #define WIN32_LEAN_AND_MEAN
 #define WM_SOCKET_EVENT (WM_USER + 1)
 #define FD_READ_EVENT   FD_READ | FD_WRITE | FD_OOB | FD_ACCEPT | FD_CONNECT | FD_CLOSE
+#define _WINSOCK_DEPRECATED_NO_WARNINGS
 
 
 #include "SFML/Graphics.hpp"
@@ -41,36 +42,43 @@ private:
     void accepteClient();
 
     static LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-    //LRESULT HandleWindowMessage(UINT uMsg, WPARAM wParam, LPARAM lParam);
+    LRESULT HandleWindowMessage(UINT uMsg, WPARAM wParam, LPARAM lParam);
 
+    void HandleReadEvent(WPARAM wParam);
+    void HandleAcceptEvent(WPARAM wParam);
+    void HandleCloseEvent(WPARAM wParam);
 
 
     HWND hWnd;
 
     WSADATA wsaData;
-    int iResult;
 
     SOCKET ListenSocket = INVALID_SOCKET;
-    SOCKET ClientSocket = INVALID_SOCKET;
 
     struct addrinfo* result = NULL;
     struct addrinfo hints;
 
-    int iSendResult;
-    char recvbuf[DEFAULT_BUFLEN];
-    int recvbuflen = DEFAULT_BUFLEN;
+    std::vector<SOCKET> clients; // Liste des sockets des clients connectï¿½s
+    std::mutex clientsMutex; // Mutex pour protï¿½ger l'accï¿½s ï¿½ la liste des clients
 
-    std::vector<SOCKET> clients; // Liste des sockets des clients connectés
-    std::mutex clientsMutex; // Mutex pour protéger l'accès à la liste des clients
+#define WM_SOCKET (WM_USER + 1)
+
 
 protected:
-    std::string mPort = "1027";
-   
+    std::string mPort;
 
+    int iResult;
+    int iSendResult;
+    int recvbuflen = DEFAULT_BUFLEN;
+
+    SOCKET ClientSocket = INVALID_SOCKET;
+
+    char recvbuf[DEFAULT_BUFLEN];
+    virtual void init();
 
 public:
     Server();
     ~Server();
-    // Ajoute d'autres méthodes et membres au besoin.
+    // Ajoute d'autres mï¿½thodes et membres au besoin.
 
 };

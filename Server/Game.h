@@ -1,10 +1,5 @@
 #pragma once
-#include "Window.h"
-
-struct cell {
-	sf::Shape* shape;
-	int player;
-};
+#include <map>
 
 class Game
 {
@@ -14,11 +9,10 @@ public:
 	void update();
 	bool hasWin();
 
-	inline bool isOpen() { return mWindow->isOpen(); };
-
 private:
 	Game();
 	static Game* mInstance;
-	static Window* mWindow;
-	std::map<std::pair<int, int>, struct cell> mCells;
+
+	//PlayerId for each game cell
+	std::map<std::pair<int, int>, int> mCells;
 };
