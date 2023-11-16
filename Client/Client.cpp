@@ -2,10 +2,6 @@
 
 Client::Client()
 {
-
-	const char* sendbuf = "1 close  1";
-	int recvbuflen = DEFAULT_BUFLEN;
-	char recvbuf[DEFAULT_BUFLEN];
 }
 
 Client::~Client()
@@ -94,12 +90,6 @@ int Client::connectClientServer()
 	}
 }
 
-	printf( sendbuf);
-	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-
-	
-
-
 int Client::clientSendData()
 {
 	if ((res = send(ClientSocket, sendbuf, (int)strlen(sendbuf), 0)) == SOCKET_ERROR)
@@ -133,18 +123,5 @@ int Client::clientDisconnect()
 			//printf("recv failed: %d\n", WSAGetLastError());
 	} while (true);
 
-	return 0;
-}
-
-int main(int ac, char const* av[])
-{
-	Client c;
-
-	c.createInvisibleWindow();
-	c.initClientSocket();
-	c.connectClientServer();
-	c.clientSendData();
-	c.clientDisconnect();
-	
 	return 0;
 }
