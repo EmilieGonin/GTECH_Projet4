@@ -11,7 +11,7 @@ void ServerWeb::init()
 void ServerWeb::handleClientWeb(SOCKET clientSocket, const std::string& sessionID) {
 	do {
 
-		iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
+		iResult = recv(clientSocket, recvbuf, recvbuflen, 0);
 		if (iResult > 0)
 		{
 			std::string httpRequest(recvbuf);
@@ -22,12 +22,12 @@ void ServerWeb::handleClientWeb(SOCKET clientSocket, const std::string& sessionI
 			//printf("Bytes received: %s\n", sessionID.c_str(), recvbuf);
 
 			// Envoyer la réponse HTTP
-			iSendResult = send(ClientSocket, httpResponse.c_str(), httpResponse.size(), 0);
+			iSendResult = send(clientSocket, httpResponse.c_str(), httpResponse.size(), 0);
 
 			if (iSendResult == SOCKET_ERROR)
 			{
 				printf("send failed with error: %d\n", WSAGetLastError());
-				closesocket(ClientSocket);
+				closesocket(clientSocket);
 				WSACleanup();
 			}
 			//printf("Bytes sent: %d\n", iSendResult);
@@ -40,7 +40,7 @@ void ServerWeb::handleClientWeb(SOCKET clientSocket, const std::string& sessionI
 		else
 		{
 			printf("recv failed with error: %d\n", WSAGetLastError());
-			closesocket(ClientSocket);
+			closesocket(clientSocket);
 			WSACleanup();
 		}
 	} while (iResult > 0);
