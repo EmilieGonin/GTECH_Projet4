@@ -6,4 +6,6 @@ JsonHandler::JsonHandler(std::map<std::pair<int, int>, int> cells)
 	mJson["JsonType"] = RESPONSE;
 	mJson["Id"] = 3;
 	mJson["Cells"] = cells;
+
+	mDump = mJson.dump();
 }
