@@ -2,10 +2,6 @@
 
 Client::Client()
 {
-
-	const char* sendbuf = "1 close  1";
-	int recvbuflen = DEFAULT_BUFLEN;
-	char recvbuf[DEFAULT_BUFLEN];
 }
 
 Client::~Client()
@@ -93,12 +89,6 @@ int Client::connectClientServer()
 		return 1;
 	}
 }
-
-	printf( sendbuf);
-	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-
-	
-
 
 int Client::clientSendData()
 {
