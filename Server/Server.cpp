@@ -4,12 +4,13 @@
 #include "../WindowsProject1/framework.h"
 
 
+Server::Server()  {}
+Server::~Server() {}
 
-Server::Server() 
+void Server::init()
 {
 	//game->init();
 	//while (game->isOpen()) game->update();
-
 	initHWND();
 	initWSA();
 	initSocket();
@@ -19,9 +20,7 @@ Server::Server()
 	// cleanup
 	closesocket(ClientSocket);
 	WSACleanup();
-
 }
-Server::~Server() {}
 
 void Server::initWSA()
 {
@@ -79,10 +78,6 @@ int Server::initHWND()
 	ShowWindow(hWnd, SW_HIDE);
 	UpdateWindow(hWnd);
 }
-
-
-
-
 
 void Server::listenClient()
 {
