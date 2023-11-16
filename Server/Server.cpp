@@ -179,37 +179,9 @@ LRESULT Server::HandleWindowMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
 
-void Server::handleClient(SOCKET clientSocket, const std::string& sessionID) {
-	do {
-
-		iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
-		if (iResult > 0)
-		{
-			printf("Bytes received: \n", recvbuf);
-
-			// Echo the buffer back to the sender
-			iSendResult = send(ClientSocket, recvbuf, iResult, 0);
-			if (iSendResult == SOCKET_ERROR)
-			{
-				printf("send failed with error: %d\n", WSAGetLastError());
-				closesocket(ClientSocket);
-				WSACleanup();
-			}
-			printf("Bytes sent: %d\n", iSendResult);
-		}
-		else if (iResult == 0)
-		{
-			printf("Connection closing from server...\n");
-
-		}
-		/*else
-		{
-			printf("recv failed with error: %d\n", WSAGetLastError());
-			closesocket(ClientSocket);
-			WSACleanup();
-		}*/
-
-	} while (true);
+void Server::handleClient(SOCKET clientSocket, const std::string& sessionID)
+{
+	//
 }
 
 void Server::shutdownClient(SOCKET clientSocket)
