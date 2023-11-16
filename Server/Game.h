@@ -1,5 +1,5 @@
 #pragma once
-#include "Window.h"
+#include <map>
 
 class Game
 {
@@ -9,10 +9,10 @@ public:
 	void update();
 	bool hasWin();
 
-	inline bool isOpen() { return mWindow->isOpen(); };
-
 private:
 	Game();
 	static Game* mInstance;
-	static Window* mWindow;
+
+	//PlayerId for each game cell
+	std::map<std::pair<int, int>, int> mCells;
 };

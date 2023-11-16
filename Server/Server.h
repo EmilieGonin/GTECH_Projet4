@@ -52,32 +52,33 @@ private:
     HWND hWnd;
 
     WSADATA wsaData;
-    int iResult;
 
     SOCKET ListenSocket = INVALID_SOCKET;
-    SOCKET ClientSocket = INVALID_SOCKET;
 
     struct addrinfo* result = NULL;
     struct addrinfo hints;
 
-    int iSendResult;
-    char recvbuf[DEFAULT_BUFLEN];
-    int recvbuflen = DEFAULT_BUFLEN;
-
-    std::vector<SOCKET> clients; // Liste des sockets des clients connectés
-    std::mutex clientsMutex; // Mutex pour protéger l'accès à la liste des clients
+    std::vector<SOCKET> clients; // Liste des sockets des clients connectï¿½s
+    std::mutex clientsMutex; // Mutex pour protï¿½ger l'accï¿½s ï¿½ la liste des clients
 
 #define WM_SOCKET (WM_USER + 1)
 
 
 protected:
     std::string mPort = "1027";
-   
 
+    int iResult;
+    int iSendResult;
+    int recvbuflen = DEFAULT_BUFLEN;
+
+    SOCKET ClientSocket = INVALID_SOCKET;
+
+    char recvbuf[DEFAULT_BUFLEN];
+    virtual void init();
 
 public:
     Server();
     ~Server();
-    // Ajoute d'autres méthodes et membres au besoin.
+    // Ajoute d'autres mï¿½thodes et membres au besoin.
 
 };
