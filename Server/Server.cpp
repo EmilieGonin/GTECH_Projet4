@@ -119,7 +119,7 @@ void Server::accepteClient()
 	printf("Client accepted.\n");
 
 
-	WSAAsyncSelect(ClientSocket, hWnd, WM_SOCKET, FD_READ | FD_ACCEPT | FD_CLOSE);
+	WSAAsyncSelect(ClientSocket, hWnd, WM_SOCKET, FD_READ | FD_CLOSE);
 
 	// Attribuer un identifiant de session au client
 	std::string sessionID = generateSessionID();
@@ -128,7 +128,7 @@ void Server::accepteClient()
 	std::lock_guard<std::mutex> lock(clientsMutex);
 	clients.push_back(ClientSocket);
 
-	handleClient(ClientSocket, sessionID);
+	//handleClient(ClientSocket, sessionID);
 	
 }
 
@@ -163,29 +163,30 @@ LRESULT Server::HandleWindowMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 {	
 	int requestID = static_cast<int>(wParam);
 	std::string requestData(reinterpret_cast<const char*>(lParam));
-	if (requestData.find("close\"") != std::string::npos)
+	if (requestData.find("close") != std::string::npos)
 	{
 		printf("close connexion since you asked it");
 		std::this_thread::sleep_for(std::chrono::milliseconds(5000));
-
+		closesocket(ClientSocket);
+		WSACleanup();
 	}
 
 
-	switch (uMsg) 
+	/*switch (uMsg) 
 	{
 
-	}
+	}*/
 
 	return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
 
-void Server::handleClient(SOCKET clientSocket, const std::string& sessionID) {
-	do {
+void Server::handleClient(UINT uMsg, WPARAM wParam, LPARAM lParam) {
+	//do {
 
-		iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
 		if (iResult > 0)
 		{
-			printf("Bytes received: \n", recvbuf);
+
+			printf("Bytes received: %d\n", recvbuf);
 
 			// Echo the buffer back to the sender
 			iSendResult = send(ClientSocket, recvbuf, iResult, 0);
@@ -199,7 +200,7 @@ void Server::handleClient(SOCKET clientSocket, const std::string& sessionID) {
 		}
 		else if (iResult == 0)
 		{
-			printf("Connection closing from server...\n");
+			//printf("Connection closing from server...\n");
 
 		}
 		/*else
@@ -209,7 +210,7 @@ void Server::handleClient(SOCKET clientSocket, const std::string& sessionID) {
 			WSACleanup();
 		}*/
 
-	} while (true);
+	//} while (true);
 }
 
 void Server::shutdownClient(SOCKET clientSocket)
@@ -245,6 +246,8 @@ void Server::HandleReadEvent(WPARAM wParam)
 {
 	// Traitement pour l'événement FD_READ
 	printf("Read event\n" + wParam);
+	iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
+
 
 }
 

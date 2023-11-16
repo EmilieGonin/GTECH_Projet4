@@ -3,9 +3,6 @@
 Client::Client()
 {
 
-	const char* sendbuf = "1 close  1";
-	int recvbuflen = DEFAULT_BUFLEN;
-	char recvbuf[DEFAULT_BUFLEN];
 }
 
 Client::~Client()
@@ -94,10 +91,8 @@ int Client::connectClientServer()
 	}
 }
 
-	printf( sendbuf);
-	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
-	
+
 
 
 int Client::clientSendData()
@@ -109,6 +104,8 @@ int Client::clientSendData()
 		WSACleanup();
 		return 1;
 	}
+	printf(sendbuf);
+	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
 	printf("Bytes Sent: %ld\n", res);
 }
@@ -123,15 +120,15 @@ int Client::clientDisconnect()
 		return 1;
 	}
 
-	do {
-		res = recv(ClientSocket, recvbuf, recvbuflen, 0);
-		if (res > 0)
-			printf("Bytes received: %d\n", res);
-		else if (res == 0)
-			printf("Connection closed\n");
-		//else
-			//printf("recv failed: %d\n", WSAGetLastError());
-	} while (true);
+
+	/*res = recv(ClientSocket, recvbuf, recvbuflen, 0);
+	if (res > 0)
+		printf("Bytes received: %d\n", res);
+	else if (res == 0)
+		printf("Connection closed\n");*/
+	//else
+		//printf("recv failed: %d\n", WSAGetLastError());
+
 
 	return 0;
 }
@@ -144,7 +141,15 @@ int main(int ac, char const* av[])
 	c.initClientSocket();
 	c.connectClientServer();
 	c.clientSendData();
+
+	MSG msg;
+	while (GetMessage(&msg, NULL, 0, 0 )) 
+	{
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+	}
+
 	c.clientDisconnect();
-	
+
 	return 0;
 }
