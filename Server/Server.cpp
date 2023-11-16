@@ -21,15 +21,6 @@ void Server::init()
 	closesocket(ClientSocket);
 	WSACleanup();
 }
-Server::~Server() {}
-
-
-int __cdecl main(void)
-{
-	ServerClient serverClient;
-	
-}
-
 
 void Server::initWSA()
 {

@@ -65,7 +65,7 @@ private:
 
 
 protected:
-    std::string mPort = "1027";
+    std::string mPort;
 
     int iResult;
     int iSendResult;
