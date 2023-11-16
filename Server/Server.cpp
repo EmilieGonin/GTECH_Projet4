@@ -128,6 +128,14 @@ void Server::accepteClient()
 	std::lock_guard<std::mutex> lock(clientsMutex);
 	clients.push_back(ClientSocket);
 
+	//Test JSON - temp
+	Game* game = Game::Instance();
+	game->init();
+
+	JsonHandler j(game->getCells());
+	send(ClientSocket, j.getDump().c_str(), j.getDump().size(), 0);
+	//Fin test JSON
+
 	handleClient(ClientSocket, sessionID);
 	
 }
@@ -260,4 +268,9 @@ void Server::HandleCloseEvent(WPARAM wParam)
 	// Traitement pour l'événement FD_CLOSE
 	printf("Close event\n" + wParam);
 
+}
+
+void Server::sendJson(std::string json)
+{
+	send(ClientSocket, json.c_str(), json.size(), 0);
 }

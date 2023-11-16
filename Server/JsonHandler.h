@@ -17,7 +17,9 @@ class JsonHandler
 public:
 	JsonHandler(std::map<std::pair<int, int>, int>);
 	inline json getJson() { return mJson; };
+	inline std::string getDump() { return mDump; };
 
 private:
 	json mJson;
+	std::string mDump;
 };
