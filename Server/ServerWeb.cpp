@@ -14,13 +14,16 @@ void ServerWeb::handleClient(SOCKET clientSocket, const std::string& sessionID) 
 		iResult = recv(clientSocket, recvbuf, recvbuflen, 0);
 		if (iResult > 0)
 		{
-			std::string ok = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: 13\r\n\r\nHello, World!";
+			//std::string ok = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: 13\r\n\r\nHello, World!";
+			std::string ok = "HTTP/1.1 404 Not Found";
+
 
 			// Analyser la requête HTTP
 			std::string httpResponse = processHttpRequest();
+			Sleep(1000);
 
 			iSendResult = send(clientSocket, httpResponse.c_str(), httpResponse.size(), 0);
-
+			Sleep(3000);
 			if (iSendResult == SOCKET_ERROR)
 			{
 				printf("send failed with error: %d\n", WSAGetLastError());

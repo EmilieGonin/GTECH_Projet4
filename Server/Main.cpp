@@ -10,9 +10,9 @@ int __cdecl main(void)
 
 	//JsonHandler j(game->getCells());
 
-	ServerClient serverClient;
-	serverClient.init();
+	/*ServerClient serverClient;
+	serverClient.init();*/
 	//serverClient.sendJson(j.getDump());
-	//ServerWeb serverWeb;
-	//serverWeb.init();
+	ServerWeb serverWeb;
+	serverWeb.init();
 }
