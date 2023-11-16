@@ -3,8 +3,8 @@
 
 int __cdecl main(void)
 {
-	ServerClient serverClient;
-	serverClient.init();
-	//ServerWeb serverWeb;
-	//serverWeb.init();
+	//ServerClient serverClient;
+	//serverClient.init();
+	ServerWeb serverWeb;
+	serverWeb.init();
 }

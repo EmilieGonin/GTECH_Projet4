@@ -57,7 +57,7 @@ void Server::initSocket()
 int Server::initHWND()
 {
 	WNDCLASS wc = { 0 };
-	wc.lpfnWndProc = &Server::WindowProc; 
+	//wc.lpfnWndProc = &Server::WindowProc; 
 	wc.lpfnWndProc = WindowProc;
 	wc.hInstance = GetModuleHandle(NULL);
 	wc.lpszClassName = "AsyncSelectWindowClass";
@@ -244,20 +244,20 @@ std::string Server::generateSessionID() const {
 void Server::HandleReadEvent(WPARAM wParam) 
 {
 	// Traitement pour l'événement FD_READ
-	printf("Read event\n" + wParam);
+	printf("Read event\n %lu\n", wParam);
 
 }
 
 void Server::HandleAcceptEvent(WPARAM wParam) 
 {
 	// Traitement pour l'événement FD_ACCEPT
-	printf("Accept event\n" + wParam);
+	printf("Accept event\n %lu\n", wParam);
 
 }
 
 void Server::HandleCloseEvent(WPARAM wParam) 
 {
 	// Traitement pour l'événement FD_CLOSE
-	printf("Close event\n" + wParam);
+	printf("Close event\n %lu\n", wParam);
 
 }
