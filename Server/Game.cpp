@@ -53,3 +53,8 @@ bool Game::hasWin()
 
 	return false;
 }
+
+void Game::updateCells(std::pair<int, int> cell, int player)
+{
+	mCells[{cell.first, cell.second}] = player;
+}

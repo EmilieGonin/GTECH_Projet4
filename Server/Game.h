@@ -8,6 +8,7 @@ public:
 	void init();
 	void update();
 	bool hasWin();
+	void updateCells(std::pair<int, int>, int);
 	inline std::map<std::pair<int, int>, int> getCells() { return mCells; };
 
 private:

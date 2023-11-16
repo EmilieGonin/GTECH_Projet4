@@ -116,7 +116,7 @@ int Client::clientDisconnect()
 	do {
 		res = recv(ClientSocket, recvbuf, recvbuflen, 0);
 		if (res > 0)
-			printf("Bytes received: %d\n", res);
+			printf("Bytes received: %s\n", recvbuf);
 		else if (res == 0)
 			printf("Connection closed\n");
 		//else
