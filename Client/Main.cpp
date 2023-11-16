@@ -3,17 +3,24 @@
 
 int main(int ac, char const* av[])
 {
-	Window w;
-	/*Client c;
+	//Window w;
+	Client c;
 
 	c.createInvisibleWindow();
 	c.initClientSocket();
 	c.connectClientServer();
 	c.clientSendData();
-	c.clientDisconnect();*/
+	c.clientDisconnect();
 
-	w.initTextMenu();
-	while (w.isOpen()) w.update();
+	MSG msg;
+	while (GetMessage(&msg, NULL, 0, 0))
+	{
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+	}
+
+	//w.initTextMenu();
+	//while (w.isOpen()) w.update();
 
 	return 0;
 }

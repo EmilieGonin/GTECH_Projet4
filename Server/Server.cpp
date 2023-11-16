@@ -137,7 +137,7 @@ void Server::accepteClient()
 	send(ClientSocket, j.getDump().c_str(), j.getDump().size(), 0);
 	//Fin test JSON
 
-	handleClient(ClientSocket, sessionID);
+	//handleClient(ClientSocket, sessionID);
 	
 }
 

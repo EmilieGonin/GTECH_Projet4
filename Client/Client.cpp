@@ -128,23 +128,23 @@ int Client::clientDisconnect()
 	return 0;
 }
 
-int main(int ac, char const* av[])
-{
-	Client c;
-
-	c.createInvisibleWindow();
-	c.initClientSocket();
-	c.connectClientServer();
-	c.clientSendData();
-
-	MSG msg;
-	while (GetMessage(&msg, NULL, 0, 0 )) 
-	{
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
-	}
-
-	c.clientDisconnect();
-
-	return 0;
-}
+//int main(int ac, char const* av[])
+//{
+//	Client c;
+//
+//	c.createInvisibleWindow();
+//	c.initClientSocket();
+//	c.connectClientServer();
+//	c.clientSendData();
+//
+//	MSG msg;
+//	while (GetMessage(&msg, NULL, 0, 0 )) 
+//	{
+//		TranslateMessage(&msg);
+//		DispatchMessage(&msg);
+//	}
+//
+//	c.clientDisconnect();
+//
+//	return 0;
+//}
