@@ -4,24 +4,18 @@
 
 using json = nlohmann::json;
 
-//Type : requête, réponse à une requête, notif
-//Identifiant : pour savoir ce que va contenir le corps en terme de champs
-//Code d'erreur : si c'est une réponse
-
 enum JsonType { NOTIF, REQUEST, RESPONSE };
+//Id : pour savoir ce que va contenir le corps en terme de champs
+//Code erreur : si c'est une response (0 = ok, -1 = pas ok)
 
 //Id 1 : Request client : jouer une case - playerId, cell
-//Id 2 : Request client : récupérer la grille (lors de la connexion) - playerId
+//Id 2 : Request client : get la grille (lors de la connexion) - playerId
 //Id 3 : Response server : oui ou non, renvoi de toutes les cases
-
-struct AllCells {
-	//
-};
 
 class JsonHandler
 {
 public:
-	JsonHandler(std::map<std::pair<int, int>, struct cell>);
+	JsonHandler(std::map<std::pair<int, int>, int>);
 	inline json getJson() { return mJson; };
 
 private:
