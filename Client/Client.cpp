@@ -1,51 +1,77 @@
-#ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
-#endif
+#include "Client.h"
 
-#include <windows.h>
-#include <winsock2.h>
-#include <ws2tcpip.h>
-#include <iphlpapi.h>
-#include <stdio.h>
-
-#pragma comment(lib, "Ws2_32.lib")
-
-#define DEFAULT_PORT "1027"
-#define ADDRESS "localhost"
-#define DEFAULT_BUFLEN 512
-
-
-int main(int ac, char const* av[])
+Client::Client()
 {
-	int res;
-	WSADATA wsaData;
-	addrinfo* result = NULL, * connection = NULL, address;
-	SOCKET ClientSocket = INVALID_SOCKET;
 
-	const char* sendbuf = "";
-	int recvbuflen = DEFAULT_BUFLEN;
-	char recvbuf[DEFAULT_BUFLEN];
+}
 
+Client::~Client()
+{
+
+}
+
+LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+	switch (msg)
+	{
+	case WM_CLOSE:
+		DestroyWindow(hwnd);
+		break;
+	case WM_DESTROY:
+		PostQuitMessage(0);
+		break;
+	default:
+		return DefWindowProc(hwnd, msg, wParam, lParam);
+	}
+	return 0;
+}
+
+int Client::createInvisibleWindow()
+{
+	WNDCLASS wc = { 0 };
+	wc.lpfnWndProc = WndProc;
+	wc.hInstance = GetModuleHandle(NULL);
+	wc.lpszClassName = L"AsyncSelectWindowClass";
+
+	if (!RegisterClass(&wc)) {
+		printf("RegisterClass failed: %d\n", GetLastError());
+		return 1;
+	}
+
+	HWND hWnd = CreateWindowEx(0, L"AsyncSelectWindowClass", L"AsyncSelectWindow", 0, 0, 0, 0, 0, HWND_MESSAGE, NULL, GetModuleHandle(NULL), NULL);
+	if (hWnd == NULL) {
+		printf("CreateWindowEx failed: %d\n", GetLastError());
+		return 1;
+	}
+
+	ShowWindow(hWnd, SW_HIDE);
+	UpdateWindow(hWnd);
+}
+
+int Client::initClientSocket()
+{
 	ZeroMemory(&address, sizeof(address));
 	address.ai_family = AF_INET;
 	address.ai_socktype = SOCK_STREAM;
 	address.ai_protocol = IPPROTO_TCP;
 
- 	if (res = WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
+
+	if (res = WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
 	{
 		printf("WSAStartup failed: %d\n", res);
 		return 1;
 	}
 
-	// Resolve the server address and port
 	if (res = getaddrinfo(ADDRESS, DEFAULT_PORT, &address, &result) != 0)
 	{
 		printf("getaddrinfo failed: %d\n", res);
 		WSACleanup();
 		return 1;
 	}
+}
 
-	// Set the address and port to connect the server
+int Client::connectClientServer()
+{
 	connection = result;
 	ClientSocket = socket(connection->ai_family, connection->ai_socktype, connection->ai_protocol);
 
@@ -63,7 +89,12 @@ int main(int ac, char const* av[])
 		WSACleanup();
 		return 1;
 	}
+}
 
+
+
+int Client::clientSendData()
+{
 	if (res = send(ClientSocket, sendbuf, (int)strlen(sendbuf), 0) == SOCKET_ERROR)
 	{
 		printf("send failed: %d\n", WSAGetLastError());
@@ -73,7 +104,10 @@ int main(int ac, char const* av[])
 	}
 
 	printf("Bytes Sent: %ld\n", res);
+}
 
+int Client::clientDisconnect()
+{
 	if (res = shutdown(ClientSocket, SD_SEND) == SOCKET_ERROR)
 	{
 		printf("shutdown failed: %d\n", WSAGetLastError());
@@ -92,5 +126,18 @@ int main(int ac, char const* av[])
 			printf("recv failed: %d\n", WSAGetLastError());
 	} while (res > 0);
 
+	return 0;
+}
+
+int main(int ac, char const* av[])
+{
+	Client c;
+
+	c.createInvisibleWindow();
+	c.initClientSocket();
+	c.connectClientServer();
+	c.clientSendData();
+	c.clientDisconnect();
+	
 	return 0;
 }

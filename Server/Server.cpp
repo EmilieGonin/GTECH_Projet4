@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include "Game.h"
 
+
 // Need to link with Ws2_32.lib
 #pragma comment (lib, "Ws2_32.lib")
 // #pragma comment (lib, "Mswsock.lib")
@@ -20,11 +21,11 @@
 
 int __cdecl main(void)
 {
-    Game* game = Game::Instance();
-    game->init();
+    //Game* game = Game::Instance();
+    //game->init();
 
     //Loop
-    while (game->isOpen()) game->update();
+    //while (game->isOpen()) game->update();
 
     WSADATA wsaData;
     int iResult;
