@@ -1,10 +1,10 @@
 #pragma once
 #include "Window.h"
 
-struct cell {
-	sf::Shape* shape;
-	int player;
-};
+//struct cell {
+//	sf::Shape* shape;
+//	int player;
+//};
 
 class Game
 {
