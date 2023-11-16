@@ -67,6 +67,9 @@ private:
     std::vector<SOCKET> clients; // Liste des sockets des clients connectés
     std::mutex clientsMutex; // Mutex pour protéger l'accès à la liste des clients
 
+#define WM_SOCKET (WM_USER + 1)
+
+
 protected:
     std::string mPort = "1027";
    

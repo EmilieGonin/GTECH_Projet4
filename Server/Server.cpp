@@ -26,8 +26,8 @@ Server::~Server() {}
 
 int __cdecl main(void)
 {
-	ServerClient mServerClient;
-	//server.start();
+	ServerClient serverClient;
+	
 }
 
 
@@ -121,19 +121,18 @@ void Server::listenClient()
 
 void Server::accepteClient()
 {
-
-	WSAAsyncSelect(ClientSocket, hWnd, ListenSocket, FD_READ | FD_ACCEPT | FD_CLOSE);
-
 	// Accept a client socket
-	/*ClientSocket = accept(ListenSocket, NULL, NULL);
+	ClientSocket = accept(ListenSocket, NULL, NULL);
 	if (ClientSocket == INVALID_SOCKET) {
 		printf("accept failed with error: %d\n", WSAGetLastError());
 		closesocket(ListenSocket);
 		WSACleanup();
 		return;
-	}*/
-
+	}
 	printf("Client accepted.\n");
+
+
+	WSAAsyncSelect(ClientSocket, hWnd, WM_SOCKET, FD_READ | FD_ACCEPT | FD_CLOSE);
 
 	// Attribuer un identifiant de session au client
 	std::string sessionID = generateSessionID();
@@ -143,6 +142,7 @@ void Server::accepteClient()
 	clients.push_back(ClientSocket);
 
 	handleClient(ClientSocket, sessionID);
+	
 }
 
 LRESULT Server::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) //static
@@ -150,7 +150,8 @@ LRESULT Server::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) /
 	Server* pServer = reinterpret_cast<Server*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
 	if (pServer) return pServer->HandleWindowMessage(uMsg, wParam, lParam);
 	
-
+	if (uMsg == WM_SOCKET) 
+	{
 		switch (lParam) {
 		case FD_READ:
 			pServer->HandleReadEvent(wParam);
@@ -165,12 +166,23 @@ LRESULT Server::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) /
 			// Gérer d'autres événements si nécessaire
 			break;
 		}
+		return 0; // Indique que le message a été traité
+	}
 
 	return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
 
-LRESULT Server::HandleWindowMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) {
-	
+LRESULT Server::HandleWindowMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) 
+{	
+	int requestID = static_cast<int>(wParam);
+	std::string requestData(reinterpret_cast<const char*>(lParam));
+	if (requestData.find("close\"") != std::string::npos)
+	{
+		printf("close connexion since you asked it");
+		std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+
+	}
+
 
 	switch (uMsg) 
 	{
@@ -186,7 +198,7 @@ void Server::handleClient(SOCKET clientSocket, const std::string& sessionID) {
 		iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
 		if (iResult > 0)
 		{
-			printf("Bytes received: %s\n", sessionID.c_str(), recvbuf);
+			printf("Bytes received: \n", recvbuf);
 
 			// Echo the buffer back to the sender
 			iSendResult = send(ClientSocket, recvbuf, iResult, 0);
@@ -203,14 +215,14 @@ void Server::handleClient(SOCKET clientSocket, const std::string& sessionID) {
 			printf("Connection closing from server...\n");
 
 		}
-		else
+		/*else
 		{
 			printf("recv failed with error: %d\n", WSAGetLastError());
 			closesocket(ClientSocket);
 			WSACleanup();
-		}
+		}*/
 
-	} while (iResult > 0);
+	} while (true);
 }
 
 void Server::shutdownClient(SOCKET clientSocket)
@@ -242,14 +254,23 @@ std::string Server::generateSessionID() const {
 	return "SessionID_" + std::to_string(timestamp);
 }
 
-void Server::HandleReadEvent(WPARAM wParam) {
+void Server::HandleReadEvent(WPARAM wParam) 
+{
 	// Traitement pour l'événement FD_READ
+	printf("Read event\n" + wParam);
+
 }
 
-void Server::HandleAcceptEvent(WPARAM wParam) {
+void Server::HandleAcceptEvent(WPARAM wParam) 
+{
 	// Traitement pour l'événement FD_ACCEPT
+	printf("Accept event\n" + wParam);
+
 }
 
-void Server::HandleCloseEvent(WPARAM wParam) {
+void Server::HandleCloseEvent(WPARAM wParam) 
+{
 	// Traitement pour l'événement FD_CLOSE
+	printf("Close event\n" + wParam);
+
 }

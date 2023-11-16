@@ -25,7 +25,7 @@ int main(int ac, char const* av[])
 	addrinfo* result = NULL, * connection = NULL, address;
 	SOCKET ClientSocket = INVALID_SOCKET;
 
-	const char* sendbuf = "";
+	const char* sendbuf = "1 close  1";
 	int recvbuflen = DEFAULT_BUFLEN;
 	char recvbuf[DEFAULT_BUFLEN];
 
@@ -52,7 +52,7 @@ int main(int ac, char const* av[])
 	connection = result;
 	ClientSocket = socket(connection->ai_family, connection->ai_socktype, connection->ai_protocol);
 
-	if (res = connect(ClientSocket, connection->ai_addr, (int)connection->ai_addrlen) == SOCKET_ERROR)
+	if ((res = connect(ClientSocket, connection->ai_addr, (int)connection->ai_addrlen)) == SOCKET_ERROR)
 	{
 		printf("Unable to connect to server 1! Error code: %d\n", WSAGetLastError());
 
@@ -70,7 +70,10 @@ int main(int ac, char const* av[])
 		return 1;
 	}
 
-	if (res = send(ClientSocket, sendbuf, (int)strlen(sendbuf), 0) == SOCKET_ERROR)
+	printf( sendbuf);
+	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+
+	if ((res = send(ClientSocket, sendbuf, (int)strlen(sendbuf), 0)) == SOCKET_ERROR)
 	{
 		printf("send failed: %d\n", WSAGetLastError());
 		closesocket(ClientSocket);
@@ -81,16 +84,16 @@ int main(int ac, char const* av[])
 	printf("Bytes Sent: %ld\n", res);
 	//std::this_thread::sleep_for(std::chrono::milliseconds(5000));
 
-
+	res = 0;
 	do {
 		res = recv(ClientSocket, recvbuf, recvbuflen, 0);
 		if (res > 0)
 			printf("received: %s\n", recvbuf);
 		else if (res == 0)
 			printf("Connection closed\n");
-		else
-			printf("recv failed: %d\n", WSAGetLastError());
-	} while (res > 0);
+		//else
+			//printf("recv failed: %d\n", WSAGetLastError());
+	} while (true);
 
 	/*if (res = shutdown(ClientSocket, SD_SEND) == SOCKET_ERROR)
 	{
