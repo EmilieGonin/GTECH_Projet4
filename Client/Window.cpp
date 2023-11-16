@@ -19,6 +19,7 @@ void Window::update()
 		mWindow->clear();
 		for (auto& cell : mCells) mWindow->draw(*cell.second.shape);
 		for (auto& shape : mShapes) mWindow->draw(*shape);
+		for (auto& text : mTexts) mWindow->draw(*text);
 		mWindow->display();
 	}
 }
@@ -75,4 +76,40 @@ void Window::addPlayerShape(sf::Vector2f position)
 
 	addShape(shape);
 	mTurn++;
+}
+
+void Window::initTextMenu()
+{
+	mFont.loadFromFile("arial.ttf");
+	sf::Text* text = new sf::Text();
+	text->setFont(mFont);
+	text->setString("Tic-Tac-Toe");
+	text->setCharacterSize(80);
+	text->setPosition(200, 100);
+	text->setFillColor(sf::Color::White);
+	mTexts.push_back(text);
+
+	text = new sf::Text();
+	text->setFont(mFont);
+	text->setString("New Game");
+	text->setCharacterSize(50);
+	text->setPosition(300, 300);
+	text->setFillColor(sf::Color::White);
+	mTexts.push_back(text);
+
+	text = new sf::Text();
+	text->setFont(mFont);
+	text->setString("Join");
+	text->setCharacterSize(50);
+	text->setPosition(300, 450);
+	text->setFillColor(sf::Color::White);
+	mTexts.push_back(text);
+
+	text = new sf::Text();
+	text->setFont(mFont);
+	text->setString("Quit");
+	text->setCharacterSize(50);
+	text->setPosition(300, 600);
+	text->setFillColor(sf::Color::White);
+	mTexts.push_back(text);
 }

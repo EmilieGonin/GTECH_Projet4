@@ -128,16 +128,3 @@ int Client::clientDisconnect()
 
 	return 0;
 }
-
-int main(int ac, char const* av[])
-{
-	Client c;
-
-	c.createInvisibleWindow();
-	c.initClientSocket();
-	c.connectClientServer();
-	c.clientSendData();
-	c.clientDisconnect();
-	
-	return 0;
-}
