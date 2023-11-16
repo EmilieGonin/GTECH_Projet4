@@ -138,8 +138,8 @@ void Server::accepteClient()
 
 	std::pair<int, int> pair = { 0, 1 };
 
-	j = JsonHandler(pair, 1);
-	if (j.getJson()["Id"] == 1) game->updateCells(j.getJson()["Cell"], j.getJson()["Player"]);
+	//j = JsonHandler(pair, 1);
+	//if (j.getJson()["Id"] == 1) game->updateCells(j.getJson()["Cell"], j.getJson()["Player"]);
 	//Fin test JSON
 
 	//handleClient(ClientSocket, sessionID);
@@ -149,11 +149,13 @@ void Server::accepteClient()
 LRESULT Server::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) //static
 {
 	Server* pServer = reinterpret_cast<Server*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
-	if (pServer) return pServer->HandleWindowMessage(uMsg, wParam, lParam);
+	//if (pServer)
+	//	return pServer->HandleWindowMessage(uMsg, wParam, lParam);
 	
+
 	if (uMsg == WM_SOCKET) 
 	{
-		switch (lParam) {
+		switch (LOWORD(lParam)) {
 		case FD_READ:
 			pServer->HandleReadEvent(wParam);
 			break;
@@ -164,18 +166,19 @@ LRESULT Server::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) /
 			pServer->HandleCloseEvent(wParam);
 			break;
 		default:
-			// Gérer d'autres événements si nécessaire
+			printf("uMsg");
 			break;
 		}
 		return 0; // Indique que le message a été traité
 	}
+	//pServer->handleClient(uMsg,wParam, lParam);
 
 	return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
 
 LRESULT Server::HandleWindowMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) 
 {	
-	int requestID = static_cast<int>(wParam);
+	/*int requestID = static_cast<int>(wParam);
 	std::string requestData(reinterpret_cast<const char*>(lParam));
 	if (requestData.find("close") != std::string::npos)
 	{
@@ -183,7 +186,7 @@ LRESULT Server::HandleWindowMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 		std::this_thread::sleep_for(std::chrono::milliseconds(5000));
 		closesocket(ClientSocket);
 		WSACleanup();
-	}
+	}*/
 
 
 	/*switch (uMsg) 
@@ -195,12 +198,12 @@ LRESULT Server::HandleWindowMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 }
 
 void Server::handleClient(UINT uMsg, WPARAM wParam, LPARAM lParam) {
-	//do {
+	
 
 		if (iResult > 0)
 		{
 
-			printf("Bytes received: %d\n", recvbuf);
+			printf("Bytes received: %d\n", uMsg);
 
 			// Echo the buffer back to the sender
 			iSendResult = send(ClientSocket, recvbuf, iResult, 0);
@@ -220,11 +223,10 @@ void Server::handleClient(UINT uMsg, WPARAM wParam, LPARAM lParam) {
 		/*else
 		{
 			printf("recv failed with error: %d\n", WSAGetLastError());
-			closesocket(ClientSocket);
-			WSACleanup();
+			
 		}*/
 
-	//} while (true);
+	
 }
 
 void Server::shutdownClient(SOCKET clientSocket)

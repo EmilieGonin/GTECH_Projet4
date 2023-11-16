@@ -99,23 +99,23 @@ int Client::clientSendData()
 		WSACleanup();
 		return 1;
 	}
-	printf(sendbuf);
-	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+	//printf(sendbuf);
+	//std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
 	printf("Bytes Sent: %ld\n", res);
 }
 
 int Client::clientDisconnect()
 {
-	if (res = shutdown(ClientSocket, SD_SEND) == SOCKET_ERROR)
+	/*if (res = shutdown(ClientSocket, SD_SEND) == SOCKET_ERROR)
 	{
 		printf("shutdown failed: %d\n", WSAGetLastError());
 		closesocket(ClientSocket);
 		WSACleanup();
 		return 1;
-	}
+	}*/
 
-	do {
+	//do {
 		res = recv(ClientSocket, recvbuf, recvbuflen, 0);
 		if (res > 0)
 			printf("Bytes received: %s\n", recvbuf);
@@ -123,7 +123,7 @@ int Client::clientDisconnect()
 			printf("Connection closed\n");
 		//else
 			//printf("recv failed: %d\n", WSAGetLastError());
-	} while (true);
+	//} while (true);
 
 	return 0;
 }

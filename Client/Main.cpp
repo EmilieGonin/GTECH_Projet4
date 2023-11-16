@@ -10,8 +10,8 @@ int main(int ac, char const* av[])
 	c.initClientSocket();
 	c.connectClientServer();
 	c.clientSendData();
-	c.clientDisconnect();
 
+	//c.clientDisconnect();
 	MSG msg;
 	while (GetMessage(&msg, NULL, 0, 0))
 	{
