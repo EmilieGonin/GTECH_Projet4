@@ -43,30 +43,29 @@ private:
     static LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
     //LRESULT HandleWindowMessage(UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-
-
     HWND hWnd;
 
     WSADATA wsaData;
-    int iResult;
 
     SOCKET ListenSocket = INVALID_SOCKET;
-    SOCKET ClientSocket = INVALID_SOCKET;
 
     struct addrinfo* result = NULL;
     struct addrinfo hints;
-
-    int iSendResult;
-    char recvbuf[DEFAULT_BUFLEN];
-    int recvbuflen = DEFAULT_BUFLEN;
 
     std::vector<SOCKET> clients; // Liste des sockets des clients connectés
     std::mutex clientsMutex; // Mutex pour protéger l'accès à la liste des clients
 
 protected:
     std::string mPort = "1027";
-   
 
+    int iResult;
+    int iSendResult;
+    int recvbuflen = DEFAULT_BUFLEN;
+
+    SOCKET ClientSocket = INVALID_SOCKET;
+
+    char recvbuf[DEFAULT_BUFLEN];
+    virtual void init();
 
 public:
     Server();
