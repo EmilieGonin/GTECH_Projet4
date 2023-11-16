@@ -8,6 +8,7 @@ public:
 	void init();
 	void update();
 	bool hasWin();
+	inline std::map<std::pair<int, int>, int> getCells() { return mCells; };
 
 private:
 	Game();

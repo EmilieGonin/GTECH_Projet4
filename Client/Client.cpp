@@ -2,7 +2,6 @@
 
 Client::Client()
 {
-
 }
 
 Client::~Client()
@@ -90,10 +89,6 @@ int Client::connectClientServer()
 		return 1;
 	}
 }
-
-
-
-
 
 int Client::clientSendData()
 {

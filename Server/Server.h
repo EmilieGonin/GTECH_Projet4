@@ -7,26 +7,22 @@
 #define FD_READ_EVENT   FD_READ | FD_WRITE | FD_OOB | FD_ACCEPT | FD_CONNECT | FD_CLOSE
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 
-
-#include "SFML/Graphics.hpp"
-
 #include <windows.h>
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <vector>
-#include "Game.h"
 #include <mutex>
-
+#include <string>
+#include "JsonHandler.h" //temp
+#include "Game.h" //temp
 
 // Need to link with Ws2_32.lib
 #pragma comment (lib, "Ws2_32.lib")
 // #pragma comment (lib, "Mswsock.lib")
 
 #define DEFAULT_BUFLEN 512
-#define DEFAULT_PORT "1027"
-
 
 class Server {
 
@@ -80,5 +76,6 @@ public:
     Server();
     ~Server();
     // Ajoute d'autres m�thodes et membres au besoin.
+    void sendJson(std::string);
 
 };
