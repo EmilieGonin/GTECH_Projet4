@@ -115,15 +115,15 @@ int Client::clientDisconnect()
 		return 1;
 	}
 
-
-	/*res = recv(ClientSocket, recvbuf, recvbuflen, 0);
-	if (res > 0)
-		printf("Bytes received: %d\n", res);
-	else if (res == 0)
-		printf("Connection closed\n");*/
-	//else
-		//printf("recv failed: %d\n", WSAGetLastError());
-
+	do {
+		res = recv(ClientSocket, recvbuf, recvbuflen, 0);
+		if (res > 0)
+			printf("Bytes received: %s\n", recvbuf);
+		else if (res == 0)
+			printf("Connection closed\n");
+		//else
+			//printf("recv failed: %d\n", WSAGetLastError());
+	} while (true);
 
 	return 0;
 }

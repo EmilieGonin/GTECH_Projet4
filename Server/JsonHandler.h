@@ -11,11 +11,14 @@ enum JsonType { NOTIF, REQUEST, RESPONSE };
 //Id 1 : Request client : jouer une case - playerId, cell
 //Id 2 : Request client : get la grille (lors de la connexion) - playerId
 //Id 3 : Response server : oui ou non, renvoi de toutes les cases
+//Id 4 : Notif server : win - playerId, renvoi de toutes les cases
 
 class JsonHandler
 {
 public:
 	JsonHandler(std::map<std::pair<int, int>, int>);
+	JsonHandler(std::pair<int, int>, int); //Move to client later
+	JsonHandler(std::string);
 	inline json getJson() { return mJson; };
 	inline std::string getDump() { return mDump; };
 
