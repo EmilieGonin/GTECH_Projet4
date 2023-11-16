@@ -51,5 +51,5 @@ bool Game::hasWin()
 	//	if (cells[{0, 2}].player == player && cells[{1, 1}].player == player && cells[{2, 0}].player == player) return true;
 	//}
 
-	//return false;
+	return false;
 }
