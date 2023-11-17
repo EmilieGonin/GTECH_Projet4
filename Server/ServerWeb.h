@@ -3,8 +3,8 @@
 
 class ServerWeb: public Server  {
 private:
-	void handleClientWeb(SOCKET clientSocket, const std::string& sessionID);
-	std::string processHttpRequest(const std::string& httpRequest);
+	void handleClient(SOCKET clientSocket, const std::string& sessionID) override;
+	std::string processHttpRequest();
 
 public:
 	ServerWeb();

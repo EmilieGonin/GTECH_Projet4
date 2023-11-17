@@ -10,12 +10,12 @@ JsonHandler::JsonHandler(std::map<std::pair<int, int>, int> cells)
 	mDump = mJson.dump();
 }
 
-JsonHandler::JsonHandler(std::pair<int, int> cell, int player)
+JsonHandler::JsonHandler(std::map<std::pair<int, int>, int> cells, int player)
 {
 	mJson["ErrorCode"] = 0;
-	mJson["JsonType"] = REQUEST;
-	mJson["Id"] = 1;
-	mJson["Cell"] = cell;
+	mJson["JsonType"] = NOTIF;
+	mJson["Id"] = 4;
+	mJson["Cells"] = cells;
 	mJson["Player"] = player;
 
 	mDump = mJson.dump();
