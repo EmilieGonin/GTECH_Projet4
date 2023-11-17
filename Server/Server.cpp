@@ -136,7 +136,7 @@ void Server::accepteClient()
 	JsonHandler j(game->getCells());
 	send(ClientSocket, j.getDump().c_str(), j.getDump().size(), 0);
 
-	std::pair<int, int> pair = { 0, 1 };
+	//std::pair<int, int> pair = { 0, 1 };
 
 	//j = JsonHandler(pair, 1);
 	//if (j.getJson()["Id"] == 1) game->updateCells(j.getJson()["Cell"], j.getJson()["Player"]);
