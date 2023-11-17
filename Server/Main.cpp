@@ -12,6 +12,8 @@ int __cdecl main(void)
 
 	//ServerClient serverClient;
 	//serverClient.init();
+	ServerWeb serverWeb;
+	serverWeb.init();
 
 	MSG msg;
 	while (GetMessage(&msg, NULL, 0, 0))
@@ -20,8 +22,6 @@ int __cdecl main(void)
 		DispatchMessage(&msg);
 	}
 	//serverClient.sendJson(j.getDump());
-	ServerWeb serverWeb;
-	serverWeb.init();
 
 	/*if (game->hasWin())
 	{
