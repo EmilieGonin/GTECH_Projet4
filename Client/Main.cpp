@@ -13,10 +13,13 @@ int main(int ac, char const* av[])
 
 	//c.clientDisconnect();
 	MSG msg;
-	while (GetMessage(&msg, NULL, 0, 0))
-	{
+	while (GetMessage(&msg, NULL, 0, 0)) {
+
+
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
+		c.clientSendData();
+
 	}
 
 	//w.initTextMenu();

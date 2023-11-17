@@ -4,7 +4,7 @@
 #include "../WindowsProject1/framework.h"
 
 
-Server::Server()  {}
+Server::Server() {}
 Server::~Server() {}
 
 void Server::init()
@@ -57,7 +57,7 @@ void Server::initSocket()
 int Server::initHWND()
 {
 	WNDCLASS wc = { 0 };
-	wc.lpfnWndProc = &Server::WindowProc; 
+	wc.lpfnWndProc = &Server::WindowProc;
 	wc.lpfnWndProc = WindowProc;
 	wc.hInstance = GetModuleHandle(NULL);
 	wc.lpszClassName = "AsyncSelectWindowClass";
@@ -81,7 +81,7 @@ int Server::initHWND()
 
 void Server::listenClient()
 {
-	
+
 	iResult = bind(ListenSocket, result->ai_addr, static_cast<int>(result->ai_addrlen));
 	if (iResult == SOCKET_ERROR) {
 		printf("bind failed with error: %d\n", WSAGetLastError());
@@ -90,7 +90,7 @@ void Server::listenClient()
 		WSACleanup();
 		return;
 	}
-	printf("Bind successful.\n");  
+	printf("Bind successful.\n");
 
 	freeaddrinfo(result);
 
@@ -101,7 +101,7 @@ void Server::listenClient()
 		WSACleanup();
 		return;
 	}
-	printf("Server listening...\n");  
+	printf("Server listening...\n");
 
 	accepteClient();
 }
@@ -143,7 +143,7 @@ void Server::accepteClient()
 	//Fin test JSON
 
 	//handleClient(ClientSocket, sessionID);
-	
+
 }
 
 LRESULT Server::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) //static
@@ -151,12 +151,13 @@ LRESULT Server::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) /
 	Server* pServer = reinterpret_cast<Server*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
 	//if (pServer)
 	//	return pServer->HandleWindowMessage(uMsg, wParam, lParam);
-	
 
-	if (uMsg == WM_SOCKET) 
+
+	if (uMsg == WM_SOCKET)
 	{
 		switch (LOWORD(lParam)) {
 		case FD_READ:
+			printf(wParam);
 			pServer->HandleReadEvent(wParam);
 			break;
 		case FD_ACCEPT:
@@ -166,18 +167,18 @@ LRESULT Server::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) /
 			pServer->HandleCloseEvent(wParam);
 			break;
 		default:
-			printf("uMsg");
 			break;
 		}
 		return 0; // Indique que le message a été traité
 	}
+	printf("uMsg");
 	//pServer->handleClient(uMsg,wParam, lParam);
 
 	return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
 
-LRESULT Server::HandleWindowMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) 
-{	
+LRESULT Server::HandleWindowMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
 	/*int requestID = static_cast<int>(wParam);
 	std::string requestData(reinterpret_cast<const char*>(lParam));
 	if (requestData.find("close") != std::string::npos)
@@ -189,7 +190,7 @@ LRESULT Server::HandleWindowMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	}*/
 
 
-	/*switch (uMsg) 
+	/*switch (uMsg)
 	{
 
 	}*/
@@ -198,35 +199,35 @@ LRESULT Server::HandleWindowMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 }
 
 void Server::handleClient(UINT uMsg, WPARAM wParam, LPARAM lParam) {
-	
 
-		if (iResult > 0)
+
+	if (iResult > 0)
+	{
+
+		printf("Bytes received: %d\n", uMsg);
+
+		// Echo the buffer back to the sender
+		iSendResult = send(ClientSocket, recvbuf, iResult, 0);
+		if (iSendResult == SOCKET_ERROR)
 		{
-
-			printf("Bytes received: %d\n", uMsg);
-
-			// Echo the buffer back to the sender
-			iSendResult = send(ClientSocket, recvbuf, iResult, 0);
-			if (iSendResult == SOCKET_ERROR)
-			{
-				printf("send failed with error: %d\n", WSAGetLastError());
-				closesocket(ClientSocket);
-				WSACleanup();
-			}
-			printf("Bytes sent: %d\n", iSendResult);
+			printf("send failed with error: %d\n", WSAGetLastError());
+			closesocket(ClientSocket);
+			WSACleanup();
 		}
-		else if (iResult == 0)
-		{
-			//printf("Connection closing from server...\n");
+		printf("Bytes sent: %d\n", iSendResult);
+	}
+	else if (iResult == 0)
+	{
+		//printf("Connection closing from server...\n");
 
-		}
-		/*else
-		{
-			printf("recv failed with error: %d\n", WSAGetLastError());
-			
-		}*/
+	}
+	/*else
+	{
+		printf("recv failed with error: %d\n", WSAGetLastError());
 
-	
+	}*/
+
+
 }
 
 void Server::shutdownClient(SOCKET clientSocket)
@@ -258,7 +259,7 @@ std::string Server::generateSessionID() const {
 	return "SessionID_" + std::to_string(timestamp);
 }
 
-void Server::HandleReadEvent(WPARAM wParam) 
+void Server::HandleReadEvent(WPARAM wParam)
 {
 	// Traitement pour l'événement FD_READ
 	printf("Read event\n" + wParam);
@@ -267,14 +268,14 @@ void Server::HandleReadEvent(WPARAM wParam)
 
 }
 
-void Server::HandleAcceptEvent(WPARAM wParam) 
+void Server::HandleAcceptEvent(WPARAM wParam)
 {
 	// Traitement pour l'événement FD_ACCEPT
 	printf("Accept event\n" + wParam);
 
 }
 
-void Server::HandleCloseEvent(WPARAM wParam) 
+void Server::HandleCloseEvent(WPARAM wParam)
 {
 	// Traitement pour l'événement FD_CLOSE
 	printf("Close event\n" + wParam);
