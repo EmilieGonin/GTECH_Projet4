@@ -1,12 +1,14 @@
+#include <SFML/Graphics.hpp>
+#include "Game.h"
 #include "ServerClient.h"
 #include "ServerWeb.h"
-#include "Game.h"
 #include "JsonHandler.h"
 
-int __cdecl main(void)
+int main(int ac, char const* av[])
 {
 	Game* game = Game::Instance();
 	game->init();
+	game->createImage();
 
 	//JsonHandler j(game->getCells());
 
