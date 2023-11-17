@@ -109,32 +109,32 @@ void Server::listenClient()
 void Server::accepteClient()
 {
 	// Accept a client socket
-	ClientSocket = accept(ListenSocket, NULL, NULL);
-	if (ClientSocket == INVALID_SOCKET) {
-		printf("accept failed with error: %d\n", WSAGetLastError());
-		closesocket(ListenSocket);
-		WSACleanup();
-		return;
-	}
-	printf("Client accepted.\n");
+	//ClientSocket = accept(ListenSocket, NULL, NULL);
+	//if (ClientSocket == INVALID_SOCKET) {
+	//	printf("accept failed with error: %d\n", WSAGetLastError());
+	//	closesocket(ListenSocket);
+	//	WSACleanup();
+	//	return;
+	//}
+	//printf("Client accepted.\n");
 
 
-	WSAAsyncSelect(ClientSocket, hWnd, WM_SOCKET, FD_READ | FD_CLOSE);
+	//WSAAsyncSelect(ClientSocket, hWnd, WM_SOCKET, FD_READ | FD_CLOSE);
 
-	// Attribuer un identifiant de session au client
-	std::string sessionID = generateSessionID();
-	send(ClientSocket, sessionID.c_str(), sessionID.size(), 0);
+	//// Attribuer un identifiant de session au client
+	//std::string sessionID = generateSessionID();
+	//send(ClientSocket, sessionID.c_str(), sessionID.size(), 0);
 
-	std::lock_guard<std::mutex> lock(clientsMutex);
-	clients.push_back(ClientSocket);
+	//std::lock_guard<std::mutex> lock(clientsMutex);
+	//clients.push_back(ClientSocket);
 
-	//handleClient(ClientSocket, sessionID);
-	//Test JSON - temp
-	Game* game = Game::Instance();
-	game->init();
+	////handleClient(ClientSocket, sessionID);
+	////Test JSON - temp
+	//Game* game = Game::Instance();
+	//game->init();
 
-	JsonHandler j(game->getCells());
-	send(ClientSocket, j.getDump().c_str(), j.getDump().size(), 0);
+	//JsonHandler j(game->getCells());
+	//send(ClientSocket, j.getDump().c_str(), j.getDump().size(), 0);
 
 	//std::pair<int, int> pair = { 0, 1 };
 
@@ -197,7 +197,6 @@ LRESULT Server::HandleWindowMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 }
 
 void Server::handleClient(UINT uMsg, WPARAM wParam, LPARAM lParam) {}
-
 
 void Server::shutdownClient(SOCKET clientSocket)
 {

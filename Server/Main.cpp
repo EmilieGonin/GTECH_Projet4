@@ -12,19 +12,18 @@ int main(int ac, char const* av[])
 
 	//JsonHandler j(game->getCells());
 
-	ServerClient serverClient;
-	serverClient.init();
+	//ServerClient serverClient;
+	//serverClient.init();
+	ServerWeb serverWeb;
+	serverWeb.init();
 
 	MSG msg;
 	while (GetMessage(&msg, NULL, 0, 0))
 	{
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
-			
 	}
 	//serverClient.sendJson(j.getDump());
-	//ServerWeb serverWeb;
-	//serverWeb.init();
 
 	/*if (game->hasWin())
 	{
