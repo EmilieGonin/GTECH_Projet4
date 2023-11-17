@@ -15,7 +15,6 @@ void ServerClient::handleClient(UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	if (iResult > 0)
 	{
-
 		printf("Bytes received: %d\n", uMsg);
 
 		// Echo the buffer back to the sender

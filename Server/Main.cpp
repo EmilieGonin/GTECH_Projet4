@@ -10,19 +10,18 @@ int __cdecl main(void)
 
 	//JsonHandler j(game->getCells());
 
-	ServerClient serverClient;
-	serverClient.init();
+	//ServerClient serverClient;
+	//serverClient.init();
 
 	MSG msg;
 	while (GetMessage(&msg, NULL, 0, 0))
 	{
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
-			
 	}
 	//serverClient.sendJson(j.getDump());
-	//ServerWeb serverWeb;
-	//serverWeb.init();
+	ServerWeb serverWeb;
+	serverWeb.init();
 
 	/*if (game->hasWin())
 	{

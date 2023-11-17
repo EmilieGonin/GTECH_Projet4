@@ -29,13 +29,12 @@ class Server {
 private:
     //Game* game = Game::Instance();
     void shutdownClient(SOCKET clientSocket);
-    std::string generateSessionID() const;
     virtual void handleClient(UINT uMsg, WPARAM wParam, LPARAM lParam);
     void initWSA();
     void initSocket();
     int initHWND();
     void listenClient();
-    void accepteClient();
+    virtual void accepteClient();
 
     static LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
     LRESULT HandleWindowMessage(UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -44,12 +43,7 @@ private:
     void HandleAcceptEvent(WPARAM wParam);
     void HandleCloseEvent(WPARAM wParam);
 
-
-    HWND hWnd;
-
     WSADATA wsaData;
-
-    SOCKET ListenSocket = INVALID_SOCKET;
 
     struct addrinfo* result = NULL;
     struct addrinfo hints;
@@ -62,15 +56,18 @@ private:
 
 protected:
     std::string mPort;
+    std::string generateSessionID() const;
 
     int iResult;
     int iSendResult;
     int recvbuflen = DEFAULT_BUFLEN;
 
     SOCKET ClientSocket = INVALID_SOCKET;
+    SOCKET ListenSocket = INVALID_SOCKET;
 
     char recvbuf[DEFAULT_BUFLEN];
     virtual void init();
+    HWND hWnd;
 
 public:
     Server();
