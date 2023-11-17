@@ -157,7 +157,6 @@ LRESULT Server::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) /
 	{
 		switch (LOWORD(lParam)) {
 		case FD_READ:
-			printf("");
 			pServer->HandleReadEvent(wParam);
 			break;
 		case FD_ACCEPT:
@@ -171,7 +170,6 @@ LRESULT Server::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) /
 		}
 		return 0; // Indique que le message a été traité
 	}
-	printf("uMsg");
 	//pServer->handleClient(uMsg,wParam, lParam);
 
 	return DefWindowProc(hWnd, uMsg, wParam, lParam);
@@ -232,10 +230,10 @@ std::string Server::generateSessionID() const {
 void Server::HandleReadEvent(WPARAM wParam)
 {
 	// Traitement pour l'événement FD_READ
-	printf("Read event\n" + wParam);
+	//printf("Read event\n" + wParam);
 	iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
 
-	printf("Read event\n %lu\n", wParam);
+	printf("Read event\n %s\n", recvbuf);
 
 }
 

@@ -23,6 +23,8 @@
 // #pragma comment (lib, "Mswsock.lib")
 
 #define DEFAULT_BUFLEN 512
+#define WM_SOCKET (WM_USER + 1)
+
 
 class Server {
 
@@ -51,7 +53,6 @@ private:
     std::vector<SOCKET> clients; // Liste des sockets des clients connect�s
     std::mutex clientsMutex; // Mutex pour prot�ger l'acc�s � la liste des clients
 
-#define WM_SOCKET (WM_USER + 1)
 
 
 protected:
