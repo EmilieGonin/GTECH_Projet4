@@ -8,10 +8,10 @@ void ServerWeb::init()
 	Server::init();
 }
 
-void ServerWeb::handleClient(SOCKET clientSocket, const std::string& sessionID) {
+void ServerWeb::handleClient(UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	do {
 
-		iResult = recv(clientSocket, recvbuf, recvbuflen, 0);
+		iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
 		if (iResult > 0)
 		{
 			std::string ok = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: 13\r\n\r\nHello, World!";
@@ -19,12 +19,12 @@ void ServerWeb::handleClient(SOCKET clientSocket, const std::string& sessionID) 
 			// Analyser la requête HTTP
 			std::string httpResponse = processHttpRequest();
 
-			iSendResult = send(clientSocket, httpResponse.c_str(), httpResponse.size(), 0);
+			iSendResult = send(ClientSocket, httpResponse.c_str(), httpResponse.size(), 0);
 
 			if (iSendResult == SOCKET_ERROR)
 			{
 				printf("send failed with error: %d\n", WSAGetLastError());
-				closesocket(clientSocket);
+				closesocket(ClientSocket);
 				WSACleanup();
 				break; // Sortir de la boucle si l'envoi échoue
 			}

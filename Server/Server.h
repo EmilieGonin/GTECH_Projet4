@@ -30,7 +30,7 @@ private:
     //Game* game = Game::Instance();
     void shutdownClient(SOCKET clientSocket);
     std::string generateSessionID() const;
-    virtual void handleClient(SOCKET clientSocket, const std::string& sessionID);
+    virtual void handleClient(UINT uMsg, WPARAM wParam, LPARAM lParam);
     void initWSA();
     void initSocket();
     int initHWND();

@@ -11,7 +11,7 @@ void ServerClient::init()
 	Server::init();
 }
 
-void ServerClient::handleClient(SOCKET clientSocket, const std::string& sessionID) {
+void ServerClient::handleClient(UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	do {
 
 		iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
