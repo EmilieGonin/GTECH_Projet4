@@ -157,7 +157,7 @@ LRESULT Server::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) /
 	{
 		switch (LOWORD(lParam)) {
 		case FD_READ:
-			printf(wParam);
+			printf("");
 			pServer->HandleReadEvent(wParam);
 			break;
 		case FD_ACCEPT:
