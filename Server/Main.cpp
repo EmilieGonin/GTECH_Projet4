@@ -14,6 +14,14 @@ int main(int ac, char const* av[])
 
 	ServerClient serverClient;
 	serverClient.init();
+
+	MSG msg;
+	while (GetMessage(&msg, NULL, 0, 0))
+	{
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+			
+	}
 	//serverClient.sendJson(j.getDump());
 	//ServerWeb serverWeb;
 	//serverWeb.init();

@@ -23,6 +23,8 @@
 // #pragma comment (lib, "Mswsock.lib")
 
 #define DEFAULT_BUFLEN 512
+#define WM_SOCKET (WM_USER + 1)
+
 
 class Server {
 
@@ -30,7 +32,7 @@ private:
     //Game* game = Game::Instance();
     void shutdownClient(SOCKET clientSocket);
     std::string generateSessionID() const;
-    virtual void handleClient(SOCKET clientSocket, const std::string& sessionID);
+    virtual void handleClient(UINT uMsg, WPARAM wParam, LPARAM lParam);
     void initWSA();
     void initSocket();
     int initHWND();
@@ -57,7 +59,6 @@ private:
     std::vector<SOCKET> clients; // Liste des sockets des clients connect�s
     std::mutex clientsMutex; // Mutex pour prot�ger l'acc�s � la liste des clients
 
-#define WM_SOCKET (WM_USER + 1)
 
 
 protected:

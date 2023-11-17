@@ -99,21 +99,23 @@ int Client::clientSendData()
 		WSACleanup();
 		return 1;
 	}
+	//printf(sendbuf);
+	//std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
 	printf("Bytes Sent: %ld\n", res);
 }
 
 int Client::clientDisconnect()
 {
-	if (res = shutdown(ClientSocket, SD_SEND) == SOCKET_ERROR)
+	/*if (res = shutdown(ClientSocket, SD_SEND) == SOCKET_ERROR)
 	{
 		printf("shutdown failed: %d\n", WSAGetLastError());
 		closesocket(ClientSocket);
 		WSACleanup();
 		return 1;
-	}
+	}*/
 
-	do {
+	//do {
 		res = recv(ClientSocket, recvbuf, recvbuflen, 0);
 		if (res > 0)
 			printf("Bytes received: %s\n", recvbuf);
@@ -121,7 +123,65 @@ int Client::clientDisconnect()
 			printf("Connection closed\n");
 		//else
 			//printf("recv failed: %d\n", WSAGetLastError());
-	} while (true);
+	//} while (true);
 
 	return 0;
+}
+
+LRESULT Client::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) //static
+{
+	Client* client= reinterpret_cast<Client*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
+	//if (pServer)
+	//	return pServer->HandleWindowMessage(uMsg, wParam, lParam);
+
+
+	if (uMsg == WM_SOCKET)
+	{
+		switch (LOWORD(lParam)) {
+		case FD_READ:
+			client->HandleReadEvent(wParam);
+			break;
+		case FD_ACCEPT:
+			client->HandleAcceptEvent(wParam);
+			break;
+		case FD_CLOSE:
+			client->HandleCloseEvent(wParam);
+			break;
+		default:
+			break;
+		}
+		return 0; // Indique que le message a été traité
+	}
+	//pServer->handleClient(uMsg,wParam, lParam);
+
+	return DefWindowProc(hWnd, uMsg, wParam, lParam);
+}
+
+LRESULT Client::HandleWindowMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	return LRESULT();
+}
+
+void Client::HandleReadEvent(WPARAM wParam)
+{
+	// Traitement pour l'événement FD_READ
+	//printf("Read event\n" + wParam);
+	iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
+
+	printf("Read event\n %s\n", recvbuf);
+
+}
+
+void Client::HandleAcceptEvent(WPARAM wParam)
+{
+	// Traitement pour l'événement FD_ACCEPT
+	printf("Accept event\n %lu\n", wParam);
+
+}
+
+void Client::HandleCloseEvent(WPARAM wParam)
+{
+	// Traitement pour l'événement FD_CLOSE
+	printf("Close event\n %lu\n", wParam);
+
 }
