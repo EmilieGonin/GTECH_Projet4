@@ -65,26 +65,5 @@ void ServerWeb::accepteClient()
 
 	WSAAsyncSelect(ClientSocket, hWnd, WM_SOCKET, FD_READ | FD_CLOSE);
 
-	// Attribuer un identifiant de session au client
-	//std::string sessionID = generateSessionID();
-	//send(ClientSocket, sessionID.c_str(), sessionID.size(), 0);
-
-	//std::lock_guard<std::mutex> lock(clientsMutex);
-	//clients.push_back(ClientSocket);
-
-	////handleClient(ClientSocket, sessionID);
-	////Test JSON - temp
-	//Game* game = Game::Instance();
-	//game->init();
-
-	//JsonHandler j(game->getCells());
-	//send(ClientSocket, j.getDump().c_str(), j.getDump().size(), 0);
-
-	//std::pair<int, int> pair = { 0, 1 };
-
-	//j = JsonHandler(pair, 1);
-	//if (j.getJson()["Id"] == 1) game->updateCells(j.getJson()["Cell"], j.getJson()["Player"]);
-	//Fin test JSON
-
 	//handleClient(ClientSocket, sessionID);
 }

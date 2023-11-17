@@ -50,11 +50,6 @@ private:
     struct addrinfo* result = NULL;
     struct addrinfo hints;
 
-    std::vector<SOCKET> clients; // Liste des sockets des clients connect�s
-    std::mutex clientsMutex; // Mutex pour prot�ger l'acc�s � la liste des clients
-
-
-
 protected:
     std::string mPort;
     std::string generateSessionID() const;
@@ -69,6 +64,9 @@ protected:
     char recvbuf[DEFAULT_BUFLEN];
     virtual void init();
     HWND hWnd;
+
+    std::vector<SOCKET> clients; // Liste des sockets des clients connect�s
+    std::mutex clientsMutex; // Mutex pour prot�ger l'acc�s � la liste des clients
 
 public:
     Server();
