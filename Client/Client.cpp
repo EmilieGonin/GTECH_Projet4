@@ -128,23 +128,60 @@ int Client::clientDisconnect()
 	return 0;
 }
 
-//int main(int ac, char const* av[])
-//{
-//	Client c;
-//
-//	c.createInvisibleWindow();
-//	c.initClientSocket();
-//	c.connectClientServer();
-//	c.clientSendData();
-//
-//	MSG msg;
-//	while (GetMessage(&msg, NULL, 0, 0 )) 
-//	{
-//		TranslateMessage(&msg);
-//		DispatchMessage(&msg);
-//	}
-//
-//	c.clientDisconnect();
-//
-//	return 0;
-//}
+LRESULT Client::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) //static
+{
+	Client* client= reinterpret_cast<Client*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
+	//if (pServer)
+	//	return pServer->HandleWindowMessage(uMsg, wParam, lParam);
+
+
+	if (uMsg == WM_SOCKET)
+	{
+		switch (LOWORD(lParam)) {
+		case FD_READ:
+			client->HandleReadEvent(wParam);
+			break;
+		case FD_ACCEPT:
+			client->HandleAcceptEvent(wParam);
+			break;
+		case FD_CLOSE:
+			client->HandleCloseEvent(wParam);
+			break;
+		default:
+			break;
+		}
+		return 0; // Indique que le message a été traité
+	}
+	//pServer->handleClient(uMsg,wParam, lParam);
+
+	return DefWindowProc(hWnd, uMsg, wParam, lParam);
+}
+
+LRESULT Client::HandleWindowMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	return LRESULT();
+}
+
+void Client::HandleReadEvent(WPARAM wParam)
+{
+	// Traitement pour l'événement FD_READ
+	//printf("Read event\n" + wParam);
+	iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
+
+	printf("Read event\n %s\n", recvbuf);
+
+}
+
+void Client::HandleAcceptEvent(WPARAM wParam)
+{
+	// Traitement pour l'événement FD_ACCEPT
+	printf("Accept event\n %lu\n", wParam);
+
+}
+
+void Client::HandleCloseEvent(WPARAM wParam)
+{
+	// Traitement pour l'événement FD_CLOSE
+	printf("Close event\n %lu\n", wParam);
+
+}

@@ -16,6 +16,8 @@
 #define DEFAULT_PORT "1027"
 #define ADDRESS "localhost"
 #define DEFAULT_BUFLEN 512
+#define WM_SOCKET (WM_USER + 1)
+
 
 class Client
 {
@@ -27,6 +29,13 @@ public:
 	int connectClientServer();
 	int clientSendData();
 	int clientDisconnect();
+
+	static LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	LRESULT HandleWindowMessage(UINT uMsg, WPARAM wParam, LPARAM lParam);
+
+	void HandleReadEvent(WPARAM wParam);
+	void HandleAcceptEvent(WPARAM wParam);
+	void HandleCloseEvent(WPARAM wParam);
 private:
 	int res;
 	WSADATA wsaData;
@@ -36,6 +45,6 @@ private:
 	const char* sendbuf = "close";
 	int recvbuflen = DEFAULT_BUFLEN;
 	char recvbuf[DEFAULT_BUFLEN];
-
+	int iResult;
 };
 
