@@ -9,6 +9,7 @@
 #include <ws2tcpip.h>
 #include <iphlpapi.h>
 #include <stdio.h>
+#include <thread>
 
 #pragma comment(lib, "Ws2_32.lib")
 
@@ -32,7 +33,7 @@ private:
 	addrinfo* result = NULL, * connection = NULL, address;
 	SOCKET ClientSocket = INVALID_SOCKET;
 
-	const char* sendbuf = "";
+	const char* sendbuf = "close";
 	int recvbuflen = DEFAULT_BUFLEN;
 	char recvbuf[DEFAULT_BUFLEN];
 

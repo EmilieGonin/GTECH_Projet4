@@ -3,8 +3,7 @@
 
 class ServerClient : public Server {
 protected:
-	void handleClient(SOCKET clientSocket, const std::string& sessionID) override;
-	void accepteClient() override;
+	void handleClient(UINT uMsg, WPARAM wParam, LPARAM lParam) override;
 
 public:
 	ServerClient();

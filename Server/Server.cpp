@@ -4,7 +4,7 @@
 #include "../WindowsProject1/framework.h"
 
 
-Server::Server()  {}
+Server::Server() {}
 Server::~Server() {}
 
 void Server::init()
@@ -81,7 +81,7 @@ int Server::initHWND()
 
 void Server::listenClient()
 {
-	
+
 	iResult = bind(ListenSocket, result->ai_addr, static_cast<int>(result->ai_addrlen));
 	if (iResult == SOCKET_ERROR) {
 		printf("bind failed with error: %d\n", WSAGetLastError());
@@ -90,7 +90,7 @@ void Server::listenClient()
 		WSACleanup();
 		return;
 	}
-	printf("Bind successful.\n");  
+	printf("Bind successful.\n");
 
 	freeaddrinfo(result);
 
@@ -101,7 +101,7 @@ void Server::listenClient()
 		WSACleanup();
 		return;
 	}
-	printf("Server listening...\n");  
+	printf("Server listening...\n");
 
 	accepteClient();
 }
@@ -118,7 +118,8 @@ void Server::accepteClient()
 	}
 	printf("Client accepted.\n");
 
-	WSAAsyncSelect(ClientSocket, hWnd, WM_SOCKET, FD_READ | FD_ACCEPT | FD_CLOSE);
+
+	WSAAsyncSelect(ClientSocket, hWnd, WM_SOCKET, FD_READ | FD_CLOSE);
 
 	// Attribuer un identifiant de session au client
 	std::string sessionID = generateSessionID();
@@ -127,7 +128,8 @@ void Server::accepteClient()
 	std::lock_guard<std::mutex> lock(clientsMutex);
 	clients.push_back(ClientSocket);
 
-	//Test JSON - temp (waiting for thread)
+	//handleClient(ClientSocket, sessionID);
+	//Test JSON - temp
 	Game* game = Game::Instance();
 	game->init();
 
@@ -136,23 +138,26 @@ void Server::accepteClient()
 
 	std::pair<int, int> pair = { 0, 1 };
 
-	j = JsonHandler(pair, 1);
-	if (j.getJson()["Id"] == 1) game->updateCells(j.getJson()["Cell"], j.getJson()["Player"]);
+	//j = JsonHandler(pair, 1);
+	//if (j.getJson()["Id"] == 1) game->updateCells(j.getJson()["Cell"], j.getJson()["Player"]);
 	//Fin test JSON
 
-	handleClient(ClientSocket, sessionID);
-	
+	//handleClient(ClientSocket, sessionID);
+
 }
 
 LRESULT Server::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) //static
 {
 	Server* pServer = reinterpret_cast<Server*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
-	if (pServer) return pServer->HandleWindowMessage(uMsg, wParam, lParam);
-	
-	if (uMsg == WM_SOCKET) 
+	//if (pServer)
+	//	return pServer->HandleWindowMessage(uMsg, wParam, lParam);
+
+
+	if (uMsg == WM_SOCKET)
 	{
-		switch (lParam) {
+		switch (LOWORD(lParam)) {
 		case FD_READ:
+			printf("");
 			pServer->HandleReadEvent(wParam);
 			break;
 		case FD_ACCEPT:
@@ -162,39 +167,39 @@ LRESULT Server::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) /
 			pServer->HandleCloseEvent(wParam);
 			break;
 		default:
-			// Gérer d'autres événements si nécessaire
 			break;
 		}
 		return 0; // Indique que le message a été traité
 	}
+	printf("uMsg");
+	//pServer->handleClient(uMsg,wParam, lParam);
 
 	return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
 
-LRESULT Server::HandleWindowMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) 
-{	
-	int requestID = static_cast<int>(wParam);
+LRESULT Server::HandleWindowMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	/*int requestID = static_cast<int>(wParam);
 	std::string requestData(reinterpret_cast<const char*>(lParam));
-	if (requestData.find("close\"") != std::string::npos)
+	if (requestData.find("close") != std::string::npos)
 	{
 		printf("close connexion since you asked it");
 		std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+		closesocket(ClientSocket);
+		WSACleanup();
+	}*/
 
-	}
 
-
-	switch (uMsg) 
+	/*switch (uMsg)
 	{
 
-	}
+	}*/
 
 	return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
 
-void Server::handleClient(SOCKET clientSocket, const std::string& sessionID)
-{
-	//
-}
+void Server::handleClient(UINT uMsg, WPARAM wParam, LPARAM lParam) {}
+
 
 void Server::shutdownClient(SOCKET clientSocket)
 {
@@ -225,21 +230,24 @@ std::string Server::generateSessionID() const {
 	return "SessionID_" + std::to_string(timestamp);
 }
 
-void Server::HandleReadEvent(WPARAM wParam) 
+void Server::HandleReadEvent(WPARAM wParam)
 {
 	// Traitement pour l'événement FD_READ
+	printf("Read event\n" + wParam);
+	iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
+
 	printf("Read event\n %lu\n", wParam);
 
 }
 
-void Server::HandleAcceptEvent(WPARAM wParam) 
+void Server::HandleAcceptEvent(WPARAM wParam)
 {
 	// Traitement pour l'événement FD_ACCEPT
 	printf("Accept event\n %lu\n", wParam);
 
 }
 
-void Server::HandleCloseEvent(WPARAM wParam) 
+void Server::HandleCloseEvent(WPARAM wParam)
 {
 	// Traitement pour l'événement FD_CLOSE
 	printf("Close event\n %lu\n", wParam);

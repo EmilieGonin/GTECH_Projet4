@@ -3,7 +3,7 @@
 
 class ServerWeb: public Server  {
 private:
-	void handleClient(SOCKET clientSocket, const std::string& sessionID) override;
+	void handleClient(UINT uMsg, WPARAM wParam, LPARAM lParam) override;
 	std::string processHttpRequest();
 	void accepteClient() override;
 
