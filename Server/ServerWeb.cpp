@@ -68,5 +68,4 @@ void ServerWeb::accepteClient()
 	std::string sessionID = generateSessionID();
 
 	handleClient(ClientSocket, sessionID);
-
 }

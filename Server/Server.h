@@ -48,16 +48,14 @@ private:
     struct addrinfo* result = NULL;
     struct addrinfo hints;
 
-    std::vector<SOCKET> clients; // Liste des sockets des clients connect�s
-    std::mutex clientsMutex; // Mutex pour prot�ger l'acc�s � la liste des clients
-
 #define WM_SOCKET (WM_USER + 1)
-
 
 protected:
     std::string generateSessionID() const;
-
     std::string mPort;
+
+    std::vector<SOCKET> clients; // Liste des sockets des clients connect�s
+    std::mutex clientsMutex; // Mutex pour prot�ger l'acc�s � la liste des clients
 
     int iResult;
     int iSendResult;
@@ -70,11 +68,9 @@ protected:
     virtual void init();
     HWND hWnd;
 
-
 public:
     Server();
     ~Server();
     // Ajoute d'autres méthodes et membres au besoin.
     void sendJson(std::string);
-
 };
