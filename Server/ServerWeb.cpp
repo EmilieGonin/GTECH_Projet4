@@ -14,10 +14,6 @@ void ServerWeb::handleClient(SOCKET clientSocket, const std::string& sessionID) 
 		iResult = recv(clientSocket, recvbuf, recvbuflen, 0);
 		if (iResult > 0)
 		{
-			//std::string ok = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: 13\r\n\r\nHello, World!";
-			std::string ok = "HTTP/1.1 404 Not Found";
-
-
 			// Analyser la requête HTTP
 			std::string httpResponse = processHttpRequest();
 			Sleep(1000);
@@ -52,4 +48,25 @@ void ServerWeb::handleClient(SOCKET clientSocket, const std::string& sessionID) 
 std::string ServerWeb::processHttpRequest() 
 {
 	return "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: 13\r\n\r\nHello, World!";
+}
+
+void ServerWeb::accepteClient()
+{
+	// Accept a client socket
+	ClientSocket = accept(ListenSocket, NULL, NULL);
+	if (ClientSocket == INVALID_SOCKET) {
+		printf("accept failed with error: %d\n", WSAGetLastError());
+		closesocket(ListenSocket);
+		WSACleanup();
+		return;
+	}
+	printf("Client accepted.\n");
+
+	WSAAsyncSelect(ClientSocket, hWnd, WM_SOCKET, FD_READ | FD_ACCEPT | FD_CLOSE);
+
+	// Attribuer un identifiant de session au client
+	std::string sessionID = generateSessionID();
+
+	handleClient(ClientSocket, sessionID);
+
 }
