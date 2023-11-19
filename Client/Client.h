@@ -10,6 +10,7 @@
 #include <iphlpapi.h>
 #include <stdio.h>
 #include <thread>
+#include "JsonHandler.h"
 
 #pragma comment(lib, "Ws2_32.lib")
 
@@ -27,7 +28,7 @@ public:
 	int createInvisibleWindow();
 	int initClientSocket();
 	int connectClientServer();
-	int clientSendData();
+	int clientSendData(std::string);
 	int clientDisconnect();
 
 	static LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
