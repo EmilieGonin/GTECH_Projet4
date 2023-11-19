@@ -9,7 +9,7 @@ int main(int ac, char const* av[])
 	c.createInvisibleWindow();
 	c.initClientSocket();
 	c.connectClientServer();
-	c.clientSendData();
+	//c.clientSendData();
 
 	//c.clientDisconnect();
 	MSG msg;
@@ -18,7 +18,7 @@ int main(int ac, char const* av[])
 
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
-		c.clientSendData();
+		//c.clientSendData();
 
 	}
 

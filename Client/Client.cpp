@@ -88,11 +88,14 @@ int Client::connectClientServer()
 		WSACleanup();
 		return 1;
 	}
+
+	std::string data = JsonHandler(1).getDump();
+	clientSendData(data);
 }
 
-int Client::clientSendData()
+int Client::clientSendData(std::string data)
 {
-	if ((res = send(ClientSocket, sendbuf, (int)strlen(sendbuf), 0)) == SOCKET_ERROR)
+	if ((res = send(ClientSocket, data.c_str(), (int)strlen(sendbuf), 0)) == SOCKET_ERROR)
 	{
 		printf("send failed: %d\n", WSAGetLastError());
 		closesocket(ClientSocket);
