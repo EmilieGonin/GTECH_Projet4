@@ -61,5 +61,5 @@ void ServerWeb::accepteClient()
 
 std::string ServerWeb::processHttpRequest()
 {
-	return "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: 13\r\n\r\nHello, World!";
+	return "HTTP / 1.1 200 OK\r\nContent - Type: text / html\r\nContent - Length: 13\r\n\r\n<img src = " + imagePath + " / >";
 }
