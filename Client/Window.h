@@ -1,6 +1,8 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <map>
+#include <string>
+
 
 struct cell {
 	sf::Shape* shape;
@@ -19,7 +21,8 @@ public:
 	inline int getTurn() { return mTurn; };
 	inline bool isOpen() { return mWindow->isOpen(); };
 	void Finito();
-	void initTextMenu();
+	void initTextFirstMenu();
+	void initTextSecondMenu();
 private:
 	sf::RenderWindow* mWindow;
 	std::vector<sf::Shape*> mShapes;
@@ -30,5 +33,9 @@ private:
 	void checkCollision(sf::Event);
 	void addPlayerShape(sf::Vector2f);
 	int mTurn = 1;
-	bool endGame = false;;
+	bool endGame = false;
+
+	bool hasEnterName = true;
+	std::string name;
+	sf::Text enterName;
 };
