@@ -9,8 +9,6 @@ Server::~Server() {}
 
 void Server::init()
 {
-	//game->init();
-	//while (game->isOpen()) game->update();
 	initHWND();
 	initWSA();
 	initSocket();
