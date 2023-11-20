@@ -3,7 +3,7 @@
 
 class ServerWeb: public Server  {
 private:
-	void handleClient(UINT uMsg, WPARAM wParam, LPARAM lParam) override;
+	void handleClient();
 	std::string processHttpRequest();
 	void accepteClient() override;
 
