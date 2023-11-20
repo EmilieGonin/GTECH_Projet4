@@ -6,6 +6,11 @@
 
 int main(int ac, char const* av[])
 {
+#ifdef _DEBUG
+	_CrtMemState memStateInit;
+	_CrtMemCheckpoint(&memStateInit);
+#endif
+
 	Game* game = Game::Instance();
 	game->init();
 	game->createImage();
@@ -30,4 +35,18 @@ int main(int ac, char const* av[])
 			//TODO->close window
 		}
 	}
+
+	game->reset();
+
+#ifdef _DEBUG
+	_CrtMemState memStateEnd, memStateDiff{};
+	_CrtMemCheckpoint(&memStateEnd);
+
+	if (_CrtMemDifference(&memStateDiff, &memStateInit, &memStateEnd))
+	{
+		_CrtDumpMemoryLeaks();
+		MessageBoxA(NULL, "MEMORY LEAKS", "DISCLAIMER", 0);
+	}
+#endif
+	return 0;
 }

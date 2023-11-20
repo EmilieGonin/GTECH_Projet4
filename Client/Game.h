@@ -6,6 +6,7 @@ class Game
 public:
 	static Game* Instance();
 	void init();
+	void reset();
 	void update();
 	bool hasWin();
 
