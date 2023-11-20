@@ -35,6 +35,7 @@ private:
 	int mTurn = 1;
 	bool endGame = false;
 
-	bool enterName = true;
+	bool hasEnterName = true;
 	std::string name;
+	sf::Text enterName;
 };

@@ -3,7 +3,7 @@
 
 int main(int ac, char const* av[])
 {
-	//Window w;
+	Window w;
 	Client c;
 
 	c.createInvisibleWindow();
