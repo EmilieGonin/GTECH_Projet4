@@ -132,6 +132,7 @@ LRESULT Server::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) /
 	}
 	//pServer->handleClient(uMsg,wParam, lParam);
 
+	delete pServer;
 	return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
 
