@@ -3,8 +3,9 @@
 
 class ServerWeb: public Server  {
 private:
-	void handleClientWeb(SOCKET clientSocket, const std::string& sessionID);
-	std::string processHttpRequest(const std::string& httpRequest);
+	void handleClient(UINT uMsg, WPARAM wParam, LPARAM lParam) override;
+	std::string processHttpRequest();
+	void accepteClient() override;
 
 public:
 	ServerWeb();

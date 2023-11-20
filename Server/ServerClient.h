@@ -1,10 +1,11 @@
 #pragma once
 #include "Server.h"
 
-#include "SFML/Graphics.hpp"
-#include "Game.h"
-
 class ServerClient : public Server {
+protected:
+	void handleClient(UINT uMsg, WPARAM wParam, LPARAM lParam) override;
+	void accepteClient() override;
+
 public:
 	ServerClient();
 	void init() override;

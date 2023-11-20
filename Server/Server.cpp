@@ -4,7 +4,7 @@
 #include "../WindowsProject1/framework.h"
 
 
-Server::Server()  {}
+Server::Server() {}
 Server::~Server() {}
 
 void Server::init()
@@ -57,7 +57,7 @@ void Server::initSocket()
 int Server::initHWND()
 {
 	WNDCLASS wc = { 0 };
-	wc.lpfnWndProc = &Server::WindowProc; 
+	//wc.lpfnWndProc = &Server::WindowProc; 
 	wc.lpfnWndProc = WindowProc;
 	wc.hInstance = GetModuleHandle(NULL);
 	wc.lpszClassName = "AsyncSelectWindowClass";
@@ -81,7 +81,7 @@ int Server::initHWND()
 
 void Server::listenClient()
 {
-	
+
 	iResult = bind(ListenSocket, result->ai_addr, static_cast<int>(result->ai_addrlen));
 	if (iResult == SOCKET_ERROR) {
 		printf("bind failed with error: %d\n", WSAGetLastError());
@@ -90,7 +90,7 @@ void Server::listenClient()
 		WSACleanup();
 		return;
 	}
-	printf("Bind successful.\n");  
+	printf("Bind successful.\n");
 
 	freeaddrinfo(result);
 
@@ -101,45 +101,23 @@ void Server::listenClient()
 		WSACleanup();
 		return;
 	}
-	printf("Server listening...\n");  
+	printf("Server listening...\n");
 
 	accepteClient();
 }
 
-void Server::accepteClient()
-{
-	// Accept a client socket
-	ClientSocket = accept(ListenSocket, NULL, NULL);
-	if (ClientSocket == INVALID_SOCKET) {
-		printf("accept failed with error: %d\n", WSAGetLastError());
-		closesocket(ListenSocket);
-		WSACleanup();
-		return;
-	}
-	printf("Client accepted.\n");
-
-
-	WSAAsyncSelect(ClientSocket, hWnd, WM_SOCKET, FD_READ | FD_ACCEPT | FD_CLOSE);
-
-	// Attribuer un identifiant de session au client
-	std::string sessionID = generateSessionID();
-	send(ClientSocket, sessionID.c_str(), sessionID.size(), 0);
-
-	std::lock_guard<std::mutex> lock(clientsMutex);
-	clients.push_back(ClientSocket);
-
-	handleClient(ClientSocket, sessionID);
-	
-}
+void Server::accepteClient() { }
 
 LRESULT Server::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) //static
 {
 	Server* pServer = reinterpret_cast<Server*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
-	if (pServer) return pServer->HandleWindowMessage(uMsg, wParam, lParam);
-	
-	if (uMsg == WM_SOCKET) 
+	//if (pServer)
+	//	return pServer->HandleWindowMessage(uMsg, wParam, lParam);
+
+
+	if (uMsg == WM_SOCKET)
 	{
-		switch (lParam) {
+		switch (LOWORD(lParam)) {
 		case FD_READ:
 			pServer->HandleReadEvent(wParam);
 			break;
@@ -150,67 +128,37 @@ LRESULT Server::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) /
 			pServer->HandleCloseEvent(wParam);
 			break;
 		default:
-			// Gérer d'autres événements si nécessaire
 			break;
 		}
 		return 0; // Indique que le message a été traité
 	}
+	//pServer->handleClient(uMsg,wParam, lParam);
 
 	return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
 
-LRESULT Server::HandleWindowMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) 
-{	
-	int requestID = static_cast<int>(wParam);
+LRESULT Server::HandleWindowMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	/*int requestID = static_cast<int>(wParam);
 	std::string requestData(reinterpret_cast<const char*>(lParam));
-	if (requestData.find("close\"") != std::string::npos)
+	if (requestData.find("close") != std::string::npos)
 	{
 		printf("close connexion since you asked it");
 		std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+		closesocket(ClientSocket);
+		WSACleanup();
+	}*/
 
-	}
 
-
-	switch (uMsg) 
+	/*switch (uMsg)
 	{
 
-	}
+	}*/
 
 	return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
 
-void Server::handleClient(SOCKET clientSocket, const std::string& sessionID) {
-	do {
-
-		iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
-		if (iResult > 0)
-		{
-			printf("Bytes received: \n", recvbuf);
-
-			// Echo the buffer back to the sender
-			iSendResult = send(ClientSocket, recvbuf, iResult, 0);
-			if (iSendResult == SOCKET_ERROR)
-			{
-				printf("send failed with error: %d\n", WSAGetLastError());
-				closesocket(ClientSocket);
-				WSACleanup();
-			}
-			printf("Bytes sent: %d\n", iSendResult);
-		}
-		else if (iResult == 0)
-		{
-			printf("Connection closing from server...\n");
-
-		}
-		/*else
-		{
-			printf("recv failed with error: %d\n", WSAGetLastError());
-			closesocket(ClientSocket);
-			WSACleanup();
-		}*/
-
-	} while (true);
-}
+void Server::handleClient(UINT uMsg, WPARAM wParam, LPARAM lParam) {}
 
 void Server::shutdownClient(SOCKET clientSocket)
 {
@@ -241,23 +189,31 @@ std::string Server::generateSessionID() const {
 	return "SessionID_" + std::to_string(timestamp);
 }
 
-void Server::HandleReadEvent(WPARAM wParam) 
+void Server::HandleReadEvent(WPARAM wParam)
 {
 	// Traitement pour l'événement FD_READ
-	printf("Read event\n" + wParam);
+	//printf("Read event\n" + wParam);
+	iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
+
+	printf("Read event\n %s\n", recvbuf);
 
 }
 
-void Server::HandleAcceptEvent(WPARAM wParam) 
+void Server::HandleAcceptEvent(WPARAM wParam)
 {
 	// Traitement pour l'événement FD_ACCEPT
-	printf("Accept event\n" + wParam);
+	printf("Accept event\n %lu\n", wParam);
 
 }
 
-void Server::HandleCloseEvent(WPARAM wParam) 
+void Server::HandleCloseEvent(WPARAM wParam)
 {
 	// Traitement pour l'événement FD_CLOSE
-	printf("Close event\n" + wParam);
+	printf("Close event\n %lu\n", wParam);
 
+}
+
+void Server::sendJson(std::string json)
+{
+	send(ClientSocket, json.c_str(), json.size(), 0);
 }
