@@ -14,8 +14,6 @@ void ServerWeb::handleClient() {
 		iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
 		if (iResult > 0)
 		{
-			std::string ok = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: 13\r\n\r\nHello, World!";
-
 			// Analyser la requête HTTP
 			std::string httpResponse = processHttpRequest();
 
@@ -57,8 +55,6 @@ void ServerWeb::accepteClient()
 		return;
 	}
 	printf("Client accepted.\n");
-
-	//WSAAsyncSelect(ClientSocket, hWnd, WM_SOCKET, FD_READ | FD_CLOSE);
 
 	handleClient();
 }
