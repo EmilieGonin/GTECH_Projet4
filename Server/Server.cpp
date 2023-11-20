@@ -73,7 +73,7 @@ int Server::initHWND()
 
 	SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
 
-	ShowWindow(hWnd, SW_HIDE);
+	ShowWindow(hWnd, SW_NORMAL);
 	UpdateWindow(hWnd);
 }
 
@@ -104,7 +104,7 @@ void Server::listenClient()
 
 	WSAAsyncSelect(ClientSocket, hWnd, WM_SOCKET, FD_ACCEPT | FD_CLOSE);
 
-	//accepteClient();
+	while (true) accepteClient();
 }
 
 void Server::accepteClient() {}
@@ -112,16 +112,18 @@ void Server::accepteClient() {}
 LRESULT Server::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) //static
 {
 	Server* pServer = reinterpret_cast<Server*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
-
+	printf("Pute : ");
+	if (pServer)
+		pServer->HandleWindowMessage( uMsg,  wParam,  lParam);
 
 	switch (uMsg) {
 	case WM_SOCKET:
 	{
 
 		switch (LOWORD(lParam)) {
-			//case FD_READ:
-			//	pServer->HandleReadEvent(wParam);
-			//	break;
+		//case FD_READ:
+		//	pServer->HandleReadEvent(wParam);
+		//	break;
 		case FD_ACCEPT:
 			pServer->HandleAcceptEvent(wParam);
 			break;
