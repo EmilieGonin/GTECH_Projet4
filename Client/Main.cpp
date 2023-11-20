@@ -12,7 +12,8 @@ int main(int ac, char const* av[])
 	c.clientSendData();
 	c.clientDisconnect();*/
 
-	w.initTextMenu();
+	//w.initTextFirstMenu();
+	w.initTextSecondMenu();
 	while (w.isOpen()) w.update();
 
 	return 0;
