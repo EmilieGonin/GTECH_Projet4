@@ -1,21 +1,24 @@
 #include <SFML/Graphics.hpp>
+#include <thread>
 #include "Game.h"
 #include "ServerClient.h"
 #include "ServerWeb.h"
 #include "JsonHandler.h"
 
+void startWebServer();
+void startClientServer();
+
 int main(int ac, char const* av[])
 {
-	Game* game = Game::Instance();
-	game->init();
-	game->createImage();
+	//Game* game = Game::Instance();
+	//game->init();
+	//game->createImage();
 
 	//JsonHandler j(game->getCells());
 
-	//ServerClient serverClient;
-	//serverClient.init();
-	ServerWeb serverWeb;
-	serverWeb.init();
+	//std::thread(&startWebServer).detach();
+	std::thread(&startClientServer).detach();
+
 
 	MSG msg;
 	while (GetMessage(&msg, NULL, 0, 0))
@@ -30,4 +33,16 @@ int main(int ac, char const* av[])
 		j = JsonHandler(game->getCells(), game->getWinner());
 		serverClient.sendJson(j.getDump());
 	}*/
+
+	WSACleanup();
+}
+
+void startWebServer() {
+	ServerWeb serverWeb;
+	serverWeb.init();
+}
+
+void startClientServer() {
+	ServerClient serverClient;
+	serverClient.init();
 }
