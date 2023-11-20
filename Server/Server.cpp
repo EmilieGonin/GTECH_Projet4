@@ -104,7 +104,7 @@ void Server::listenClient()
 
 	WSAAsyncSelect(ClientSocket, hWnd, WM_SOCKET, FD_ACCEPT | FD_CLOSE);
 
-	while (true) accepteClient();
+	//while (true) accepteClient();
 }
 
 void Server::accepteClient() {}
