@@ -8,13 +8,13 @@ void ServerWeb::init()
 	Server::init();
 }
 
-void ServerWeb::handleClient(UINT uMsg, WPARAM wParam, LPARAM lParam) {
+void ServerWeb::handleClient() {
 	do {
 
 		iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
 		if (iResult > 0)
 		{
-			//std::string ok = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: 13\r\n\r\nHello, World!";
+			std::string ok = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: 13\r\n\r\nHello, World!";
 
 			// Analyser la requête HTTP
 			std::string httpResponse = processHttpRequest();
@@ -46,11 +46,6 @@ void ServerWeb::handleClient(UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	} while (iResult > 0);
 }
 
-std::string ServerWeb::processHttpRequest() 
-{
-	return "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: 13\r\n\r\nHello, World!";
-}
-
 void ServerWeb::accepteClient()
 {
 	// Accept a client socket
@@ -63,7 +58,12 @@ void ServerWeb::accepteClient()
 	}
 	printf("Client accepted.\n");
 
-	WSAAsyncSelect(ClientSocket, hWnd, WM_SOCKET, FD_READ | FD_CLOSE);
+	//WSAAsyncSelect(ClientSocket, hWnd, WM_SOCKET, FD_READ | FD_CLOSE);
 
-	//handleClient(ClientSocket, sessionID);
+	handleClient();
+}
+
+std::string ServerWeb::processHttpRequest()
+{
+	return "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: 13\r\n\r\nHello, World!";
 }
