@@ -1,13 +1,16 @@
 #pragma once
 #include "Server.h"
 #include <string>
+#include <fstream>
+#include <sstream>
+#include "base64.h"
 
 class ServerWeb : public Server {
 private:
     void handleClient();
     void accepteClient() override;
     std::string processHttpRequest();
-    std::string imagePath = "/game.png";
+    std::string imagePath = "game.png";
 
 public:
     ServerWeb();

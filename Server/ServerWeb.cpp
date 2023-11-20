@@ -14,6 +14,7 @@ void ServerWeb::handleClient() {
 		iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
 		if (iResult > 0)
 		{
+			printf("request received: %s\n", recvbuf);
 			// Analyser la requête HTTP
 			std::string httpResponse = processHttpRequest();
 
@@ -61,5 +62,15 @@ void ServerWeb::accepteClient()
 
 std::string ServerWeb::processHttpRequest()
 {
-	return "HTTP / 1.1 200 OK\r\nContent - Type: text / html\r\nContent - Length: 13\r\n\r\n<img src = " + imagePath + " / >";
+	std::ifstream file(imagePath, std::ios::binary);
+
+	std::ostringstream imageStream;
+	imageStream << file.rdbuf();
+
+	std::string imageData = imageStream.str();
+	std::string base64 = base64_encode(imageData);
+
+	std::string html = "HTTP / 1.1 200 OK\r\nContent-Type: text/html\r\n\r\n<h1>Tic-Tac-Toe</h1><img src=\"data:image/png;base64," + base64 + "\" />";
+
+	return html;
 }
