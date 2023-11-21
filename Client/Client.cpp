@@ -10,26 +10,10 @@ Client::Client()
 
 Client::~Client() {}
 
-LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
-{
-	switch (msg)
-	{
-	case WM_CLOSE:
-		DestroyWindow(hwnd);
-		break;
-	case WM_DESTROY:
-		PostQuitMessage(0);
-		break;
-	default:
-		return DefWindowProc(hwnd, msg, wParam, lParam);
-	}
-	return 0;
-}
-
 int Client::createInvisibleWindow()
 {
 	WNDCLASS wc = { 0 };
-	wc.lpfnWndProc = WndProc;
+	wc.lpfnWndProc = WindowProc;
 	wc.hInstance = GetModuleHandle(NULL);
 	wc.lpszClassName = L"AsyncSelectWindowClass";
 
