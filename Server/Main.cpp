@@ -4,36 +4,61 @@
 #include "ServerClient.h"
 #include "ServerWeb.h"
 #include "JsonHandler.h"
+#include <windows.h>
+#include <iostream>
 
-void startWebServer();
-void startClientServer();
+Game* game;
 
-void startWebServer() {
-	ServerWeb serverWeb;
-	serverWeb.init();
-}
 
-void startClientServer() {
+DWORD WINAPI startClientServer(LPVOID lpParam) {
+	// Code à exécuter dans le thread
+
 	ServerClient serverClient;
 	serverClient.init();
+
+	std::cout << "Bonjour depuis le thread !" << std::endl;
+	return 0;
+}
+
+DWORD WINAPI startWebServer(LPVOID lpParam) {
+	// Code à exécuter dans le thread
+
+	ServerWeb serverWeb;
+	serverWeb.init();
+
+	std::cout << "Bonjour depuis le thread !" << std::endl;
+	return 0;
 }
 
 int main(int ac, char const* av[])
 {
-	//std::thread(&startWebServer).detach();
-	//std::thread(&startClientServer).detach();
+	HANDLE hThreadClient;
+	DWORD threadIdClient;
+	HANDLE hThreadWeb;
+	DWORD threadIdWeb;
 
 #ifdef _DEBUG
 	_CrtMemState memStateInit;
 	_CrtMemCheckpoint(&memStateInit);
 #endif
 
-	Game* game = Game::Instance();
+	game = Game::Instance();
 	game->init();
 	game->createImage();
 
-	ServerClient serverClient;
-	serverClient.init();
+	 // Création du thread ClientServeur
+	hThreadClient = CreateThread(NULL, 0, startClientServer, NULL, 0, &threadIdClient);
+	if (hThreadClient == NULL) {
+		std::cerr << "Erreur lors de la création du thread : " << GetLastError() << std::endl;
+		return 1;
+	}
+	
+	// Création du thread WebServeur
+	hThreadWeb = CreateThread(NULL, 0, startClientServer, NULL, 0, &threadIdWeb);
+	if (hThreadWeb == NULL) {
+		std::cerr << "Erreur lors de la création du thread : " << GetLastError() << std::endl;
+		return 1;
+	}
 
 	MSG msg;
 	while (GetMessage(&msg, NULL, 0, 0))
@@ -64,5 +89,14 @@ int main(int ac, char const* av[])
 		MessageBoxA(NULL, "MEMORY LEAKS", "DISCLAIMER", 0);
 	}
 #endif
+
+	
+	WaitForSingleObject(hThreadClient, INFINITE);// Attendre la fin du thread
+	CloseHandle(hThreadClient);	// Fermer le handle du thread
+
+	WaitForSingleObject(hThreadWeb, INFINITE);// Attendre la fin du thread
+	CloseHandle(hThreadWeb);	// Fermer le handle du thread
+
+
 	return 0;
 }
