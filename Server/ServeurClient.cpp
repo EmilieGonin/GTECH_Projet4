@@ -13,9 +13,6 @@ void ServerClient::init()
 
 void ServerClient::accepteClient()
 {
-	while (true)
-	{
-
 		// Accept a client socket
 		ClientSocket = accept(ListenSocket, NULL, NULL);
 		if (ClientSocket == INVALID_SOCKET) {
@@ -58,7 +55,6 @@ void ServerClient::accepteClient()
 
 		//handleClient(ClientSocket, sessionID);
 
-	}
 }
 
 void ServerClient::handleClient(UINT uMsg, WPARAM wParam, LPARAM lParam)
