@@ -120,7 +120,6 @@ void Window::checkTextClick()
 	}
 }
 
-
 void Window::initTextFirstMenu()
 {
 	mFontTitle.loadFromFile("valoon.ttf");

@@ -200,7 +200,7 @@ std::string Server::generateSessionID() const {
 void Server::HandleReadEvent(WPARAM wParam)
 {
 	iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
-	printf("Read event\n %s\n", recvbuf);
+	printf("Read event :\n %s\n", recvbuf);
 	handleJson(recvbuf);
 }
 
@@ -223,6 +223,7 @@ void Server::sendJson(std::string json)
 
 void Server::handleJson(std::string dump)
 {
+	JsonHandler response;
 	Game* game = Game::Instance();
 	json json = json::parse(dump);
 	int id = json["Id"];
@@ -231,21 +232,24 @@ void Server::handleJson(std::string dump)
 
 	switch (id)
 	{
-	case 1:
+	case 1: //Play cell
 		//Check if it's player turn
 		if (game->getPlayerTurn() == playerId)
 		{
 			game->updateCells(cell, playerId);
-			JsonHandler response(game->getCells());
+			response = JsonHandler(game->getCells());
 			sendJson(response.getDump());
 		}
 		else
 		{
-			JsonHandler response(game->getCells(), true);
+			response = JsonHandler(game->getCells(), true);
 			sendJson(response.getDump());
 		}
-	case 2:
-		//
+		break;
+	case 2: //Get cells after reconnect
+		response = JsonHandler(game->getCells());
+		sendJson(response.getDump());
+		break;
 	default:
 		break;
 	}
