@@ -1,8 +1,10 @@
 #include "JsonHandler.h"
 
-JsonHandler::JsonHandler(std::map<std::pair<int, int>, int> cells)
+JsonHandler::JsonHandler() {}
+
+JsonHandler::JsonHandler(std::map<std::pair<int, int>, int> cells, bool error)
 {
-	mJson["ErrorCode"] = 0;
+	mJson["ErrorCode"] = error ? -1 : 0;
 	mJson["JsonType"] = RESPONSE;
 	mJson["Id"] = 3;
 	mJson["Cells"] = cells;
@@ -21,7 +23,10 @@ JsonHandler::JsonHandler(std::map<std::pair<int, int>, int> cells, int player)
 	mDump = mJson.dump();
 }
 
-JsonHandler::JsonHandler(std::string jsonDump)
+JsonHandler::JsonHandler(std::string playerId)
 {
-	json j = jsonDump;
+	mJson["ErrorCode"] = 0;
+	mJson["JsonType"] = NOTIF;
+	mJson["Id"] = 6;
+	mJson["Player"] = playerId;
 }

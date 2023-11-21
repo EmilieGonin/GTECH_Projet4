@@ -46,6 +46,7 @@ int Server::initHWND()
 	UpdateWindow(hWnd);
 	pServer = reinterpret_cast<Server*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
 
+	printf("HWND created\n");
 }
 
 void Server::initWSA()
@@ -69,6 +70,7 @@ void Server::initSocket()
 	if (iResult != 0) {
 		printf("getaddrinfo failed with error: %d\n", iResult);
 		WSACleanup();
+		return;
 	}
 
 	// Create a SOCKET for the server to listen for client connections.
@@ -77,7 +79,10 @@ void Server::initSocket()
 		printf("socket failed with error: %ld\n", WSAGetLastError());
 		freeaddrinfo(result);
 		WSACleanup();
+		return;
 	}
+
+	printf("Socket initialized\n");
 }
 
 
@@ -93,7 +98,6 @@ void Server::listenClient()
 		return;
 	}
 	printf("Bind successful.\n");
-	printf("listen.\n");
 
 	freeaddrinfo(result);
 
@@ -104,11 +108,9 @@ void Server::listenClient()
 		WSACleanup();
 		return;
 	}
-	printf("Server listening...\n");
 
+	printf("Listening for clients...\n");
 	WSAAsyncSelect(ListenSocket, hWnd, WM_SOCKET, FD_ACCEPT | FD_CLOSE);
-
-	//while (true) accepteClient();
 }
 
 void Server::accepteClient() {}
@@ -200,11 +202,11 @@ void Server::HandleReadEvent(WPARAM wParam)
 {
 	iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
 	printf("Read event\n %s\n", recvbuf);
+	handleJson(recvbuf);
 }
 
 void Server::HandleAcceptEvent(WPARAM wParam)
 {
-	printf("test");
 	accepteClient();
 	WSAAsyncSelect(ClientSocket, hWnd, WM_SOCKET, FD_READ | FD_CLOSE);
 
@@ -213,10 +215,39 @@ void Server::HandleAcceptEvent(WPARAM wParam)
 void Server::HandleCloseEvent(WPARAM wParam)
 {
 	//printf("Close event\n %lu\n", wParam);
-
 }
 
 void Server::sendJson(std::string json)
 {
 	send(ClientSocket, json.c_str(), json.size(), 0);
+}
+
+void Server::handleJson(std::string dump)
+{
+	Game* game = Game::Instance();
+	json json = json::parse(dump);
+	int id = json["Id"];
+	int playerId = json["Player"];
+	std::pair<int, int> cell = json["Cell"];
+
+	switch (id)
+	{
+	case 1:
+		//Check if it's player turn
+		if (game->getPlayerTurn() == playerId)
+		{
+			game->updateCells(cell, playerId);
+			JsonHandler response(game->getCells());
+			sendJson(response.getJson());
+		}
+		else
+		{
+			JsonHandler response(game->getCells(), true);
+			sendJson(response.getJson());
+		}
+	case 2:
+		//
+	default:
+		break;
+	}
 }

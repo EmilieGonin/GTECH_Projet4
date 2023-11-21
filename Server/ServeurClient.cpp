@@ -1,9 +1,6 @@
 #include "ServerClient.h"
 
-ServerClient::ServerClient()
-{
-
-};
+ServerClient::ServerClient() {}
 
 void ServerClient::init()
 {
@@ -25,36 +22,33 @@ void ServerClient::accepteClient()
 
 		// Attribuer un identifiant de session au client
 		std::string sessionID = generateSessionID();
-		send(ClientSocket, sessionID.c_str(), sessionID.size(), 0);
+		JsonHandler j(sessionID);
+		printf("Sending session id : %s\n", sessionID.c_str());
+		send(ClientSocket, j.getDump().c_str(), sessionID.size(), 0);
 
 		//std::lock_guard<std::mutex> lock(clientsMutex);
 		if (clientsPlayer.size() < 2)
 		{
+			//TODO -> add to game
 			clientsPlayer.push_back(ClientSocket);
+			printf("Client added to players.\n");
 		}
 		else {
 			//spectateur ?
-
+			printf("Client added to spectators.\n");
 		}
 
+		//TODO -> check if game has started
 		if (clientsPlayer.size() == 2)
 		{
 			Game* game = Game::Instance();
 			game->init();
 
 			JsonHandler j(game->getCells());
+			//Send cells
+			printf("Sending cells to clients...\n");
 			send(ClientSocket, j.getDump().c_str(), j.getDump().size(), 0);
 		}
-
-		//std::pair<int, int> pair = { 0, 1 };
-
-		//Test JSON - temp
-		//j = JsonHandler(pair, 1);
-		//if (j.getJson()["Id"] == 1) game->updateCells(j.getJson()["Cell"], j.getJson()["Player"]);
-		//Fin test JSON
-
-		//handleClient(ClientSocket, sessionID);
-
 }
 
 void ServerClient::handleClient(UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -85,23 +79,4 @@ void ServerClient::handleClient(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	}*/
 
 
-}
-
-void ServerClient::handleJson(std::string dump)
-{
-	Game* game = Game::Instance();
-	json json = json::parse(dump);
-	int id = json["Id"];
-	int playerId = json["Player"];
-
-	switch (id)
-	{
-	case 1:
-		//Check if it's player turn
-		if (game->getPlayerTurn() == playerId) //
-	case 2:
-		//
-	default:
-		break;
-	}
 }

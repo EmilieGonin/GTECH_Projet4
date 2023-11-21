@@ -12,6 +12,7 @@ public:
 	bool hasWin();
 	void updateCells(std::pair<int, int>, int);
 	void createImage();
+	void changeTurn();
 
 	inline int getPlayerTurn() { return mTurnPlayer; };
 	inline int getWinner() { return mWinner; };
