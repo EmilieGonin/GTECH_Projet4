@@ -112,7 +112,6 @@ void Server::accepteClient() {}
 LRESULT Server::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) //static
 {
 	Server* pServer = reinterpret_cast<Server*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
-	printf("Pute : ");
 	if (pServer)
 		pServer->HandleWindowMessage( uMsg,  wParam,  lParam);
 
