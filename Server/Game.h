@@ -7,11 +7,13 @@ class Game
 public:
 	static Game* Instance();
 	void init();
+	void reset();
 	void update();
 	bool hasWin();
 	void updateCells(std::pair<int, int>, int);
 	void createImage();
 
+	inline int getPlayerTurn() { return mTurnPlayer; };
 	inline int getWinner() { return mWinner; };
 	inline bool hasWinner() { return mWinner != 0; };
 	inline std::map<std::pair<int, int>, int> getCells() { return mCells; };

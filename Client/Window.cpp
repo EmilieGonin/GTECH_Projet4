@@ -5,6 +5,13 @@ Window::Window()
 	mWindow = new sf::RenderWindow(sf::VideoMode(800, 800), "Tic-tac-toe");
 }
 
+Window::~Window()
+{
+	for (auto& shape : mShapes) delete shape;
+	for (auto& text : mTexts) delete text;
+	for (auto& cell : mCells) delete cell.second.shape;
+}
+
 void Window::update()
 {
 	sf::Event event;

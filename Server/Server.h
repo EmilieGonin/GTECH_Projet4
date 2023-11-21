@@ -1,7 +1,5 @@
 #pragma once
 
-#undef UNICODE
-
 #define WIN32_LEAN_AND_MEAN
 #define WM_SOCKET_EVENT (WM_USER + 1)
 #define FD_READ_EVENT   FD_READ | FD_WRITE | FD_OOB | FD_ACCEPT | FD_CONNECT | FD_CLOSE
@@ -22,7 +20,7 @@
 #pragma comment (lib, "Ws2_32.lib")
 // #pragma comment (lib, "Mswsock.lib")
 
-#define DEFAULT_BUFLEN 512
+#define DEFAULT_BUFLEN 1000
 #define WM_SOCKET (WM_USER + 1)
 
 
@@ -65,13 +63,12 @@ protected:
     virtual void init();
     HWND hWnd;
 
-    std::vector<SOCKET> clients; // Liste des sockets des clients connect�s
-    std::mutex clientsMutex; // Mutex pour prot�ger l'acc�s � la liste des clients
+    std::vector<SOCKET> clientsPlayer;
+    std::mutex clientsMutex; 
 
 public:
     Server();
     ~Server();
-    // Ajoute d'autres m�thodes et membres au besoin.
     void sendJson(std::string);
 
 };

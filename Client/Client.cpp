@@ -79,6 +79,7 @@ int Client::connectClientServer()
 	{
 		closesocket(ClientSocket);
 		ClientSocket = INVALID_SOCKET;
+		return -1;
 	}
 
 	freeaddrinfo(result);
@@ -96,7 +97,8 @@ int Client::connectClientServer()
 
 int Client::clientSendData(std::string data)
 {
-	if ((res = send(ClientSocket, data.c_str(), (int)strlen(sendbuf), 0)) == SOCKET_ERROR)
+	res = send(ClientSocket, data.c_str(), (int)strlen(sendbuf), 0);
+	if (res  == SOCKET_ERROR || res == INVALID_SOCKET)
 	{
 		printf("send failed: %d\n", WSAGetLastError());
 		closesocket(ClientSocket);
@@ -135,10 +137,7 @@ int Client::clientDisconnect()
 LRESULT Client::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) //static
 {
 	Client* client= reinterpret_cast<Client*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
-	//if (pServer)
-	//	return pServer->HandleWindowMessage(uMsg, wParam, lParam);
-
-
+	
 	if (uMsg == WM_SOCKET)
 	{
 		switch (LOWORD(lParam)) {
@@ -168,7 +167,6 @@ LRESULT Client::HandleWindowMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 void Client::HandleReadEvent(WPARAM wParam)
 {
-	// Traitement pour l'événement FD_READ
 	//printf("Read event\n" + wParam);
 	iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
 
@@ -178,14 +176,12 @@ void Client::HandleReadEvent(WPARAM wParam)
 
 void Client::HandleAcceptEvent(WPARAM wParam)
 {
-	// Traitement pour l'événement FD_ACCEPT
 	printf("Accept event\n %lu\n", wParam);
 
 }
 
 void Client::HandleCloseEvent(WPARAM wParam)
 {
-	// Traitement pour l'événement FD_CLOSE
 	printf("Close event\n %lu\n", wParam);
 
 }

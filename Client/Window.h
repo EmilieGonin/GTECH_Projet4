@@ -13,6 +13,7 @@ class Window
 {
 public:
 	Window();
+	~Window();
 	void update();
 	void addShape(sf::Shape*);
 	void addCell(std::pair<int, int>, sf::Shape*);

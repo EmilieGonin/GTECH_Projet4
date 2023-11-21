@@ -42,6 +42,12 @@ void Game::init()
 	}
 }
 
+void Game::reset()
+{
+	delete mInstance;
+	mInstance = NULL;
+}
+
 void Game::update()
 {
 	mWindow->update();

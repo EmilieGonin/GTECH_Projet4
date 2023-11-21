@@ -37,6 +37,15 @@ void Game::init()
 	}
 }
 
+void Game::reset()
+{
+	delete mTexture;
+	for (auto& shape : mShapes) delete shape;
+	for (auto& cell : mCellShapes) delete cell.second;
+	delete mInstance;
+	mInstance = NULL;
+}
+
 void Game::update()
 {
 	//
