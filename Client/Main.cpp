@@ -19,8 +19,9 @@ int main(int ac, char const* av[])
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 		//c.clientSendData();
-		//w.initTextFirstMenu();
-		w.initTextSecondMenu();
+		
+		w.initTextFirstMenu();
+		//w.initTextSecondMenu();
 		//w.initTextMenu();
 		w.update();
 

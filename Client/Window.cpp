@@ -25,12 +25,12 @@ void Window::update()
 					hasEnterName = false;
 				}
 				else if (event.text.unicode == 8) {
-					if (!name.empty()) {
-						name.pop_back();
+					if (!mName.empty()) {
+						mName.pop_back();
 					}
 				}
 				else {
-					name += static_cast<char>(event.text.unicode);
+					mName += static_cast<char>(event.text.unicode);
 				}
 			}
 		}
@@ -42,8 +42,8 @@ void Window::update()
 		for (auto& cell : mCells) mWindow->draw(*cell.second.shape);
 		for (auto& shape : mShapes) mWindow->draw(*shape);
 		if (hasEnterName) {
-			enterName.setString("Enter your name: " + name);
-			mWindow->draw(enterName);
+			mEnterName.setString("Enter your name: " + mName);
+			mWindow->draw(mEnterName);
 		}
 		for (auto& text : mTexts) mWindow->draw(*text);
 		mWindow->display();
@@ -106,13 +106,17 @@ void Window::addPlayerShape(sf::Vector2f position)
 
 void Window::initTextFirstMenu()
 {
+	mFontTitle.loadFromFile("valoon.ttf");
 	mFont.loadFromFile("arial.ttf");
+
+	sf::Vector2i localPosition = sf::Mouse::getPosition(*mWindow);
+
 	sf::Text* text = new sf::Text();
-	text->setFont(mFont);
+	text->setFont(mFontTitle);
 	text->setString("Tic-Tac-Toe");
 	text->setCharacterSize(80);
-	text->setPosition(200, 100);
-	text->setFillColor(sf::Color::White);
+	text->setPosition(150, 100);
+	text->setFillColor(sf::Color(31, 222, 190));
 	mTexts.push_back(text);
 
 	text = new sf::Text();
@@ -120,7 +124,10 @@ void Window::initTextFirstMenu()
 	text->setString("New Game");
 	text->setCharacterSize(50);
 	text->setPosition(300, 300);
-	text->setFillColor(sf::Color::White);
+	if (localPosition == sf::Vector2i(300, 300))
+		text->setFillColor(sf::Color(222, 31, 63));
+	else
+		text->setFillColor(sf::Color::White);
 	mTexts.push_back(text);
 
 	text = new sf::Text();
@@ -128,7 +135,6 @@ void Window::initTextFirstMenu()
 	text->setString("Join");
 	text->setCharacterSize(50);
 	text->setPosition(300, 450);
-	text->setFillColor(sf::Color::White);
 	mTexts.push_back(text);
 
 	text = new sf::Text();
@@ -136,7 +142,6 @@ void Window::initTextFirstMenu()
 	text->setString("Quit");
 	text->setCharacterSize(50);
 	text->setPosition(300, 600);
-	text->setFillColor(sf::Color::White);
 	mTexts.push_back(text);
 }
 
@@ -144,10 +149,10 @@ void Window::initTextSecondMenu()
 {
 	mFont.loadFromFile("arial.ttf");
 	sf::Text* text = new sf::Text();
-	enterName.setFont(mFont);
-	enterName.setCharacterSize(40);
-	enterName.setPosition(200, 100);
-	enterName.setFillColor(sf::Color::White);
+	mEnterName.setFont(mFont);
+	mEnterName.setCharacterSize(40);
+	mEnterName.setPosition(200, 100);
+	mEnterName.setFillColor(sf::Color::White);
 
 	mFont.loadFromFile("arial.ttf");
 	text = new sf::Text();
