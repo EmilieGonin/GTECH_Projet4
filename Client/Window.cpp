@@ -1,5 +1,7 @@
 #include "Window.h"
 
+Window* Window::mInstance = nullptr;
+
 Window::Window()
 {
 	mWindow = new sf::RenderWindow(sf::VideoMode(800, 800), "Tic-tac-toe");
@@ -10,6 +12,12 @@ Window::~Window()
 	for (auto& shape : mShapes) delete shape;
 	for (auto& text : mTexts) delete text;
 	for (auto& cell : mCells) delete cell.second.shape;
+}
+
+Window* Window::Instance()
+{
+	if (mInstance == nullptr) mInstance = new Window();
+	return mInstance;
 }
 
 void Window::update()
@@ -39,6 +47,32 @@ void Window::update()
 		for (auto& text : mTexts) mWindow->draw(*text);
 		for (auto& text : mTextMenu) mWindow->draw(*text);
 		mWindow->display();
+	}
+}
+
+void Window::initCells(std::map<std::pair<int, int>, int> cells)
+{
+	//Init cells when client connect for the first time
+	int cellNumber = 9;
+	int cellSize = 150;
+	int line = 0;
+	int column = 0;
+
+	for (size_t i = 1; i <= cellNumber; i++)
+	{
+		sf::RectangleShape* shape = new sf::RectangleShape(sf::Vector2f(cellSize, cellSize));
+		shape->setPosition(sf::Vector2f(cellSize * line + 150, cellSize * column + 150));
+
+		if (i % 2 == 0) shape->setFillColor(sf::Color::White);
+		else shape->setFillColor(sf::Color::Blue);
+
+		cell newCell = { shape, cells[{line, column}] };
+		mCells[{line, column}] = newCell;
+
+		if (newCell.player != 0) addPlayerShape(shape->getPosition());
+
+		line++;
+		if (i % 3 == 0) line = 0, column++;
 	}
 }
 

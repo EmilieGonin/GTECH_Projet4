@@ -165,8 +165,8 @@ void Client::HandleReadEvent(WPARAM wParam)
 {
 	//printf("Read event\n" + wParam);
 	iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
-
 	printf("Read event :\n %s\n", recvbuf);
+	handleJson(recvbuf);
 }
 
 void Client::HandleCloseEvent(WPARAM wParam)
@@ -182,17 +182,18 @@ void Client::sendJson(std::string json)
 void Client::handleJson(std::string dump)
 {
 	JsonHandler response;
-	Game* game = Game::Instance();
+	Window* window = Window::Instance();
 	json json = json::parse(dump);
 	int id = json["Id"];
 	int error = json["ErrorCode"];
-	std::string playerId = json["Player"];
-	std::map<std::pair<int, int>, int> cells = json["Cells"];
 
 	switch (id)
 	{
 	case 3: //Get cells after connect or play
-		if (error == 0) //
+		if (error == 0)
+		{
+			window->initCells(json["Cells"]);
+		}
 		break;
 	case 4: //Get cells and winner
 		break;

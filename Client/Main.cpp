@@ -3,7 +3,7 @@
 
 int main(int ac, char const* av[])
 {
-	Window w;
+	Window* w = Window::Instance();
 	Client c;
 
 	if (c.init() == 1)
@@ -23,9 +23,9 @@ int main(int ac, char const* av[])
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 		
-		//w.initTextFirstMenu();
-		//w.initTextSecondMenu();
-		//w.update();
+		//w->initTextFirstMenu();
+		//w->initTextSecondMenu();
+		w->update();
 	}
 
 	return 0;

@@ -12,11 +12,11 @@ struct cell {
 class Window
 {
 public:
-	Window();
-	~Window();
+	static Window* Instance();
 	void update();
 	void addShape(sf::Shape*);
 	void addCell(std::pair<int, int>, sf::Shape*);
+	void initCells(std::map<std::pair<int, int>, int>);
 
 	inline std::map<std::pair<int, int>, struct cell> getCells() { return mCells; };
 	inline int getTurn() { return mTurn; };
@@ -27,7 +27,11 @@ public:
 	void menuNameEnter();
 	void changeMenuColor();
 	void checkTextClick();
+
 private:
+	Window();
+	~Window();
+	static Window* mInstance;
 	sf::RenderWindow* mWindow;
 	std::vector<sf::Shape*> mShapes;
 	std::vector<sf::Text*> mTexts;
