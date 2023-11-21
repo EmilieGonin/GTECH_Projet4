@@ -24,8 +24,8 @@ void ServerClient::accepteClient()
 		printf("Client accepted.\n");
 
 		// Attribuer un identifiant de session au client
-		std::string sessionID = generateSessionID();
-		send(ClientSocket, sessionID.c_str(), sessionID.size(), 0);
+		//std::string sessionID = generateSessionID();
+		//send(ClientSocket, sessionID.c_str(), sessionID.size(), 0);
 
 		//std::lock_guard<std::mutex> lock(clientsMutex);
 		if (clientsPlayer.size() < 2)
@@ -45,13 +45,6 @@ void ServerClient::accepteClient()
 			JsonHandler j(game->getCells());
 			send(ClientSocket, j.getDump().c_str(), j.getDump().size(), 0);
 		}
-
-		//std::pair<int, int> pair = { 0, 1 };
-
-		//Test JSON - temp
-		//j = JsonHandler(pair, 1);
-		//if (j.getJson()["Id"] == 1) game->updateCells(j.getJson()["Cell"], j.getJson()["Player"]);
-		//Fin test JSON
 
 		//handleClient(ClientSocket, sessionID);
 
@@ -85,23 +78,4 @@ void ServerClient::handleClient(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	}*/
 
 
-}
-
-void ServerClient::handleJson(std::string dump)
-{
-	Game* game = Game::Instance();
-	json json = json::parse(dump);
-	int id = json["Id"];
-	int playerId = json["Player"];
-
-	switch (id)
-	{
-	case 1:
-		//Check if it's player turn
-		if (game->getPlayerTurn() == playerId) //
-	case 2:
-		//
-	default:
-		break;
-	}
 }

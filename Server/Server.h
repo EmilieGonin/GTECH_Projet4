@@ -35,6 +35,7 @@ private:
     int initHWND();
     void listenClient();
     virtual void accepteClient();
+    void handleJson(std::string dump);
 
     static LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
     LRESULT HandleWindowMessage(UINT uMsg, WPARAM wParam, LPARAM lParam);

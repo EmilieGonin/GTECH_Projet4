@@ -107,8 +107,6 @@ void Server::listenClient()
 	printf("Server listening...\n");
 
 	WSAAsyncSelect(ListenSocket, hWnd, WM_SOCKET, FD_ACCEPT | FD_CLOSE);
-
-	//while (true) accepteClient();
 }
 
 void Server::accepteClient() {}
@@ -200,6 +198,7 @@ void Server::HandleReadEvent(WPARAM wParam)
 {
 	iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
 	printf("Read event\n %s\n", recvbuf);
+	handleJson(recvbuf);
 }
 
 void Server::HandleAcceptEvent(WPARAM wParam)
@@ -219,4 +218,34 @@ void Server::HandleCloseEvent(WPARAM wParam)
 void Server::sendJson(std::string json)
 {
 	send(ClientSocket, json.c_str(), json.size(), 0);
+}
+
+void Server::handleJson(std::string dump)
+{
+	Game* game = Game::Instance();
+	json json = json::parse(dump);
+	int id = json["Id"];
+	int playerId = json["Player"];
+	std::pair<int, int> cell = json["Cell"];
+
+	switch (id)
+	{
+	case 1:
+		//Check if it's player turn
+		if (game->getPlayerTurn() == playerId)
+		{
+			game->updateCells(cell, playerId);
+			JsonHandler response(game->getCells());
+			sendJson(response.getJson());
+		}
+		else
+		{
+			JsonHandler response(game->getCells(), true);
+			sendJson(response.getJson());
+		}
+	case 2:
+		//
+	default:
+		break;
+	}
 }

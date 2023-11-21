@@ -81,6 +81,7 @@ void Game::updateCells(std::pair<int, int> cell, int player)
 	else shape->setFillColor(sf::Color::Red);
 
 	mShapes.push_back(shape);
+	changeTurn();
 }
 
 void Game::createImage()
@@ -94,4 +95,9 @@ void Game::createImage()
 
 	sf::Image image = mTexture->copyToImage();
 	image.saveToFile("game.png");
+}
+
+void Game::changeTurn()
+{
+	mTurnPlayer = mTurnPlayer == 1 ? 2 : 1;
 }
