@@ -3,7 +3,6 @@
 #include <SFML/Window/Mouse.hpp>
 #include <map>
 #include <string>
-//#include <WinUser.h>
 
 struct cell {
 	sf::Shape* shape;
@@ -25,13 +24,13 @@ public:
 	void Finito();
 	void initTextFirstMenu();
 	void initTextSecondMenu();
-
-	void checkTextClick();
-
+	void menuNameEnter();
+	void changeMenuColor();
 private:
 	sf::RenderWindow* mWindow;
 	std::vector<sf::Shape*> mShapes;
 	std::vector<sf::Text*> mTexts;
+	std::vector<sf::Text*> mTextMenu;
 	std::map<std::pair<int, int>, struct cell> mCells;
 	sf::Font mFont;
 	sf::Font mFontTitle;
@@ -44,4 +43,6 @@ private:
 	bool hasEnterName = true;
 	std::string mName;
 	sf::Text mEnterName;
+	sf::Event event;
+
 };

@@ -75,12 +75,13 @@ int Client::connectClientServer()
 	connection = result;
 	ClientSocket = socket(connection->ai_family, connection->ai_socktype, connection->ai_protocol);
 
-	if ((res = connect(ClientSocket, connection->ai_addr, (int)connection->ai_addrlen)) == SOCKET_ERROR)
-	{
-		closesocket(ClientSocket);
-		ClientSocket = INVALID_SOCKET;
-		return -1;
-	}
+	connect(ClientSocket, connection->ai_addr, (int)connection->ai_addrlen);
+	//if ((res = connect(ClientSocket, connection->ai_addr, (int)connection->ai_addrlen)) == SOCKET_ERROR)
+	//{
+	//	closesocket(ClientSocket);
+	//	ClientSocket = INVALID_SOCKET;
+	//	return -1;
+	//}
 
 	freeaddrinfo(result);
 

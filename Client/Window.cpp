@@ -14,31 +14,14 @@ Window::~Window()
 
 void Window::update()
 {
-	sf::Event event;
 	while (mWindow->pollEvent(event))
 	{
 		if (event.type == sf::Event::Closed) mWindow->close();
-		if (event.type == sf::Event::MouseButtonReleased)
-		{
-			checkTextClick();
-			checkCollision(event);
-		}
-		if (event.type == sf::Event::TextEntered && hasEnterName) {
-			if (event.text.unicode < 128) {
-				if (event.text.unicode == 13) {
-					hasEnterName = false;
-				}
-				else if (event.text.unicode == 8) {
-					if (!mName.empty()) {
-						mName.pop_back();
-					}
-				}
-				else {
-					mName += static_cast<char>(event.text.unicode);
-				}
-			}
-		}
+		if (event.type == sf::Event::MouseButtonReleased) checkCollision(event);
+		menuNameEnter();
 	}
+
+	changeMenuColor();
 
 	if (!endGame)
 	{
@@ -50,6 +33,7 @@ void Window::update()
 			mWindow->draw(mEnterName);
 		}
 		for (auto& text : mTexts) mWindow->draw(*text);
+		for (auto& text : mTextMenu) mWindow->draw(*text);
 		mWindow->display();
 	}
 }
@@ -108,31 +92,6 @@ void Window::addPlayerShape(sf::Vector2f position)
 	mTurn++;
 }
 
-void Window::checkTextClick() 
-{
-	// Récupère la position du clic de souris
-	sf::Vector2f mousePosition = sf::Vector2f(sf::Mouse::getPosition(*mWindow));
-
-	// Parcours des textes pour vérifier si l'un d'eux a été cliqué
-	for (auto& text : mTexts)
-	{
-		// Récupère les limites de la zone occupée par le texte
-		sf::FloatRect bounds = text->getGlobalBounds();
-
-		// Vérifie la collision avec la position du clic de souris
-		if (bounds.contains(mousePosition))
-		{
-			// Actions spécifiques au texte cliqué
-			if (text->getString() == "Quit")
-			{
-				// Quitte le jeu
-				mWindow->close();
-			}
-		}
-	}
-
-}
-
 void Window::initTextFirstMenu()
 {
 	mFontTitle.loadFromFile("valoon.ttf");
@@ -153,25 +112,24 @@ void Window::initTextFirstMenu()
 	text->setString("New Game");
 	text->setCharacterSize(50);
 	text->setPosition(300, 300);
-	if (localPosition == sf::Vector2i(300, 300))
-		text->setFillColor(sf::Color(222, 31, 63));
-	else
-		text->setFillColor(sf::Color::White);
-	mTexts.push_back(text);
+	text->setFillColor(sf::Color::White);
+	mTextMenu.push_back(text);
 
 	text = new sf::Text();
 	text->setFont(mFont);
 	text->setString("Join");
 	text->setCharacterSize(50);
 	text->setPosition(300, 450);
-	mTexts.push_back(text);
+	text->setFillColor(sf::Color::White);
+	mTextMenu.push_back(text);
 
 	text = new sf::Text();
 	text->setFont(mFont);
 	text->setString("Quit");
 	text->setCharacterSize(50);
 	text->setPosition(300, 600);
-	mTexts.push_back(text);
+	text->setFillColor(sf::Color::White);
+	mTextMenu.push_back(text);
 }
 
 void Window::initTextSecondMenu()
@@ -192,4 +150,35 @@ void Window::initTextSecondMenu()
 	text->setFillColor(sf::Color::White);
 	mTexts.push_back(text);
 
+}
+
+void Window::menuNameEnter()
+{
+	if (event.type == sf::Event::TextEntered && hasEnterName) {
+		if (event.text.unicode < 128) {
+			if (event.text.unicode == 13) {
+				hasEnterName = false;
+			}
+			else if (event.text.unicode == 8) {
+				if (!mName.empty()) {
+					mName.pop_back();
+				}
+			}
+			else {
+				mName += static_cast<char>(event.text.unicode);
+			}
+		}
+	}
+}
+
+void Window::changeMenuColor()
+{
+	sf::Vector2f pos = sf::Vector2f(sf::Mouse::getPosition(*mWindow));
+
+	for (auto& text : mTextMenu)
+	{
+		auto gb = text->getGlobalBounds();
+		if (gb.contains(pos)) text->setFillColor(sf::Color(222, 31, 63));
+		else text->setFillColor(sf::Color::White);
+	}
 }
