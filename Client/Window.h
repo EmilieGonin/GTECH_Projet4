@@ -1,8 +1,8 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include <SFML/Window/Mouse.hpp>
 #include <map>
 #include <string>
-
 
 struct cell {
 	sf::Shape* shape;
@@ -29,6 +29,7 @@ private:
 	std::vector<sf::Text*> mTexts;
 	std::map<std::pair<int, int>, struct cell> mCells;
 	sf::Font mFont;
+	sf::Font mFontTitle;
 
 	void checkCollision(sf::Event);
 	void addPlayerShape(sf::Vector2f);
@@ -36,6 +37,6 @@ private:
 	bool endGame = false;
 
 	bool hasEnterName = true;
-	std::string name;
-	sf::Text enterName;
+	std::string mName;
+	sf::Text mEnterName;
 };
