@@ -13,11 +13,11 @@ void Server::init()
 	initWSA();
 	initSocket();
 	listenClient();
-	closesocket(ListenSocket);
+	//closesocket(ListenSocket);
 
 	// cleanup
-	closesocket(ClientSocket);
-	WSACleanup();
+	//closesocket(ClientSocket);
+	//WSACleanup();
 }
 
 void Server::initWSA()
@@ -55,17 +55,16 @@ void Server::initSocket()
 int Server::initHWND()
 {
 	WNDCLASS wc = { 0 };
-	//wc.lpfnWndProc = &Server::WindowProc; 
 	wc.lpfnWndProc = WindowProc;
 	wc.hInstance = GetModuleHandle(NULL);
-	wc.lpszClassName = "AsyncSelectWindowClass";
+	wc.lpszClassName = L"AsyncSelectWindowClass";
 
 	if (!RegisterClass(&wc)) {
 		printf("RegisterClass failed: %d\n", GetLastError());
 		return 1;
 	}
 
-	hWnd = CreateWindowEx(0, "AsyncSelectWindowClass", "AsyncSelectWindow", 0, 0, 0, 0, 0, HWND_MESSAGE, NULL, GetModuleHandle(NULL), NULL);
+	hWnd = CreateWindowEx(0, L"AsyncSelectWindowClass", L"AsyncSelectWindow", 0, 0, 0, 0, 0, HWND_MESSAGE, NULL, GetModuleHandle(NULL), NULL);
 	if (hWnd == NULL) {
 		printf("CreateWindowEx failed: %d\n", GetLastError());
 		return 1;
@@ -73,7 +72,7 @@ int Server::initHWND()
 
 	SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
 
-	ShowWindow(hWnd, SW_HIDE);
+	ShowWindow(hWnd, SW_NORMAL);
 	UpdateWindow(hWnd);
 }
 
@@ -89,6 +88,7 @@ void Server::listenClient()
 		return;
 	}
 	printf("Bind successful.\n");
+	printf("listen.\n");
 
 	freeaddrinfo(result);
 
@@ -101,24 +101,27 @@ void Server::listenClient()
 	}
 	printf("Server listening...\n");
 
-	accepteClient();
+	WSAAsyncSelect(ClientSocket, hWnd, WM_SOCKET, FD_ACCEPT | FD_CLOSE);
+
+	//while (true) accepteClient();
 }
 
-void Server::accepteClient() { }
+void Server::accepteClient() {}
 
 LRESULT Server::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) //static
 {
 	Server* pServer = reinterpret_cast<Server*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
-	//if (pServer)
-	//	return pServer->HandleWindowMessage(uMsg, wParam, lParam);
+	if (pServer)
+		pServer->HandleWindowMessage(uMsg, wParam, lParam);
 
-
-	if (uMsg == WM_SOCKET)
+	switch (uMsg) {
+	case WM_SOCKET:
 	{
+
 		switch (LOWORD(lParam)) {
-		case FD_READ:
-			pServer->HandleReadEvent(wParam);
-			break;
+			//case FD_READ:
+			//	pServer->HandleReadEvent(wParam);
+			//	break;
 		case FD_ACCEPT:
 			pServer->HandleAcceptEvent(wParam);
 			break;
@@ -131,7 +134,7 @@ LRESULT Server::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) /
 		return 0; // Indique que le message a été traité
 	}
 	//pServer->handleClient(uMsg,wParam, lParam);
-
+	}
 	delete pServer;
 	return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
@@ -171,8 +174,8 @@ void Server::shutdownClient(SOCKET clientSocket)
 	// Attendre quelques instants pour permettre la fermeture propre du socket
 	std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
-	clients.erase(std::remove_if(clients.begin(), clients.end(),
-		[clientSocket](SOCKET s) { return s == clientSocket; }), clients.end());
+	clientsPlayer.erase(std::remove_if(clientsPlayer.begin(), clientsPlayer.end(),
+		[clientSocket](SOCKET s) { return s == clientSocket; }), clientsPlayer.end());
 
 	closesocket(clientSocket);
 
@@ -190,25 +193,20 @@ std::string Server::generateSessionID() const {
 
 void Server::HandleReadEvent(WPARAM wParam)
 {
-	// Traitement pour l'événement FD_READ
-	//printf("Read event\n" + wParam);
 	iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
-
 	printf("Read event\n %s\n", recvbuf);
-
 }
 
 void Server::HandleAcceptEvent(WPARAM wParam)
 {
-	// Traitement pour l'événement FD_ACCEPT
-	printf("Accept event\n %lu\n", wParam);
+	accepteClient();
+	//WSAAsyncSelect(ClientSocket, hWnd, WM_SOCKET, FD_READ | FD_CLOSE);
 
 }
 
 void Server::HandleCloseEvent(WPARAM wParam)
 {
-	// Traitement pour l'événement FD_CLOSE
-	printf("Close event\n %lu\n", wParam);
+	//printf("Close event\n %lu\n", wParam);
 
 }
 

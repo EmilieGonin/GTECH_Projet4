@@ -1,11 +1,31 @@
 #include <SFML/Graphics.hpp>
+#include <thread>
 #include "Game.h"
 #include "ServerClient.h"
 #include "ServerWeb.h"
 #include "JsonHandler.h"
 
+void startWebServer();
+void startClientServer();
+
+void startWebServer() {
+	ServerWeb serverWeb;
+	serverWeb.init();
+}
+
+void startClientServer() {
+	ServerClient serverClient;
+	serverClient.init();
+}
+
 int main(int ac, char const* av[])
 {
+
+
+
+	//std::thread(&startWebServer).detach();
+	std::thread(&startClientServer).detach();
+
 #ifdef _DEBUG
 	_CrtMemState memStateInit;
 	_CrtMemCheckpoint(&memStateInit);
@@ -15,10 +35,7 @@ int main(int ac, char const* av[])
 	game->init();
 	game->createImage();
 
-	ServerClient serverClient;
-	serverClient.init();
-	//ServerWeb serverWeb;
-	//serverWeb.init();
+
 
 	MSG msg;
 	while (GetMessage(&msg, NULL, 0, 0))
@@ -37,6 +54,7 @@ int main(int ac, char const* av[])
 	}
 
 	game->reset();
+	WSACleanup();
 
 #ifdef _DEBUG
 	_CrtMemState memStateEnd, memStateDiff{};
