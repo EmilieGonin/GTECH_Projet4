@@ -46,6 +46,7 @@ int Server::initHWND()
 	UpdateWindow(hWnd);
 	pServer = reinterpret_cast<Server*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
 
+	printf("HWND created\n");
 }
 
 void Server::initWSA()
@@ -69,6 +70,7 @@ void Server::initSocket()
 	if (iResult != 0) {
 		printf("getaddrinfo failed with error: %d\n", iResult);
 		WSACleanup();
+		return;
 	}
 
 	// Create a SOCKET for the server to listen for client connections.
@@ -77,13 +79,15 @@ void Server::initSocket()
 		printf("socket failed with error: %ld\n", WSAGetLastError());
 		freeaddrinfo(result);
 		WSACleanup();
+		return;
 	}
+
+	printf("Socket initialized\n");
 }
 
 
 void Server::listenClient()
 {
-
 	iResult = bind(ListenSocket, result->ai_addr, static_cast<int>(result->ai_addrlen));
 	if (iResult == SOCKET_ERROR) {
 		printf("bind failed with error: %d\n", WSAGetLastError());
@@ -93,7 +97,6 @@ void Server::listenClient()
 		return;
 	}
 	printf("Bind successful.\n");
-	printf("listen.\n");
 
 	freeaddrinfo(result);
 
@@ -104,11 +107,9 @@ void Server::listenClient()
 		WSACleanup();
 		return;
 	}
-	printf("Server listening...\n");
 
+	printf("Listening for clients...\n");
 	WSAAsyncSelect(ListenSocket, hWnd, WM_SOCKET, FD_ACCEPT | FD_CLOSE);
-
-	//while (true) accepteClient();
 }
 
 void Server::accepteClient() {}
@@ -199,12 +200,12 @@ std::string Server::generateSessionID() const {
 void Server::HandleReadEvent(WPARAM wParam)
 {
 	iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
-	printf("Read event\n %s\n", recvbuf);
+	printf("Read event :\n %s\n", recvbuf);
+	handleJson(recvbuf);
 }
 
 void Server::HandleAcceptEvent(WPARAM wParam)
 {
-	printf("test");
 	accepteClient();
 	WSAAsyncSelect(ClientSocket, hWnd, WM_SOCKET, FD_READ | FD_CLOSE);
 
@@ -213,10 +214,43 @@ void Server::HandleAcceptEvent(WPARAM wParam)
 void Server::HandleCloseEvent(WPARAM wParam)
 {
 	//printf("Close event\n %lu\n", wParam);
-
 }
 
 void Server::sendJson(std::string json)
 {
 	send(ClientSocket, json.c_str(), json.size(), 0);
+}
+
+void Server::handleJson(std::string dump)
+{
+	JsonHandler response;
+	Game* game = Game::Instance();
+	json json = json::parse(dump);
+	int id = json["Id"];
+	int playerId = json["Player"];
+	std::pair<int, int> cell = json["Cell"];
+
+	switch (id)
+	{
+	case 1: //Play cell
+		//Check if it's player turn
+		if (game->getPlayerTurn() == playerId)
+		{
+			game->updateCells(cell, playerId);
+			response = JsonHandler(game->getCells());
+			sendJson(response.getDump());
+		}
+		else
+		{
+			response = JsonHandler(game->getCells(), true);
+			sendJson(response.getDump());
+		}
+		break;
+	case 2: //Get cells after reconnect
+		response = JsonHandler(game->getCells());
+		sendJson(response.getDump());
+		break;
+	default:
+		break;
+	}
 }

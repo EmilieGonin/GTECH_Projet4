@@ -11,7 +11,7 @@ Game* Game::Instance()
 	if (mInstance == nullptr)
 	{
 		mInstance = new Game();
-		mWindow = new Window();
+		//mWindow = new Window();
 	}
 
 	return mInstance;
