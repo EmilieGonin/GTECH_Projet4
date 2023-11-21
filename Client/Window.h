@@ -26,6 +26,7 @@ public:
 	void initTextSecondMenu();
 	void menuNameEnter();
 	void changeMenuColor();
+	void checkTextClick();
 private:
 	sf::RenderWindow* mWindow;
 	std::vector<sf::Shape*> mShapes;

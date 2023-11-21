@@ -17,7 +17,11 @@ void Window::update()
 	while (mWindow->pollEvent(event))
 	{
 		if (event.type == sf::Event::Closed) mWindow->close();
-		if (event.type == sf::Event::MouseButtonReleased) checkCollision(event);
+		if (event.type == sf::Event::MouseButtonReleased)
+		{
+			checkCollision(event);
+			checkTextClick();
+		}
 		menuNameEnter();
 	}
 
@@ -91,6 +95,31 @@ void Window::addPlayerShape(sf::Vector2f position)
 	addShape(shape);
 	mTurn++;
 }
+
+void Window::checkTextClick()
+{
+	// Récupère la position du clic de souris
+	sf::Vector2f mousePosition = sf::Vector2f(sf::Mouse::getPosition(*mWindow));
+
+	// Parcours des textes pour vérifier si l'un d'eux a été cliqué
+	for (auto& text : mTextMenu)
+	{
+		// Récupère les limites de la zone occupée par le texte
+		sf::FloatRect bounds = text->getGlobalBounds();
+
+		// Vérifie la collision avec la position du clic de souris
+		if (bounds.contains(mousePosition))
+		{
+			// Actions spécifiques au texte cliqué
+			if (text->getString() == "Quit")
+			{
+				// Quitte le jeu
+				mWindow->close();
+			}
+		}
+	}
+}
+
 
 void Window::initTextFirstMenu()
 {
