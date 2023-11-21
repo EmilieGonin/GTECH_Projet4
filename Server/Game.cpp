@@ -46,11 +46,6 @@ void Game::reset()
 	mInstance = NULL;
 }
 
-void Game::update()
-{
-	//
-}
-
 bool Game::hasWin()
 {
 	for (size_t i = 0; i < 3; i++)

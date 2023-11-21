@@ -27,7 +27,7 @@ JsonHandler::JsonHandler(std::string playerId)
 {
 	mJson["ErrorCode"] = 0;
 	mJson["JsonType"] = NOTIF;
-	mJson["Id"] = 6;
+	mJson["Id"] = 5;
 	mJson["Player"] = playerId;
 
 	mDump = mJson.dump();

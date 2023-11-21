@@ -165,16 +165,41 @@ void Client::HandleReadEvent(WPARAM wParam)
 {
 	//printf("Read event\n" + wParam);
 	iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
-
-	printf("Read event\n %s\n", recvbuf);
-}
-
-void Client::HandleAcceptEvent(WPARAM wParam)
-{
-	printf("Accept event\n %lu\n", wParam);
+	printf("Read event :\n %s\n", recvbuf);
+	handleJson(recvbuf);
 }
 
 void Client::HandleCloseEvent(WPARAM wParam)
 {
 	printf("Close event\n %lu\n", wParam);
+}
+
+void Client::sendJson(std::string json)
+{
+	send(ClientSocket, json.c_str(), json.size(), 0);
+}
+
+void Client::handleJson(std::string dump)
+{
+	JsonHandler response;
+	Window* window = Window::Instance();
+	json json = json::parse(dump);
+	int id = json["Id"];
+	int error = json["ErrorCode"];
+
+	switch (id)
+	{
+	case 3: //Get cells after connect or play
+		if (error == 0)
+		{
+			window->initCells(json["Cells"]);
+		}
+		break;
+	case 4: //Get cells and winner
+		break;
+	case 5: //Get session id
+		break;
+	default:
+		break;
+	}
 }

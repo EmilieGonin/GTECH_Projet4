@@ -40,9 +40,12 @@ public:
 	LRESULT HandleWindowMessage(UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 	void HandleReadEvent(WPARAM wParam);
-	void HandleAcceptEvent(WPARAM wParam);
 	void HandleCloseEvent(WPARAM wParam);
+
 private:
+	void sendJson(std::string json);
+	void handleJson(std::string dump);
+
 	int res;
 	WSADATA wsaData;
 	addrinfo* result = NULL, * connection = NULL, address;

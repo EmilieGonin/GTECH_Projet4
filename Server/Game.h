@@ -8,7 +8,6 @@ public:
 	static Game* Instance();
 	void init();
 	void reset();
-	void update();
 	bool hasWin();
 	void updateCells(std::pair<int, int>, int);
 	void createImage();
