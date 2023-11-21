@@ -88,7 +88,6 @@ void Server::initSocket()
 
 void Server::listenClient()
 {
-
 	iResult = bind(ListenSocket, result->ai_addr, static_cast<int>(result->ai_addrlen));
 	if (iResult == SOCKET_ERROR) {
 		printf("bind failed with error: %d\n", WSAGetLastError());
@@ -238,12 +237,12 @@ void Server::handleJson(std::string dump)
 		{
 			game->updateCells(cell, playerId);
 			JsonHandler response(game->getCells());
-			sendJson(response.getJson());
+			sendJson(response.getDump());
 		}
 		else
 		{
 			JsonHandler response(game->getCells(), true);
-			sendJson(response.getJson());
+			sendJson(response.getDump());
 		}
 	case 2:
 		//

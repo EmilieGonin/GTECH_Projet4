@@ -6,7 +6,15 @@ int main(int ac, char const* av[])
 	Window w;
 	Client c;
 
-	//c.clientSendData("test");
+	if (c.init() == 1)
+	{
+		printf("Error during client initialization.");
+		return 1;
+	}
+
+	//std::pair<int, int> cell = { 0, 0 };
+	//JsonHandler j(cell, 1);
+	//c.clientSendData(j.getDump());
 	//c.clientDisconnect();
 
 	MSG msg;
@@ -14,11 +22,10 @@ int main(int ac, char const* av[])
 	{
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
-		//c.clientSendData();
 		
-		w.initTextFirstMenu();
+		//w.initTextFirstMenu();
 		//w.initTextSecondMenu();
-		w.update();
+		//w.update();
 	}
 
 	return 0;
