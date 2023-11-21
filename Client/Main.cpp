@@ -8,6 +8,7 @@ int main(int ac, char const* av[])
 
 	c.createInvisibleWindow();
 	c.initClientSocket();
+	Sleep(2000);
 	c.connectClientServer();
 	c.clientSendData("test");
 

@@ -66,6 +66,9 @@ protected:
     std::vector<SOCKET> clientsPlayer;
     std::mutex clientsMutex; 
 
+    static Server* pServer;
+
+
 public:
     Server();
     ~Server();
