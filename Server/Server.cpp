@@ -112,16 +112,16 @@ LRESULT Server::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) /
 {
 	Server* pServer = reinterpret_cast<Server*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
 	if (pServer)
-		pServer->HandleWindowMessage( uMsg,  wParam,  lParam);
+		pServer->HandleWindowMessage(uMsg, wParam, lParam);
 
 	switch (uMsg) {
 	case WM_SOCKET:
 	{
 
 		switch (LOWORD(lParam)) {
-		//case FD_READ:
-		//	pServer->HandleReadEvent(wParam);
-		//	break;
+			//case FD_READ:
+			//	pServer->HandleReadEvent(wParam);
+			//	break;
 		case FD_ACCEPT:
 			pServer->HandleAcceptEvent(wParam);
 			break;
@@ -134,7 +134,7 @@ LRESULT Server::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) /
 		return 0; // Indique que le message a été traité
 	}
 	//pServer->handleClient(uMsg,wParam, lParam);
-
+	}
 	delete pServer;
 	return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }

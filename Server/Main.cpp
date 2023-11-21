@@ -16,11 +16,11 @@ void startWebServer() {
 void startClientServer() {
 	ServerClient serverClient;
 	serverClient.init();
-	}
+}
 
 int main(int ac, char const* av[])
 {
-	
+
 
 
 	//std::thread(&startWebServer).detach();
@@ -35,7 +35,7 @@ int main(int ac, char const* av[])
 	game->init();
 	game->createImage();
 
-	
+
 
 	MSG msg;
 	while (GetMessage(&msg, NULL, 0, 0))
