@@ -1,16 +1,19 @@
 #include "Client.h"
 
-Client::Client()
-{
-	createInvisibleWindow();
-	initClientSocket();
-	//Sleep(2000);
-	connectClientServer();
-}
+Client::Client() {}
 
 Client::~Client() {}
 
-int Client::createInvisibleWindow()
+int Client::init()
+{
+	if (initHWND() == 1) return 1;
+	if (initSocket() == 1) return 1;
+	//Sleep(2000);
+	if (connectClientServer() == 1) return 1;
+	return 0;
+}
+
+int Client::initHWND()
 {
 	WNDCLASS wc = { 0 };
 	wc.lpfnWndProc = WindowProc;
@@ -34,20 +37,21 @@ int Client::createInvisibleWindow()
 	UpdateWindow(hWnd);
 
 	printf("HWND created\n");
+	return 0;
 }
 
-int Client::initClientSocket()
+int Client::initSocket()
 {
-	ZeroMemory(&address, sizeof(address));
-	address.ai_family = AF_INET;
-	address.ai_socktype = SOCK_STREAM;
-	address.ai_protocol = IPPROTO_TCP;
-
 	if (res = WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
 	{
 		printf("WSAStartup failed: %d\n", res);
 		return 1;
 	}
+
+	ZeroMemory(&address, sizeof(address));
+	address.ai_family = AF_INET;
+	address.ai_socktype = SOCK_STREAM;
+	address.ai_protocol = IPPROTO_TCP;
 
 	if (res = getaddrinfo(ADDRESS, DEFAULT_PORT, &address, &result) != 0)
 	{
@@ -56,41 +60,40 @@ int Client::initClientSocket()
 		return 1;
 	}
 
+	ClientSocket = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
+
+	if (ClientSocket == INVALID_SOCKET) {
+		printf("socket failed with error: %ld\n", WSAGetLastError());
+		freeaddrinfo(result);
+		WSACleanup();
+		return 1;
+	}
+
 	printf("Socket initialized\n");
+	return 0;
 }
 
 int Client::connectClientServer()
 {
 	printf("Connecting to server...\n");
-	connection = result;
-	ClientSocket = socket(connection->ai_family, connection->ai_socktype, connection->ai_protocol);
-
-	//connect(ClientSocket, connection->ai_addr, (int)connection->ai_addrlen);
-	if ((res = connect(ClientSocket, connection->ai_addr, (int)connection->ai_addrlen)) == SOCKET_ERROR)
-	{
-		closesocket(ClientSocket);
-		ClientSocket = INVALID_SOCKET;
-	}
-
-	freeaddrinfo(result);
-
-	if (ClientSocket == INVALID_SOCKET)
+	if ((res = connect(ClientSocket, result->ai_addr, (int)result->ai_addrlen)) == SOCKET_ERROR)
 	{
 		printf("Unable to connect to server!\n");
+		freeaddrinfo(result);
+		closesocket(ClientSocket);
 		WSACleanup();
 		return 1;
 	}
 
 	printf("Client connected\n");
+	freeaddrinfo(result);
 	WSAAsyncSelect(ClientSocket, hWnd, WM_SOCKET, FD_READ | FD_CLOSE);
-
-	//std::string data = JsonHandler(1).getDump();
-	//clientSendData(data);
+	return 0;
 }
 
 int Client::clientSendData(std::string data)
 {
-	res = send(ClientSocket, data.c_str(), (int)strlen(sendbuf), 0);
+	res = send(ClientSocket, data.c_str(), data.size(), 0);
 	if (res  == SOCKET_ERROR || res == INVALID_SOCKET)
 	{
 		printf("send failed: %d\n", WSAGetLastError());

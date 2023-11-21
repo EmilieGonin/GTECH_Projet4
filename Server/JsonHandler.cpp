@@ -29,4 +29,6 @@ JsonHandler::JsonHandler(std::string playerId)
 	mJson["JsonType"] = NOTIF;
 	mJson["Id"] = 6;
 	mJson["Player"] = playerId;
+
+	mDump = mJson.dump();
 }

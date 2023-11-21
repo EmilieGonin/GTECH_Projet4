@@ -29,8 +29,9 @@ class Client
 public:
 	Client();
 	~Client();
-	int createInvisibleWindow();
-	int initClientSocket();
+	int init();
+	int initHWND();
+	int initSocket();
 	int connectClientServer();
 	int clientSendData(std::string);
 	//int clientDisconnect();
