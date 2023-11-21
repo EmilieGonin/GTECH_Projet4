@@ -16,7 +16,7 @@ enum JsonType { NOTIF, REQUEST, RESPONSE };
 class JsonHandler
 {
 public:
-	JsonHandler(std::map<std::pair<int, int>, int>); //3
+	JsonHandler(std::map<std::pair<int, int>, int>, int); //3
 	JsonHandler(std::map<std::pair<int, int>, int>, int); //4
 	JsonHandler(std::string);
 	inline json getJson() { return mJson; };

@@ -1,8 +1,8 @@
 #include "JsonHandler.h"
 
-JsonHandler::JsonHandler(std::map<std::pair<int, int>, int> cells)
+JsonHandler::JsonHandler(std::map<std::pair<int, int>, int> cells, int error)
 {
-	mJson["ErrorCode"] = 0;
+	mJson["ErrorCode"] = error;
 	mJson["JsonType"] = RESPONSE;
 	mJson["Id"] = 3;
 	mJson["Cells"] = cells;
