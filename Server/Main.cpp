@@ -20,11 +20,8 @@ void startClientServer() {
 
 int main(int ac, char const* av[])
 {
-
-
-
 	//std::thread(&startWebServer).detach();
-	std::thread(&startClientServer).detach();
+	//std::thread(&startClientServer).detach();
 
 #ifdef _DEBUG
 	_CrtMemState memStateInit;
@@ -35,7 +32,8 @@ int main(int ac, char const* av[])
 	game->init();
 	game->createImage();
 
-
+	ServerClient serverClient;
+	serverClient.init();
 
 	MSG msg;
 	while (GetMessage(&msg, NULL, 0, 0))

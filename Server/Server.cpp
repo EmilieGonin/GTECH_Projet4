@@ -7,6 +7,8 @@
 Server::Server() {}
 Server::~Server() {}
 
+Server* Server::pServer = nullptr;
+
 void Server::init()
 {
 	initHWND();
@@ -18,6 +20,32 @@ void Server::init()
 	// cleanup
 	//closesocket(ClientSocket);
 	//WSACleanup();
+}
+
+int Server::initHWND()
+{
+	WNDCLASS wc = { 0 };
+	wc.lpfnWndProc = WindowProc;
+	wc.hInstance = GetModuleHandle(NULL);
+	wc.lpszClassName = L"AsyncSelectWindowClass";
+
+	if (!RegisterClass(&wc)) {
+		printf("RegisterClass failed: %d\n", GetLastError());
+		return 1;
+	}
+
+	hWnd = CreateWindowEx(0, L"AsyncSelectWindowClass", L"AsyncSelectWindow", 0, 0, 0, 0, 0, HWND_MESSAGE, NULL, GetModuleHandle(NULL), NULL);
+	if (hWnd == NULL) {
+		printf("CreateWindowEx failed: %d\n", GetLastError());
+		return 1;
+	}
+
+	SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
+
+	ShowWindow(hWnd, SW_NORMAL);
+	UpdateWindow(hWnd);
+	pServer = reinterpret_cast<Server*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
+
 }
 
 void Server::initWSA()
@@ -52,29 +80,6 @@ void Server::initSocket()
 	}
 }
 
-int Server::initHWND()
-{
-	WNDCLASS wc = { 0 };
-	wc.lpfnWndProc = WindowProc;
-	wc.hInstance = GetModuleHandle(NULL);
-	wc.lpszClassName = L"AsyncSelectWindowClass";
-
-	if (!RegisterClass(&wc)) {
-		printf("RegisterClass failed: %d\n", GetLastError());
-		return 1;
-	}
-
-	hWnd = CreateWindowEx(0, L"AsyncSelectWindowClass", L"AsyncSelectWindow", 0, 0, 0, 0, 0, HWND_MESSAGE, NULL, GetModuleHandle(NULL), NULL);
-	if (hWnd == NULL) {
-		printf("CreateWindowEx failed: %d\n", GetLastError());
-		return 1;
-	}
-
-	SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
-
-	ShowWindow(hWnd, SW_NORMAL);
-	UpdateWindow(hWnd);
-}
 
 void Server::listenClient()
 {
@@ -101,7 +106,7 @@ void Server::listenClient()
 	}
 	printf("Server listening...\n");
 
-	WSAAsyncSelect(ClientSocket, hWnd, WM_SOCKET, FD_ACCEPT | FD_CLOSE);
+	WSAAsyncSelect(ListenSocket, hWnd, WM_SOCKET, FD_ACCEPT | FD_CLOSE);
 
 	//while (true) accepteClient();
 }
@@ -110,18 +115,19 @@ void Server::accepteClient() {}
 
 LRESULT Server::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) //static
 {
-	Server* pServer = reinterpret_cast<Server*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
-	if (pServer)
-		pServer->HandleWindowMessage(uMsg, wParam, lParam);
+	//pServer = reinterpret_cast<Server*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
+	//if (pServer)
+	//	pServer->HandleWindowMessage(uMsg, wParam, lParam);
 
-	switch (uMsg) {
+	switch (uMsg)
+	{
 	case WM_SOCKET:
 	{
-
-		switch (LOWORD(lParam)) {
-			//case FD_READ:
-			//	pServer->HandleReadEvent(wParam);
-			//	break;
+		switch (LOWORD(lParam))
+		{
+			case FD_READ:
+				pServer->HandleReadEvent(wParam);
+				break;
 		case FD_ACCEPT:
 			pServer->HandleAcceptEvent(wParam);
 			break;
@@ -135,7 +141,6 @@ LRESULT Server::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) /
 	}
 	//pServer->handleClient(uMsg,wParam, lParam);
 	}
-	delete pServer;
 	return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
 
@@ -199,8 +204,9 @@ void Server::HandleReadEvent(WPARAM wParam)
 
 void Server::HandleAcceptEvent(WPARAM wParam)
 {
+	printf("test");
 	accepteClient();
-	//WSAAsyncSelect(ClientSocket, hWnd, WM_SOCKET, FD_READ | FD_CLOSE);
+	WSAAsyncSelect(ClientSocket, hWnd, WM_SOCKET, FD_READ | FD_CLOSE);
 
 }
 
