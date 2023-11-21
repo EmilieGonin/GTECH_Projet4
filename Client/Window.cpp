@@ -5,6 +5,13 @@ Window::Window()
 	mWindow = new sf::RenderWindow(sf::VideoMode(800, 800), "Tic-tac-toe");
 }
 
+Window::~Window()
+{
+	for (auto& shape : mShapes) delete shape;
+	for (auto& text : mTexts) delete text;
+	for (auto& cell : mCells) delete cell.second.shape;
+}
+
 void Window::update()
 {
 	sf::Event event;
@@ -12,6 +19,21 @@ void Window::update()
 	{
 		if (event.type == sf::Event::Closed) mWindow->close();
 		if (event.type == sf::Event::MouseButtonReleased) checkCollision(event);
+		if (event.type == sf::Event::TextEntered && hasEnterName) {
+			if (event.text.unicode < 128) {
+				if (event.text.unicode == 13) {
+					hasEnterName = false;
+				}
+				else if (event.text.unicode == 8) {
+					if (!name.empty()) {
+						name.pop_back();
+					}
+				}
+				else {
+					name += static_cast<char>(event.text.unicode);
+				}
+			}
+		}
 	}
 
 	if (!endGame)
@@ -19,6 +41,10 @@ void Window::update()
 		mWindow->clear();
 		for (auto& cell : mCells) mWindow->draw(*cell.second.shape);
 		for (auto& shape : mShapes) mWindow->draw(*shape);
+		if (hasEnterName) {
+			enterName.setString("Enter your name: " + name);
+			mWindow->draw(enterName);
+		}
 		for (auto& text : mTexts) mWindow->draw(*text);
 		mWindow->display();
 	}
@@ -78,7 +104,7 @@ void Window::addPlayerShape(sf::Vector2f position)
 	mTurn++;
 }
 
-void Window::initTextMenu()
+void Window::initTextFirstMenu()
 {
 	mFont.loadFromFile("arial.ttf");
 	sf::Text* text = new sf::Text();
@@ -112,4 +138,24 @@ void Window::initTextMenu()
 	text->setPosition(300, 600);
 	text->setFillColor(sf::Color::White);
 	mTexts.push_back(text);
+}
+
+void Window::initTextSecondMenu()
+{
+	mFont.loadFromFile("arial.ttf");
+	sf::Text* text = new sf::Text();
+	enterName.setFont(mFont);
+	enterName.setCharacterSize(40);
+	enterName.setPosition(200, 100);
+	enterName.setFillColor(sf::Color::White);
+
+	mFont.loadFromFile("arial.ttf");
+	text = new sf::Text();
+	text->setFont(mFont);
+	text->setString("Let's go!");
+	text->setCharacterSize(40);
+	text->setPosition(300, 300);
+	text->setFillColor(sf::Color::White);
+	mTexts.push_back(text);
+
 }

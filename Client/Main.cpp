@@ -3,7 +3,7 @@
 
 int main(int ac, char const* av[])
 {
-	//Window w;
+	Window w;
 	Client c;
 
 	c.createInvisibleWindow();
@@ -18,12 +18,13 @@ int main(int ac, char const* av[])
 
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
-		c.clientSendData("chips");
+		//c.clientSendData();
+		//w.initTextFirstMenu();
+		w.initTextSecondMenu();
+		//w.initTextMenu();
+		w.update();
 
 	}
-
-	//w.initTextMenu();
-	//while (w.isOpen()) w.update();
 
 	return 0;
 }

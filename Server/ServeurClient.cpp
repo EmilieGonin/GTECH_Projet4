@@ -90,3 +90,22 @@ void ServerClient::handleClient(UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 
 }
+
+void ServerClient::handleJson(std::string dump)
+{
+	Game* game = Game::Instance();
+	json json = json::parse(dump);
+	int id = json["Id"];
+	int playerId = json["Player"];
+
+	switch (id)
+	{
+	case 1:
+		//Check if it's player turn
+		if (game->getPlayerTurn() == playerId) //
+	case 2:
+		//
+	default:
+		break;
+	}
+}

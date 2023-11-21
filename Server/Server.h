@@ -20,7 +20,7 @@
 #pragma comment (lib, "Ws2_32.lib")
 // #pragma comment (lib, "Mswsock.lib")
 
-#define DEFAULT_BUFLEN 512
+#define DEFAULT_BUFLEN 1000
 #define WM_SOCKET (WM_USER + 1)
 
 

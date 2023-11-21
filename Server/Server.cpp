@@ -9,7 +9,6 @@ Server::~Server() {}
 
 void Server::init()
 {
-
 	initHWND();
 	initWSA();
 	initSocket();
@@ -135,7 +134,8 @@ LRESULT Server::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) /
 		return 0; // Indique que le message a été traité
 	}
 	//pServer->handleClient(uMsg,wParam, lParam);
-	}
+
+	delete pServer;
 	return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
 

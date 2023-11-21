@@ -8,36 +8,6 @@
 void startWebServer();
 void startClientServer();
 
-int main(int ac, char const* av[])
-{
-	//Game* game = Game::Instance();
-	//game->init();
-	//game->createImage();
-
-	//JsonHandler j(game->getCells());
-
-	//std::thread(&startWebServer).detach();
-	std::thread(&startClientServer).detach();
-
-
-	MSG msg;
-	while (GetMessage(&msg, NULL, 0, 0))
-	{
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
-	}
-
-	//serverClient.sendJson(j.getDump());
-
-	/*if (game->hasWin())
-	{
-		j = JsonHandler(game->getCells(), game->getWinner());
-		serverClient.sendJson(j.getDump());
-	}*/
-
-	WSACleanup();
-}
-
 void startWebServer() {
 	ServerWeb serverWeb;
 	serverWeb.init();
@@ -46,5 +16,55 @@ void startWebServer() {
 void startClientServer() {
 	ServerClient serverClient;
 	serverClient.init();
+	}
 
+int main(int ac, char const* av[])
+{
+	
+
+
+	//std::thread(&startWebServer).detach();
+	std::thread(&startClientServer).detach();
+
+#ifdef _DEBUG
+	_CrtMemState memStateInit;
+	_CrtMemCheckpoint(&memStateInit);
+#endif
+
+	Game* game = Game::Instance();
+	game->init();
+	game->createImage();
+
+	
+
+	MSG msg;
+	while (GetMessage(&msg, NULL, 0, 0))
+	{
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+
+		if (game->hasWin())
+		{
+			//Send winner
+			//j = JsonHandler(game->getCells(), game->getWinner());
+			//serverClient.sendJson(j.getDump());
+
+			//TODO->close window
+		}
+	}
+
+	game->reset();
+	WSACleanup();
+
+#ifdef _DEBUG
+	_CrtMemState memStateEnd, memStateDiff{};
+	_CrtMemCheckpoint(&memStateEnd);
+
+	if (_CrtMemDifference(&memStateDiff, &memStateInit, &memStateEnd))
+	{
+		_CrtDumpMemoryLeaks();
+		MessageBoxA(NULL, "MEMORY LEAKS", "DISCLAIMER", 0);
+	}
+#endif
+	return 0;
 }
