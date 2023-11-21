@@ -3,6 +3,7 @@
 #include <SFML/Window/Mouse.hpp>
 #include <map>
 #include <string>
+//#include <WinUser.h>
 
 struct cell {
 	sf::Shape* shape;
@@ -24,6 +25,9 @@ public:
 	void Finito();
 	void initTextFirstMenu();
 	void initTextSecondMenu();
+
+	void checkTextClick();
+
 private:
 	sf::RenderWindow* mWindow;
 	std::vector<sf::Shape*> mShapes;
