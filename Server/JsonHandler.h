@@ -12,13 +12,16 @@ enum JsonType { NOTIF, REQUEST, RESPONSE };
 //Id 2 : Request client : get la grille (lors de la connexion) - playerId
 //Id 3 : Response server : oui ou non, renvoi de toutes les cases
 //Id 4 : Notif server : win - playerId, renvoi de toutes les cases
+//Id 5 : Request server : donne id au client, demande le nom ?
 
 class JsonHandler
 {
 public:
+	JsonHandler();
 	JsonHandler(std::map<std::pair<int, int>, int>, bool = false); //3
 	JsonHandler(std::map<std::pair<int, int>, int>, int); //4
-	JsonHandler(std::string);
+	JsonHandler(std::string); //5
+
 	inline json getJson() { return mJson; };
 	inline std::string getDump() { return mDump; };
 

@@ -2,13 +2,13 @@
 
 Client::Client()
 {
-
+	createInvisibleWindow();
+	initClientSocket();
+	//Sleep(2000);
+	connectClientServer();
 }
 
-Client::~Client()
-{
-
-}
+Client::~Client() {}
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -38,14 +38,18 @@ int Client::createInvisibleWindow()
 		return 1;
 	}
 
-	HWND hWnd = CreateWindowEx(0, L"AsyncSelectWindowClass", L"AsyncSelectWindow", 0, 0, 0, 0, 0, HWND_MESSAGE, NULL, GetModuleHandle(NULL), NULL);
+	hWnd = CreateWindowEx(0, L"AsyncSelectWindowClass", L"AsyncSelectWindow", 0, 0, 0, 0, 0, HWND_MESSAGE, NULL, GetModuleHandle(NULL), NULL);
 	if (hWnd == NULL) {
 		printf("CreateWindowEx failed: %d\n", GetLastError());
 		return 1;
 	}
 
+	SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
+
 	ShowWindow(hWnd, SW_HIDE);
 	UpdateWindow(hWnd);
+
+	printf("HWND created\n");
 }
 
 int Client::initClientSocket()
@@ -54,7 +58,6 @@ int Client::initClientSocket()
 	address.ai_family = AF_INET;
 	address.ai_socktype = SOCK_STREAM;
 	address.ai_protocol = IPPROTO_TCP;
-
 
 	if (res = WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
 	{
@@ -68,20 +71,22 @@ int Client::initClientSocket()
 		WSACleanup();
 		return 1;
 	}
+
+	printf("Socket initialized\n");
 }
 
 int Client::connectClientServer()
 {
+	printf("Connecting to server...\n");
 	connection = result;
 	ClientSocket = socket(connection->ai_family, connection->ai_socktype, connection->ai_protocol);
 
-	connect(ClientSocket, connection->ai_addr, (int)connection->ai_addrlen);
-	//if ((res = connect(ClientSocket, connection->ai_addr, (int)connection->ai_addrlen)) == SOCKET_ERROR)
-	//{
-	//	closesocket(ClientSocket);
-	//	ClientSocket = INVALID_SOCKET;
-	//	return -1;
-	//}
+	//connect(ClientSocket, connection->ai_addr, (int)connection->ai_addrlen);
+	if ((res = connect(ClientSocket, connection->ai_addr, (int)connection->ai_addrlen)) == SOCKET_ERROR)
+	{
+		closesocket(ClientSocket);
+		ClientSocket = INVALID_SOCKET;
+	}
 
 	freeaddrinfo(result);
 
@@ -92,8 +97,11 @@ int Client::connectClientServer()
 		return 1;
 	}
 
-	std::string data = JsonHandler(1).getDump();
-	clientSendData(data);
+	printf("Client connected\n");
+	WSAAsyncSelect(ClientSocket, hWnd, WM_SOCKET, FD_READ | FD_CLOSE);
+
+	//std::string data = JsonHandler(1).getDump();
+	//clientSendData(data);
 }
 
 int Client::clientSendData(std::string data)
@@ -112,41 +120,41 @@ int Client::clientSendData(std::string data)
 	printf("Bytes Sent: %ld\n", res);
 }
 
-int Client::clientDisconnect()
-{
-	/*if (res = shutdown(ClientSocket, SD_SEND) == SOCKET_ERROR)
-	{
-		printf("shutdown failed: %d\n", WSAGetLastError());
-		closesocket(ClientSocket);
-		WSACleanup();
-		return 1;
-	}*/
-
-	//do {
-		res = recv(ClientSocket, recvbuf, recvbuflen, 0);
-		if (res > 0)
-			printf("Bytes received: %s\n", recvbuf);
-		else if (res == 0)
-			printf("Connection closed\n");
-		//else
-			//printf("recv failed: %d\n", WSAGetLastError());
-	//} while (true);
-
-	return 0;
-}
+//int Client::clientDisconnect()
+//{
+//	/*if (res = shutdown(ClientSocket, SD_SEND) == SOCKET_ERROR)
+//	{
+//		printf("shutdown failed: %d\n", WSAGetLastError());
+//		closesocket(ClientSocket);
+//		WSACleanup();
+//		return 1;
+//	}*/
+//
+//	//do {
+//		res = recv(ClientSocket, recvbuf, recvbuflen, 0);
+//		if (res > 0)
+//			printf("Bytes received: %s\n", recvbuf);
+//		else if (res == 0)
+//			printf("Connection closed\n");
+//		//else
+//			//printf("recv failed: %d\n", WSAGetLastError());
+//	//} while (true);
+//
+//	return 0;
+//}
 
 LRESULT Client::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) //static
 {
 	Client* client= reinterpret_cast<Client*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
-	
-	if (uMsg == WM_SOCKET)
+
+	switch (uMsg)
 	{
-		switch (LOWORD(lParam)) {
+	case WM_SOCKET:
+	{
+		switch (LOWORD(lParam))
+		{
 		case FD_READ:
 			client->HandleReadEvent(wParam);
-			break;
-		case FD_ACCEPT:
-			client->HandleAcceptEvent(wParam);
 			break;
 		case FD_CLOSE:
 			client->HandleCloseEvent(wParam);
@@ -156,7 +164,7 @@ LRESULT Client::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) /
 		}
 		return 0; // Indique que le message a été traité
 	}
-	//pServer->handleClient(uMsg,wParam, lParam);
+	}
 
 	return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
@@ -172,17 +180,14 @@ void Client::HandleReadEvent(WPARAM wParam)
 	iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
 
 	printf("Read event\n %s\n", recvbuf);
-
 }
 
 void Client::HandleAcceptEvent(WPARAM wParam)
 {
 	printf("Accept event\n %lu\n", wParam);
-
 }
 
 void Client::HandleCloseEvent(WPARAM wParam)
 {
 	printf("Close event\n %lu\n", wParam);
-
 }

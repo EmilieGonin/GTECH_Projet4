@@ -4,6 +4,10 @@
 #define WIN32_LEAN_AND_MEAN
 #endif
 
+#define WM_SOCKET_EVENT (WM_USER + 1)
+#define FD_READ_EVENT FD_READ | FD_WRITE | FD_OOB | FD_ACCEPT | FD_CONNECT | FD_CLOSE
+#define _WINSOCK_DEPRECATED_NO_WARNINGS
+
 #include <windows.h>
 #include <winsock2.h>
 #include <ws2tcpip.h>
@@ -29,7 +33,7 @@ public:
 	int initClientSocket();
 	int connectClientServer();
 	int clientSendData(std::string);
-	int clientDisconnect();
+	//int clientDisconnect();
 
 	static LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	LRESULT HandleWindowMessage(UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -47,5 +51,6 @@ private:
 	int recvbuflen = DEFAULT_BUFLEN;
 	char recvbuf[DEFAULT_BUFLEN];
 	int iResult;
+	HWND hWnd;
 };
 

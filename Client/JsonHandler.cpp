@@ -1,5 +1,7 @@
 #include "JsonHandler.h"
 
+JsonHandler::JsonHandler() {}
+
 JsonHandler::JsonHandler(std::pair<int, int> cell, int player)
 {
 	mJson["ErrorCode"] = 0;
@@ -18,9 +20,4 @@ JsonHandler::JsonHandler(int player)
 	mJson["Player"] = player;
 
 	mDump = mJson.dump();
-}
-
-JsonHandler::JsonHandler(std::string jsonDump)
-{
-	json j = jsonDump;
 }

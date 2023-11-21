@@ -6,17 +6,12 @@ int main(int ac, char const* av[])
 	Window w;
 	Client c;
 
-	c.createInvisibleWindow();
-	c.initClientSocket();
-	Sleep(2000);
-	c.connectClientServer();
-	c.clientSendData("test");
-
+	//c.clientSendData("test");
 	//c.clientDisconnect();
+
 	MSG msg;
-	while (GetMessage(&msg, NULL, 0, 0)) {
-
-
+	while (GetMessage(&msg, NULL, 0, 0))
+	{
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 		//c.clientSendData();
@@ -24,7 +19,6 @@ int main(int ac, char const* av[])
 		w.initTextFirstMenu();
 		//w.initTextSecondMenu();
 		w.update();
-
 	}
 
 	return 0;

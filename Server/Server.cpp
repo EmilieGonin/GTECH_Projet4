@@ -46,6 +46,7 @@ int Server::initHWND()
 	UpdateWindow(hWnd);
 	pServer = reinterpret_cast<Server*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
 
+	printf("HWND created\n");
 }
 
 void Server::initWSA()
@@ -69,6 +70,7 @@ void Server::initSocket()
 	if (iResult != 0) {
 		printf("getaddrinfo failed with error: %d\n", iResult);
 		WSACleanup();
+		return;
 	}
 
 	// Create a SOCKET for the server to listen for client connections.
@@ -77,7 +79,10 @@ void Server::initSocket()
 		printf("socket failed with error: %ld\n", WSAGetLastError());
 		freeaddrinfo(result);
 		WSACleanup();
+		return;
 	}
+
+	printf("Socket initialized\n");
 }
 
 
@@ -93,7 +98,6 @@ void Server::listenClient()
 		return;
 	}
 	printf("Bind successful.\n");
-	printf("listen.\n");
 
 	freeaddrinfo(result);
 
@@ -104,8 +108,8 @@ void Server::listenClient()
 		WSACleanup();
 		return;
 	}
-	printf("Server listening...\n");
 
+	printf("Listening for clients...\n");
 	WSAAsyncSelect(ListenSocket, hWnd, WM_SOCKET, FD_ACCEPT | FD_CLOSE);
 }
 
@@ -203,7 +207,6 @@ void Server::HandleReadEvent(WPARAM wParam)
 
 void Server::HandleAcceptEvent(WPARAM wParam)
 {
-	printf("test");
 	accepteClient();
 	WSAAsyncSelect(ClientSocket, hWnd, WM_SOCKET, FD_READ | FD_CLOSE);
 
@@ -212,7 +215,6 @@ void Server::HandleAcceptEvent(WPARAM wParam)
 void Server::HandleCloseEvent(WPARAM wParam)
 {
 	//printf("Close event\n %lu\n", wParam);
-
 }
 
 void Server::sendJson(std::string json)
