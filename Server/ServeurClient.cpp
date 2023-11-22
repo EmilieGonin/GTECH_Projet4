@@ -5,6 +5,33 @@ ServerClient::ServerClient() {}
 void ServerClient::init()
 {
 	mPort = "1027";
+	
+
+	WNDCLASS wca = { 0 };
+	wca.lpfnWndProc = WindowProc;
+	wca.hInstance = GetModuleHandle(NULL);
+	wca.lpszClassName = L"AsyncSelectWindowClassA";
+
+
+	if (!RegisterClass(&wca)) {
+		printf("RegisterClass failed: %d\n", GetLastError());
+		return ;
+	}
+
+	hWnd = CreateWindowEx(0, L"AsyncSelectWindowClassA", L"AsyncSelectWindowA", 0, 0, 0, 0, 0, HWND_MESSAGE, NULL, GetModuleHandle(NULL), NULL);
+	if (hWnd == NULL) {
+		printf("CreateWindowEx failed: %d\n", GetLastError());
+		return ;
+	}
+
+	SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
+
+	ShowWindow(hWnd, SW_NORMAL);
+	UpdateWindow(hWnd);
+	pServer = reinterpret_cast<Server*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
+
+	printf("HWND created\n");
+
 	Server::init();
 }
 

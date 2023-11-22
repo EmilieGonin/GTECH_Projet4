@@ -18,14 +18,14 @@ int Client::initHWND()
 	WNDCLASS wc = { 0 };
 	wc.lpfnWndProc = WindowProc;
 	wc.hInstance = GetModuleHandle(NULL);
-	wc.lpszClassName = L"AsyncSelectWindowClass";
+	wc.lpszClassName = L"AsyncSelectWindowClassC";
 
 	if (!RegisterClass(&wc)) {
 		printf("RegisterClass failed: %d\n", GetLastError());
 		return 1;
 	}
 
-	hWnd = CreateWindowEx(0, L"AsyncSelectWindowClass", L"AsyncSelectWindow", 0, 0, 0, 0, 0, HWND_MESSAGE, NULL, GetModuleHandle(NULL), NULL);
+	hWnd = CreateWindowEx(0, L"AsyncSelectWindowClassC", L"AsyncSelectWindowC", 0, 0, 0, 0, 0, HWND_MESSAGE, NULL, GetModuleHandle(NULL), NULL);
 	if (hWnd == NULL) {
 		printf("CreateWindowEx failed: %d\n", GetLastError());
 		return 1;
@@ -76,7 +76,8 @@ int Client::initSocket()
 int Client::connectClientServer()
 {
 	printf("Connecting to server...\n");
-	if ((res = connect(ClientSocket, result->ai_addr, (int)result->ai_addrlen)) == SOCKET_ERROR)
+	res = connect(ClientSocket, result->ai_addr, (int)result->ai_addrlen);
+	if ((res = connect(ClientSocket, result->ai_addr, (int)result->ai_addrlen)) == INVALID_SOCKET)
 	{
 		printf("Unable to connect to server!\n");
 		freeaddrinfo(result);

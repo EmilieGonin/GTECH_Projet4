@@ -54,7 +54,7 @@ int main(int ac, char const* av[])
 	}
 	
 	// Création du thread WebServeur
-	hThreadWeb = CreateThread(NULL, 0, startClientServer, NULL, 0, &threadIdWeb);
+	hThreadWeb = CreateThread(NULL, 0, startWebServer, NULL, 0, &threadIdWeb);
 	if (hThreadWeb == NULL) {
 		std::cerr << "Erreur lors de la création du thread : " << GetLastError() << std::endl;
 		return 1;
