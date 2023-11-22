@@ -56,5 +56,6 @@ private:
 	char recvbuf[DEFAULT_BUFLEN];
 	int iResult;
 	HWND hWnd;
+	std::string mPlayerId;
 };
 

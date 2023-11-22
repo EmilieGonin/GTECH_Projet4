@@ -5,6 +5,8 @@ Window* Window::mInstance = nullptr;
 Window::Window()
 {
 	mWindow = new sf::RenderWindow(sf::VideoMode(mWidth, mLength), "Tic-tac-toe");
+	mSelectedCell = { -1, -1 };
+	mHasPlayed = false;
 }
 
 Window::~Window()
@@ -27,7 +29,7 @@ void Window::update()
 		if (event.type == sf::Event::Closed) mWindow->close();
 		if (event.type == sf::Event::MouseButtonReleased)
 		{
-			checkCollision(event);
+			if (!hasSelectedCell()) checkCollision(event);
 			//checkTextClick();
 		}
 		menuNameEnter();
@@ -50,7 +52,7 @@ void Window::update()
 	}
 }
 
-void Window::initCells(std::map<std::pair<int, int>, int> cells)
+void Window::initCells(std::map<std::pair<int, int>, std::string> cells)
 {
 	//Init cells when client connect for the first time
 	int cellNumber = 9;
@@ -66,14 +68,26 @@ void Window::initCells(std::map<std::pair<int, int>, int> cells)
 		if (i % 2 == 0) shape->setFillColor(sf::Color::White);
 		else shape->setFillColor(sf::Color::Blue);
 
-		cell newCell = { shape, cells[{line, column}] };
+		cell newCell = { shape, {line, column}, cells[{line, column}] };
 		mCells[{line, column}] = newCell;
 
-		if (newCell.player != 0) addPlayerShape(shape->getPosition());
+		if (!newCell.player.empty()) addPlayerShape(shape->getPosition(), newCell.player);
 
 		line++;
 		if (i % 3 == 0) line = 0, column++;
 	}
+}
+
+void Window::resetTurn()
+{
+	mHasPlayed = false;
+	mSelectedCell = { -1, -1 };
+}
+
+std::pair<int, int> Window::play()
+{
+	mHasPlayed = true;
+	return mSelectedCell;
 }
 
 void Window::addShape(sf::Shape* shape)
@@ -85,7 +99,7 @@ void Window::addCell(std::pair<int, int> pos, sf::Shape* shape)
 {
 	struct cell newCell;
 	newCell.shape = shape;
-	newCell.player = 0;
+	newCell.player = "";
 
 	mCells[pos] = newCell;
 }
@@ -105,25 +119,26 @@ void Window::checkCollision(sf::Event e)
 
 		for (auto& cell : mCells)
 		{
-			if (cell.second.player != 0) continue; //If the shape has already been selected
+			if (!cell.second.player.empty()) continue; //If the shape has already been selected
 			sf::FloatRect bounds = cell.second.shape->getGlobalBounds();
 
 			if (bounds.contains(pos))
 			{
 				cell.second.player = mTurn % 2 == 0 ? 2 : 1; //Shape has now been selected
-				addPlayerShape(bounds.getPosition());
+				mSelectedCell = cell.second.pos;
+				addPlayerShape(bounds.getPosition(), cell.second.player);
 				return;
 			}
 		}
 	}
 }
 
-void Window::addPlayerShape(sf::Vector2f position)
+void Window::addPlayerShape(sf::Vector2f position, std::string player)
 {
 	sf::CircleShape* shape = new sf::CircleShape(75);
 	shape->setPosition(position);
 
-	if (mTurn % 2 == 0)shape->setFillColor(sf::Color::Green);
+	if (player == mPlayerId)shape->setFillColor(sf::Color::Green);
 	else shape->setFillColor(sf::Color::Red);
 
 	addShape(shape);
@@ -132,19 +147,19 @@ void Window::addPlayerShape(sf::Vector2f position)
 
 /*void Window::checkTextClick()
 {
-	// Récupère la position du clic de souris
+	// Rï¿½cupï¿½re la position du clic de souris
 	sf::Vector2f mousePosition = sf::Vector2f(sf::Mouse::getPosition(*mWindow));
 
-	// Parcours des textes pour vérifier si l'un d'eux a été cliqué
+	// Parcours des textes pour vï¿½rifier si l'un d'eux a ï¿½tï¿½ cliquï¿½
 	for (auto& text : mTextMenu)
 	{
-		// Récupère les limites de la zone occupée par le texte
+		// Rï¿½cupï¿½re les limites de la zone occupï¿½e par le texte
 		sf::FloatRect bounds = text->getGlobalBounds();
 
-		// Vérifie la collision avec la position du clic de souris
+		// Vï¿½rifie la collision avec la position du clic de souris
 		if (bounds.contains(mousePosition))
 		{
-			// Actions spécifiques au texte cliqué
+			// Actions spï¿½cifiques au texte cliquï¿½
 			if (text->getString() == "Quit")
 			{
 				// Quitte le jeu
@@ -232,7 +247,7 @@ void Window::initTextFirstMenu()
 void Window::menuNameEnter()
 {
 	if (event.type == sf::Event::TextEntered && hasEnterName) {
-		//Récupère les valeurs de la table ASCII
+		//Rï¿½cupï¿½re les valeurs de la table ASCII
 		if (event.text.unicode < 128) {
 			if (event.text.unicode == 13) {
 				hasEnterName = false;
@@ -251,7 +266,7 @@ void Window::menuNameEnter()
 
 void Window::changeMenuColor()
 {
-	//Récupère la position de la souris sur la fenêtre
+	//Rï¿½cupï¿½re la position de la souris sur la fenï¿½tre
 	sf::Vector2f pos = sf::Vector2f(sf::Mouse::getPosition(*mWindow));
 
 	//Boucle sur notre texte

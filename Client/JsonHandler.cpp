@@ -2,7 +2,7 @@
 
 JsonHandler::JsonHandler() {}
 
-JsonHandler::JsonHandler(std::pair<int, int> cell, int player)
+JsonHandler::JsonHandler(std::pair<int, int> cell, std::string player)
 {
 	mJson["ErrorCode"] = 0;
 	mJson["JsonType"] = REQUEST;
@@ -12,7 +12,7 @@ JsonHandler::JsonHandler(std::pair<int, int> cell, int player)
 
 	mDump = mJson.dump();
 }
-JsonHandler::JsonHandler(int player)
+JsonHandler::JsonHandler(std::string player)
 {
 	mJson["ErrorCode"] = 0;
 	mJson["JsonType"] = REQUEST;

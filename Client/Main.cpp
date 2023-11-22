@@ -9,12 +9,9 @@ int main(int ac, char const* av[])
 	if (c.init() == 1)
 	{
 		printf("Error during client initialization.");
-		//return 1;
+		return 1;
 	}
 
-	//std::pair<int, int> cell = { 0, 0 };
-	//JsonHandler j(cell, 1);
-	//c.clientSendData(j.getDump());
 	//c.clientDisconnect();
 
 	//w->changeScene(Window::MAIN_MENU);
@@ -33,7 +30,16 @@ int main(int ac, char const* av[])
 			break;
 		}*/
 		w->initTextFirstMenu();
+		}
+
 		w->update();
+
+		if (!w->hasPlayed() && w->hasSelectedCell())
+		{
+			//TODO -> add playerId
+			JsonHandler j(w->play(), w->getPlayer());
+			c.clientSendData(j.getDump());
+		}
 	}
 	return 0;
 }
