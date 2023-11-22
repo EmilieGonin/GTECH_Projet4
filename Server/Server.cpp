@@ -112,9 +112,9 @@ void Server::listenClient()
 	WSAAsyncSelect(ListenSocket, hWnd, WM_SOCKET, FD_ACCEPT | FD_CLOSE);
 }
 
-void Server::accepteClient() {}
+void Server::accepteClient(SOCKET client) {}
 
-LRESULT Server::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) //static
+LRESULT Server::WindowProc(HWND hWnd, UINT uMsg, WPARAM socket, LPARAM lParam) //static
 {
 	//pServer = reinterpret_cast<Server*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
 	//if (pServer)
@@ -126,23 +126,23 @@ LRESULT Server::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) /
 	{
 		switch (LOWORD(lParam))
 		{
-			case FD_READ:
-				pServer->HandleReadEvent(wParam);
-				break;
+		case FD_READ:
+			pServer->HandleReadEvent(socket);
+			break;
 		case FD_ACCEPT:
-			pServer->HandleAcceptEvent(wParam);
+			pServer->HandleAcceptEvent(socket);
 			break;
 		case FD_CLOSE:
-			pServer->HandleCloseEvent(wParam);
+			pServer->HandleCloseEvent(socket);
 			break;
 		default:
 			break;
 		}
 		return 0; // Indique que le message a été traité
 	}
-	//pServer->handleClient(uMsg,wParam, lParam);
+	//pServer->handleClient(uMsg,socket, lParam);
 	}
-	return DefWindowProc(hWnd, uMsg, wParam, lParam);
+	return DefWindowProc(hWnd, uMsg, socket, lParam);
 }
 
 LRESULT Server::HandleWindowMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -170,10 +170,10 @@ void Server::handleClient(UINT uMsg, WPARAM wParam, LPARAM lParam) {}
 
 void Server::shutdownClient(SOCKET clientSocket)
 {
-	iResult = shutdown(ClientSocket, SD_SEND);
+	iResult = shutdown(clientSocket, SD_SEND);
 	if (iResult == SOCKET_ERROR) {
 		printf("shutdown failed with error: %d\n", WSAGetLastError());
-		closesocket(ClientSocket);
+		closesocket(clientSocket);
 		WSACleanup();
 	}
 
@@ -199,18 +199,16 @@ std::string Server::generateSessionID() const {
 	return "SessionID_" + std::to_string(timestamp);
 }
 
-void Server::HandleReadEvent(WPARAM wParam)
+void Server::HandleReadEvent(WPARAM socket)
 {
-	iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
+	iResult = recv(socket, recvbuf, recvbuflen, 0);
 	printf("Read event :\n %s\n", recvbuf);
-	handleJson(recvbuf);
+	handleJson(socket, recvbuf);
 }
 
-void Server::HandleAcceptEvent(WPARAM wParam)
+void Server::HandleAcceptEvent(WPARAM socket)
 {
-	accepteClient();
-	WSAAsyncSelect(ClientSocket, hWnd, WM_SOCKET, FD_READ | FD_CLOSE);
-
+	accepteClient(socket);
 }
 
 void Server::HandleCloseEvent(WPARAM wParam)
@@ -218,12 +216,12 @@ void Server::HandleCloseEvent(WPARAM wParam)
 	//printf("Close event\n %lu\n", wParam);
 }
 
-void Server::sendJson(std::string json)
+void Server::sendJson(SOCKET client, std::string json)
 {
-	send(ClientSocket, json.c_str(), json.size(), 0);
+	send(client, json.c_str(), json.size(), 0);
 }
 
-void Server::handleJson(std::string dump)
+void Server::handleJson(SOCKET client, std::string dump)
 {
 	JsonHandler response;
 	Game* game = Game::Instance();
@@ -240,12 +238,17 @@ void Server::handleJson(std::string dump)
 		bool error = game->getPlayerTurn() != playerId;
 		if (!error) game->updateCells(cell, playerId);
 		response = JsonHandler(game->getCells(), game->getPlayerTurn(), error);
-		sendJson(response.getDump());
+
+		for (auto& player : mPlayers)
+		{
+			if (player.second != playerId && error) continue;
+			sendJson(player.first, response.getDump());
+		}
 	}
 		break;
 	case 2: //Get cells after reconnect
 		response = JsonHandler(game->getCells(), game->getPlayerTurn(), false);
-		sendJson(response.getDump());
+		sendJson(client, response.getDump());
 		break;
 	default:
 		break;

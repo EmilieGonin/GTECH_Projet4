@@ -76,7 +76,7 @@ int Client::initSocket()
 int Client::connectClientServer()
 {
 	printf("Connecting to server...\n");
-	if ((res = connect(ClientSocket, result->ai_addr, (int)result->ai_addrlen)) == SOCKET_ERROR)
+	if ((res = connect(ClientSocket, result->ai_addr, (int)result->ai_addrlen)) == (SOCKET_ERROR | INVALID_SOCKET))
 	{
 		printf("Unable to connect to server!\n");
 		freeaddrinfo(result);

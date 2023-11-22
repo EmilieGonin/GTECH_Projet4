@@ -8,13 +8,13 @@ void ServerClient::init()
 	Server::init();
 }
 
-void ServerClient::accepteClient()
+void ServerClient::accepteClient(SOCKET client)
 {
 	Game* game = Game::Instance();
 
 	// Accept a client socket
-	ClientSocket = accept(ListenSocket, NULL, NULL);
-	if (ClientSocket == INVALID_SOCKET) {
+	client = accept(ListenSocket, NULL, NULL);
+	if (client == INVALID_SOCKET) {
 		printf("accept failed with error: %d\n", WSAGetLastError());
 		closesocket(ListenSocket);
 		WSACleanup();
@@ -26,13 +26,13 @@ void ServerClient::accepteClient()
 	std::string sessionID = generateSessionID();
 	JsonHandler j(sessionID);
 	printf("Sending session id : %s\n", sessionID.c_str());
-	send(ClientSocket, j.getDump().c_str(), j.getDump().size(), 0);
+	send(client, j.getDump().c_str(), j.getDump().size(), 0);
 	Sleep(1000);
 
 	//std::lock_guard<std::mutex> lock(clientsMutex);
 	if (mPlayers.size() < 2)
 	{
-		mPlayers[ClientSocket] = sessionID;
+		mPlayers[client] = sessionID;
 		game->addPlayer(sessionID);
 		printf("Client added to players.\n");
 	}
@@ -52,34 +52,34 @@ void ServerClient::accepteClient()
 		std::string t = j.getDump();
 		for (auto& player : mPlayers) send(player.first, j.getDump().c_str(), j.getDump().size(), 0);
 	}
+
+	WSAAsyncSelect(client, hWnd, WM_SOCKET, FD_READ | FD_CLOSE);
 }
 
 void ServerClient::handleClient(UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	if (iResult > 0)
-	{
-		printf("Bytes received: %d\n", uMsg);
+	//if (iResult > 0)
+	//{
+	//	printf("Bytes received: %d\n", uMsg);
 
-		// Echo the buffer back to the sender
-		iSendResult = send(ClientSocket, recvbuf, iResult, 0);
-		if (iSendResult == SOCKET_ERROR)
-		{
-			printf("send failed with error: %d\n", WSAGetLastError());
-			closesocket(ClientSocket);
-			WSACleanup();
-		}
-		printf("Bytes sent: %d\n", iSendResult);
-	}
-	else if (iResult == 0)
-	{
-		//printf("Connection closing from server...\n");
+	//	// Echo the buffer back to the sender
+	//	iSendResult = send(ClientSocket, recvbuf, iResult, 0);
+	//	if (iSendResult == SOCKET_ERROR)
+	//	{
+	//		printf("send failed with error: %d\n", WSAGetLastError());
+	//		closesocket(ClientSocket);
+	//		WSACleanup();
+	//	}
+	//	printf("Bytes sent: %d\n", iSendResult);
+	//}
+	//else if (iResult == 0)
+	//{
+	//	//printf("Connection closing from server...\n");
 
-	}
-	/*else
-	{
-		printf("recv failed with error: %d\n", WSAGetLastError());
+	//}
+	///*else
+	//{
+	//	printf("recv failed with error: %d\n", WSAGetLastError());
 
-	}*/
-
-
+	//}*/
 }

@@ -34,8 +34,8 @@ private:
     void initSocket();
     int initHWND();
     void listenClient();
-    virtual void accepteClient();
-    void handleJson(std::string dump);
+    virtual void accepteClient(SOCKET);
+    void handleJson(SOCKET, std::string dump);
 
     static LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
     LRESULT HandleWindowMessage(UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -57,7 +57,7 @@ protected:
     int iSendResult;
     int recvbuflen = DEFAULT_BUFLEN;
 
-    SOCKET ClientSocket = INVALID_SOCKET;
+    //SOCKET ClientSocket = INVALID_SOCKET;
     SOCKET ListenSocket = INVALID_SOCKET;
 
     char recvbuf[DEFAULT_BUFLEN];
@@ -72,5 +72,5 @@ protected:
 public:
     Server();
     ~Server();
-    void sendJson(std::string);
+    void sendJson(SOCKET, std::string);
 };

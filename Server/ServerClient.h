@@ -5,7 +5,7 @@ class ServerClient : public Server {
 
 protected:
 	void handleClient(UINT uMsg, WPARAM wParam, LPARAM lParam) override;
-	void accepteClient() override;
+	void accepteClient(SOCKET) override;
 
 public:
 	ServerClient();
