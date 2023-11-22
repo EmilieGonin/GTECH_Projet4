@@ -32,6 +32,7 @@ public:
 	enum SceneState {
 		MAIN_MENU,
 		NAME_MENU,
+		GAME,
 	};
 
 	void changeScene(SceneState newState);
@@ -73,4 +74,5 @@ private:
 
 
 	SceneState currentScene;
+
 };
