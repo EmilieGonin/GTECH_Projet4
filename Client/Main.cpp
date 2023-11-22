@@ -21,17 +21,16 @@ int main(int ac, char const* av[])
 	{
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
-		
+
 		switch (w->getCurrentScene())
 		{
 		case Window::MAIN_MENU:
 			break;
+		case Window::JOIN:
+			break;
 		case Window::GAME:
 			break;
 		}
-
-		//w->initTextFirstMenu();
-		w->addBackgroundText();
 
 		w->update();
 

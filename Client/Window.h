@@ -38,6 +38,7 @@ public:
 
 	enum SceneState {
 		MAIN_MENU,
+		JOIN,
 		GAME,
 	};
 
@@ -53,7 +54,7 @@ private:
 
 	int mTurn = 1;
 
-	const unsigned int maxNameLength = 12;
+	const unsigned int maxNameLength = 15;
 
 	bool endGame = false;
 	bool hasEnterName = true;
