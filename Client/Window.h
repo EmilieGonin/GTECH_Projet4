@@ -31,6 +31,7 @@ public:
 
 	void Finito();
 	void initTextFirstMenu();
+	void addBackgroundText();
 	void menuNameEnter();
 	void changeMenuColor();
 	void checkTextClick();
@@ -60,6 +61,7 @@ private:
 	std::vector<sf::Shape*> mShapes;
 	std::vector<sf::Text*> mTexts;
 	std::vector<sf::Text*> mTextMenu;
+	std::vector<sf::RectangleShape*> mButton;
 
 	std::map<std::pair<int, int>, cell> mCells;
 

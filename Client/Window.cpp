@@ -47,6 +47,7 @@ void Window::update()
 			mWindow->draw(mEnterName);
 		}
 		for (auto& text : mTexts) mWindow->draw(*text);
+		for (auto& button : mButton) mWindow->draw(*button);
 		for (auto& text : mTextMenu) mWindow->draw(*text);
 		mWindow->display();
 	}
@@ -221,7 +222,7 @@ void Window::initTextFirstMenu()
 	text->setFont(mFont);
 	text->setString("Play");
 	text->setCharacterSize(50);
-	text->setPosition(300, 450);
+	text->setPosition(350, 520);
 	text->setFillColor(sf::Color::White);
 	mTextMenu.push_back(text);
 
@@ -230,7 +231,7 @@ void Window::initTextFirstMenu()
 	text->setFont(mFont);
 	text->setString("Join");
 	text->setCharacterSize(50);
-	text->setPosition(300, 550);
+	text->setPosition(150, 650);
 	text->setFillColor(sf::Color::White);
 	mTextMenu.push_back(text);
 
@@ -239,9 +240,37 @@ void Window::initTextFirstMenu()
 	text->setFont(mFont);
 	text->setString("Quit");
 	text->setCharacterSize(50);
-	text->setPosition(300, 600);
+	text->setPosition(550, 650);
 	text->setFillColor(sf::Color::White);
 	mTextMenu.push_back(text);
+}
+
+void Window::addBackgroundText()
+{
+	sf::RectangleShape* button = new sf::RectangleShape();
+
+	//Rectangle "Play"
+	button->setSize(sf::Vector2f(500.f, 100.f));
+	//button->setRadius(40.0);
+	button->setPosition(150, 500);
+	button->setFillColor(sf::Color(150, 50, 250));
+	mButton.push_back(button);
+
+	//Rectangle "Join"
+	button = new sf::RectangleShape();
+	button->setSize(sf::Vector2f(250.f, 100.f));
+	//button->setRadius(40.0);
+	button->setPosition(150, 650);
+	button->setFillColor(sf::Color(150, 50, 250));
+	mButton.push_back(button);
+
+	//Rectangle "Quit"
+	button = new sf::RectangleShape();
+	button->setSize(sf::Vector2f(250.f, 100.f));
+	//button->setRadius(40.0);
+	button->setPosition(500, 650);
+	button->setFillColor(sf::Color(150, 50, 250));
+	mButton.push_back(button);
 }
 
 void Window::menuNameEnter()
