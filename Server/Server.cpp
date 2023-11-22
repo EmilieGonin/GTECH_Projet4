@@ -111,6 +111,13 @@ void Server::listenClient()
 
 	printf("Listening for clients...\n");
 	WSAAsyncSelect(ListenSocket, hWnd, WM_SOCKET, FD_ACCEPT | FD_CLOSE);
+
+	MSG msg;
+	while (GetMessage(&msg, NULL, 0, 0))
+	{
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+	}
 }
 
 void Server::accepteClient(SOCKET client) {}

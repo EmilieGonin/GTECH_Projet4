@@ -11,8 +11,6 @@ DWORD WINAPI startClientServer(LPVOID lpParam)
 {
 	ServerClient serverClient;
 	serverClient.init();
-
-	std::cout << "Bonjour depuis le thread !" << std::endl;
 	return 0;
 }
 
@@ -20,8 +18,6 @@ DWORD WINAPI startWebServer(LPVOID lpParam)
 {
 	ServerWeb serverWeb;
 	serverWeb.init();
-
-	std::cout << "Bonjour depuis le thread !" << std::endl;
 	return 0;
 }
 
@@ -55,23 +51,14 @@ int main(int ac, char const* av[])
 		return 1;
 	}
 
-	MSG msg;
-	while (GetMessage(&msg, NULL, 0, 0))
-	{
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
-
-		//if (game->hasWin())
-	}
-
-	game->reset();
-	WSACleanup();
-	
 	WaitForSingleObject(hThreadClient, INFINITE);// Attendre la fin du thread
-	CloseHandle(hThreadClient);	// Fermer le handle du thread
-
 	WaitForSingleObject(hThreadWeb, INFINITE);// Attendre la fin du thread
+	
+	CloseHandle(hThreadClient);	// Fermer le handle du thread
 	CloseHandle(hThreadWeb);	// Fermer le handle du thread
+
+	WSACleanup();
+	game->reset();
 
 #ifdef _DEBUG
 	_CrtMemState memStateEnd, memStateDiff{};
