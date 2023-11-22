@@ -9,7 +9,7 @@ int main(int ac, char const* av[])
 	if (c.init() == 1)
 	{
 		printf("Error during client initialization.");
-		return 1;
+		//return 1;
 	}
 
 	//c.clientDisconnect();
@@ -30,6 +30,7 @@ int main(int ac, char const* av[])
 			break;
 		}*/
 		w->initTextFirstMenu();
+		w->addBackgroundText();
 
 		w->update();
 
