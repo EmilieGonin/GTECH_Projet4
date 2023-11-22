@@ -172,6 +172,10 @@ void Window::checkTextClick()
 				// Lance le jeu
 				changeScene(GAME);
 			}
+			else if (text->getString() == "Join")
+			{
+
+			}
 		}
 	}
 }
@@ -189,6 +193,8 @@ void Window::changeScene(SceneState newState)
 	{
 	case Window::MAIN_MENU:
 		initTextFirstMenu();
+		break;
+	case Window::JOIN:
 		break;
 	case Window::GAME:
 		break;
@@ -273,26 +279,6 @@ void Window::addBackgroundText()
 	button->setFillColor(sf::Color(150, 50, 250));
 	mButton.push_back(button);
 }
-
-//void Window::menuNameEnter()
-//{
-//	if (event.type == sf::Event::TextEntered && hasEnterName) {
-//		//R�cup�re les valeurs de la table ASCII
-//		if (event.text.unicode < 128) {
-//			if (event.text.unicode == 13) {
-//				hasEnterName = false;
-//			}
-//			else if (event.text.unicode == 8) {
-//				if (!mName.empty()) {
-//					mName.pop_back();
-//				}
-//			}
-//			else {
-//				mName += static_cast<char>(event.text.unicode);
-//			}
-//		}
-//	}
-//}
 
 void Window::menuNameEnter()
 {

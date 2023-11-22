@@ -38,6 +38,7 @@ public:
 
 	enum SceneState {
 		MAIN_MENU,
+		JOIN,
 		GAME,
 	};
 
