@@ -21,7 +21,7 @@ int main(int ac, char const* av[])
 	{
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
-		
+
 		switch (w->getCurrentScene())
 		{
 		case Window::MAIN_MENU:
