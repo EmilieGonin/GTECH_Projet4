@@ -31,14 +31,13 @@ public:
 
 	void Finito();
 	void initTextFirstMenu();
-	void initTextSecondMenu();
 	void menuNameEnter();
 	void changeMenuColor();
 	void checkTextClick();
 
 	enum SceneState {
 		MAIN_MENU,
-		NAME_MENU,
+		GAME,
 	};
 
 	void changeScene(SceneState newState);
@@ -67,13 +66,16 @@ private:
 	sf::Font mFont;
 	sf::Font mFontTitle;
 
+	void checkCollision(sf::Event);
+	void addPlayerShape(sf::Vector2f, std::string);
+
+	int mWidth = 800;
+	int mLength = 800;
 	std::string mName;
 
 	sf::Text mEnterName;
 
 	sf::Event event;
-	void checkCollision(sf::Event);
-	void addPlayerShape(sf::Vector2f, std::string);
 
 	SceneState currentScene;
 
