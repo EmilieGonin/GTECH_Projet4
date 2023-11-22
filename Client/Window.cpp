@@ -159,7 +159,32 @@ void Window::checkTextClick()
 				// Quitte le jeu
 				mWindow->close();
 			}
+
+			else if (text->getString() == "New Game")
+			{
+				changeScene(NAME_MENU);
+			}
 		}
+	}
+}
+
+void Window::changeScene(SceneState newState)
+{
+	mShapes.clear();
+	mTexts.clear();
+	mTextMenu.clear();
+	mCells.clear();
+
+	currentScene = newState;
+
+	switch (currentScene)
+	{
+	case Window::MAIN_MENU:
+		initTextFirstMenu();
+		break;
+	case Window::NAME_MENU:
+		initTextSecondMenu();
+		break;
 	}
 }
 
