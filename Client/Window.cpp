@@ -4,9 +4,9 @@ Window* Window::mInstance = nullptr;
 
 Window::Window()
 {
+	mWindow = new sf::RenderWindow(sf::VideoMode(mWidth, mLength), "Tic-tac-toe");
 	mSelectedCell = { -1, -1 };
 	mHasPlayed = false;
-	mWindow = new sf::RenderWindow(sf::VideoMode(800, 800), "Tic-tac-toe");
 }
 
 Window::~Window()
@@ -30,7 +30,7 @@ void Window::update()
 		if (event.type == sf::Event::MouseButtonReleased)
 		{
 			if (!hasSelectedCell()) checkCollision(event);
-			checkTextClick();
+			//checkTextClick();
 		}
 		menuNameEnter();
 	}
@@ -145,33 +145,26 @@ void Window::addPlayerShape(sf::Vector2f position, std::string player)
 	mTurn++;
 }
 
-void Window::checkTextClick()
+/*void Window::checkTextClick()
 {
-	// Récupère la position du clic de souris
+	// Rï¿½cupï¿½re la position du clic de souris
 	sf::Vector2f mousePosition = sf::Vector2f(sf::Mouse::getPosition(*mWindow));
 
-	// Parcours des textes pour vérifier si l'un d'eux a été cliqué
+	// Parcours des textes pour vï¿½rifier si l'un d'eux a ï¿½tï¿½ cliquï¿½
 	for (auto& text : mTextMenu)
 	{
-		// Récupère les limites de la zone occupée par le texte
+		// Rï¿½cupï¿½re les limites de la zone occupï¿½e par le texte
 		sf::FloatRect bounds = text->getGlobalBounds();
 
-		// Vérifie la collision avec la position du clic de souris
+		// Vï¿½rifie la collision avec la position du clic de souris
 		if (bounds.contains(mousePosition))
 		{
-			// Actions spécifiques au texte cliqué
+			// Actions spï¿½cifiques au texte cliquï¿½
 			if (text->getString() == "Quit")
 			{
 				// Quitte le jeu
 				mWindow->close();
 			}
-
-			else if (text->getString() == "New Game")
-			{
-				// Lance la seconde scène
-				changeScene(NAME_MENU);
-			}
-
 			else if (text->getString() == "Let's go!")
 			{
 				// Lance le jeu
@@ -179,9 +172,9 @@ void Window::checkTextClick()
 			}
 		}
 	}
-}
+}*/
 
-void Window::changeScene(SceneState newState)
+/*void Window::changeScene(SceneState newState)
 {
 	mShapes.clear();
 	mTexts.clear();
@@ -195,13 +188,10 @@ void Window::changeScene(SceneState newState)
 	case Window::MAIN_MENU:
 		initTextFirstMenu();
 		break;
-	case Window::NAME_MENU:
-		initTextSecondMenu();
-		break;
 	case Window::GAME:
 		break;
 	}
-}
+}*/
 
 void Window::initTextFirstMenu()
 {
@@ -215,16 +205,23 @@ void Window::initTextFirstMenu()
 	text->setFont(mFontTitle);
 	text->setString("Tic-Tac-Toe");
 	text->setCharacterSize(80);
-	text->setPosition(150, 100);
+	text->setPosition(mWidth / 5.3, mLength / 8);
 	text->setFillColor(sf::Color(31, 222, 190));
 	mTexts.push_back(text);
+
+	// Enter name text
+	mFont.loadFromFile("arial.ttf");
+	mEnterName.setFont(mFont);
+	mEnterName.setCharacterSize(40);
+	mEnterName.setPosition(mWidth / 4.7, mLength / 2.6);
+	mEnterName.setFillColor(sf::Color::White);
 
 	// New Game text
 	text = new sf::Text();
 	text->setFont(mFont);
-	text->setString("New Game");
+	text->setString("Play");
 	text->setCharacterSize(50);
-	text->setPosition(300, 300);
+	text->setPosition(300, 450);
 	text->setFillColor(sf::Color::White);
 	mTextMenu.push_back(text);
 
@@ -233,7 +230,7 @@ void Window::initTextFirstMenu()
 	text->setFont(mFont);
 	text->setString("Join");
 	text->setCharacterSize(50);
-	text->setPosition(300, 450);
+	text->setPosition(300, 550);
 	text->setFillColor(sf::Color::White);
 	mTextMenu.push_back(text);
 
@@ -247,30 +244,10 @@ void Window::initTextFirstMenu()
 	mTextMenu.push_back(text);
 }
 
-void Window::initTextSecondMenu()
-{
-	// Enter name text
-	mFont.loadFromFile("arial.ttf");
-	sf::Text* text = new sf::Text();
-	mEnterName.setFont(mFont);
-	mEnterName.setCharacterSize(40);
-	mEnterName.setPosition(200, 100);
-	mEnterName.setFillColor(sf::Color::White);
-
-	// Let's go text
-	mFont.loadFromFile("arial.ttf");
-	text = new sf::Text();
-	text->setFont(mFont);
-	text->setString("Let's go!");
-	text->setCharacterSize(40);
-	text->setPosition(300, 300);
-	text->setFillColor(sf::Color::White);
-	mTexts.push_back(text);
-}
-
 void Window::menuNameEnter()
 {
 	if (event.type == sf::Event::TextEntered && hasEnterName) {
+		//Rï¿½cupï¿½re les valeurs de la table ASCII
 		if (event.text.unicode < 128) {
 			if (event.text.unicode == 13) {
 				hasEnterName = false;
@@ -289,8 +266,10 @@ void Window::menuNameEnter()
 
 void Window::changeMenuColor()
 {
+	//Rï¿½cupï¿½re la position de la souris sur la fenï¿½tre
 	sf::Vector2f pos = sf::Vector2f(sf::Mouse::getPosition(*mWindow));
 
+	//Boucle sur notre texte
 	for (auto& text : mTextMenu)
 	{
 		auto gb = text->getGlobalBounds();
