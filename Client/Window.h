@@ -24,14 +24,12 @@ public:
 
 	void Finito();
 	void initTextFirstMenu();
-	void initTextSecondMenu();
 	void menuNameEnter();
 	void changeMenuColor();
 	void checkTextClick();
 
 	enum SceneState {
 		MAIN_MENU,
-		NAME_MENU,
 		GAME,
 	};
 
