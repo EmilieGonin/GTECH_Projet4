@@ -190,6 +190,7 @@ void Window::changeScene(SceneState newState)
 	{
 	case Window::MAIN_MENU:
 		initTextFirstMenu();
+		addBackgroundText();
 		break;
 	case Window::JOIN:
 		break;

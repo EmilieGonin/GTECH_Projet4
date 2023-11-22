@@ -32,9 +32,6 @@ int main(int ac, char const* av[])
 			break;
 		}
 
-		//w->initTextFirstMenu();
-		w->addBackgroundText();
-
 		w->update();
 
 		if (!w->hasPlayed() && w->hasSelectedCell())
