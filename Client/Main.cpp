@@ -30,7 +30,6 @@ int main(int ac, char const* av[])
 			break;
 		}*/
 		w->initTextFirstMenu();
-		}
 
 		w->update();
 
