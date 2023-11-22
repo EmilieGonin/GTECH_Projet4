@@ -7,9 +7,8 @@
 #include <windows.h>
 #include <iostream>
 
-DWORD WINAPI startClientServer(LPVOID lpParam) {
-	// Code à exécuter dans le thread
-
+DWORD WINAPI startClientServer(LPVOID lpParam) 
+{
 	ServerClient serverClient;
 	serverClient.init();
 
@@ -17,9 +16,8 @@ DWORD WINAPI startClientServer(LPVOID lpParam) {
 	return 0;
 }
 
-DWORD WINAPI startWebServer(LPVOID lpParam) {
-	// Code à exécuter dans le thread
-
+DWORD WINAPI startWebServer(LPVOID lpParam) 
+{
 	ServerWeb serverWeb;
 	serverWeb.init();
 
