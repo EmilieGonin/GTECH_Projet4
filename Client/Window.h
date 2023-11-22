@@ -53,6 +53,8 @@ private:
 
 	int mTurn = 1;
 
+	const unsigned int maxNameLength = 12;
+
 	bool endGame = false;
 	bool hasEnterName = true;
 

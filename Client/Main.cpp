@@ -14,7 +14,7 @@ int main(int ac, char const* av[])
 
 	//c.clientDisconnect();
 
-	//w->changeScene(Window::MAIN_MENU);
+	w->changeScene(Window::MAIN_MENU);
 
 	MSG msg;
 	while (GetMessage(&msg, NULL, 0, 0))
@@ -22,14 +22,15 @@ int main(int ac, char const* av[])
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 		
-		/*switch (w->getCurrentScene())
+		switch (w->getCurrentScene())
 		{
 		case Window::MAIN_MENU:
 			break;
 		case Window::GAME:
 			break;
-		}*/
-		w->initTextFirstMenu();
+		}
+
+		//w->initTextFirstMenu();
 		w->addBackgroundText();
 
 		w->update();
