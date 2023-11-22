@@ -239,7 +239,7 @@ void Window::initTextFirstMenu()
 	text->setFont(mFont);
 	text->setString("Join");
 	text->setCharacterSize(50);
-	text->setPosition(150, 650);
+	text->setPosition(200, 670);
 	text->setFillColor(sf::Color::White);
 	mTextMenu.push_back(text);
 
@@ -248,7 +248,7 @@ void Window::initTextFirstMenu()
 	text->setFont(mFont);
 	text->setString("Quit");
 	text->setCharacterSize(50);
-	text->setPosition(550, 650);
+	text->setPosition(500, 670);
 	text->setFillColor(sf::Color::White);
 	mTextMenu.push_back(text);
 }
@@ -266,7 +266,7 @@ void Window::addBackgroundText()
 
 	//Rectangle "Join"
 	button = new sf::RectangleShape();
-	button->setSize(sf::Vector2f(250.f, 100.f));
+	button->setSize(sf::Vector2f(200.f, 100.f));
 	//button->setRadius(40.0);
 	button->setPosition(150, 650);
 	button->setFillColor(sf::Color(150, 50, 250));
@@ -274,9 +274,9 @@ void Window::addBackgroundText()
 
 	//Rectangle "Quit"
 	button = new sf::RectangleShape();
-	button->setSize(sf::Vector2f(250.f, 100.f));
+	button->setSize(sf::Vector2f(200.f, 100.f));
 	//button->setRadius(40.0);
-	button->setPosition(500, 650);
+	button->setPosition(450, 650);
 	button->setFillColor(sf::Color(150, 50, 250));
 	mButton.push_back(button);
 }
