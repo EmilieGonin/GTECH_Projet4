@@ -190,7 +190,7 @@ void Window::initTextFirstMenu()
 	text->setFont(mFontTitle);
 	text->setString("Tic-Tac-Toe");
 	text->setCharacterSize(80);
-	text->setPosition(150, 100);
+	text->setPosition(mWidth / 5.3, mLength / 8);
 	text->setFillColor(sf::Color(31, 222, 190));
 	mTexts.push_back(text);
 
@@ -198,7 +198,7 @@ void Window::initTextFirstMenu()
 	text->setFont(mFont);
 	text->setString("New Game");
 	text->setCharacterSize(50);
-	text->setPosition(300, 300);
+	text->setPosition(mWidth / 2.6, mLength / 2.6);
 	text->setFillColor(sf::Color::White);
 	mTextMenu.push_back(text);
 

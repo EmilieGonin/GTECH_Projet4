@@ -62,10 +62,7 @@ private:
 
 	void checkCollision(sf::Event);
 	void addPlayerShape(sf::Vector2f);
-	int mTurn = 1;
-	bool endGame = false;
 
-	bool hasEnterName = true;
 	int mWidth = 800;
 	int mLength = 800;
 	std::string mName;
@@ -74,8 +71,6 @@ private:
 
 	sf::Event event;
 
-	void checkCollision(sf::Event);
-	void addPlayerShape(sf::Vector2f);
 
 	SceneState currentScene;
 };
