@@ -26,13 +26,14 @@ void Window::update()
 {
 	while (mWindow->pollEvent(event))
 	{
+		menuNameEnter();
+
 		if (event.type == sf::Event::Closed) mWindow->close();
 		if (event.type == sf::Event::MouseButtonReleased)
 		{
 			if (!hasSelectedCell() && !hasPlayed()) checkCollision(event);
-			//checkTextClick();
+			checkTextClick();
 		}
-		menuNameEnter();
 	}
 
 	changeMenuColor();
@@ -147,7 +148,7 @@ void Window::addPlayerShape(sf::Vector2f position, std::string player)
 	mTurn++;
 }
 
-/*void Window::checkTextClick()
+void Window::checkTextClick()
 {
 	// R�cup�re la position du clic de souris
 	sf::Vector2f mousePosition = sf::Vector2f(sf::Mouse::getPosition(*mWindow));
@@ -167,16 +168,16 @@ void Window::addPlayerShape(sf::Vector2f position, std::string player)
 				// Quitte le jeu
 				mWindow->close();
 			}
-			else if (text->getString() == "Let's go!")
+			else if (text->getString() == "Play")
 			{
 				// Lance le jeu
 				changeScene(GAME);
 			}
 		}
 	}
-}*/
+}
 
-/*void Window::changeScene(SceneState newState)
+void Window::changeScene(SceneState newState)
 {
 	mShapes.clear();
 	mTexts.clear();
@@ -193,7 +194,7 @@ void Window::addPlayerShape(sf::Vector2f position, std::string player)
 	case Window::GAME:
 		break;
 	}
-}*/
+}
 
 void Window::initTextFirstMenu()
 {
@@ -274,23 +275,49 @@ void Window::addBackgroundText()
 	mButton.push_back(button);
 }
 
+//void Window::menuNameEnter()
+//{
+//	if (event.type == sf::Event::TextEntered && hasEnterName) {
+//		//R�cup�re les valeurs de la table ASCII
+//		if (event.text.unicode < 128) {
+//			if (event.text.unicode == 13) {
+//				hasEnterName = false;
+//			}
+//			else if (event.text.unicode == 8) {
+//				if (!mName.empty()) {
+//					mName.pop_back();
+//				}
+//			}
+//			else {
+//				mName += static_cast<char>(event.text.unicode);
+//			}
+//		}
+//	}
+//}
+
 void Window::menuNameEnter()
 {
-	if (event.type == sf::Event::TextEntered && hasEnterName) {
-		//R�cup�re les valeurs de la table ASCII
-		if (event.text.unicode < 128) {
-			if (event.text.unicode == 13) {
-				hasEnterName = false;
-			}
-			else if (event.text.unicode == 8) {
-				if (!mName.empty()) {
-					mName.pop_back();
+	if (hasEnterName && event.type == sf::Event::TextEntered)
+	{
+		auto processInput = [&](char inputChar)
+			{
+				if (inputChar == 13) // Touche "Enter"
+				{
+					hasEnterName = false;
 				}
-			}
-			else {
-				mName += static_cast<char>(event.text.unicode);
-			}
-		}
+				else if (inputChar == 8) // Touche "Backspace"
+				{
+					if (!mName.empty())
+					{
+						mName.pop_back();
+					}
+				}
+				else if (inputChar < 128 && mName.length() < maxNameLength)
+				{
+					mName += static_cast<char>(inputChar);
+				}
+			};
+		processInput(event.text.unicode);
 	}
 }
 
