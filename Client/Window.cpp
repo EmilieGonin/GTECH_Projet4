@@ -4,6 +4,8 @@ Window* Window::mInstance = nullptr;
 
 Window::Window()
 {
+	mSelectedCell = { -1, -1 };
+	mHasPlayed = false;
 	mWindow = new sf::RenderWindow(sf::VideoMode(800, 800), "Tic-tac-toe");
 }
 
@@ -27,7 +29,7 @@ void Window::update()
 		if (event.type == sf::Event::Closed) mWindow->close();
 		if (event.type == sf::Event::MouseButtonReleased)
 		{
-			checkCollision(event);
+			if (!hasSelectedCell()) checkCollision(event);
 			checkTextClick();
 		}
 		menuNameEnter();
@@ -50,7 +52,7 @@ void Window::update()
 	}
 }
 
-void Window::initCells(std::map<std::pair<int, int>, int> cells)
+void Window::initCells(std::map<std::pair<int, int>, std::string> cells)
 {
 	//Init cells when client connect for the first time
 	int cellNumber = 9;
@@ -66,14 +68,26 @@ void Window::initCells(std::map<std::pair<int, int>, int> cells)
 		if (i % 2 == 0) shape->setFillColor(sf::Color::White);
 		else shape->setFillColor(sf::Color::Blue);
 
-		cell newCell = { shape, cells[{line, column}] };
+		cell newCell = { shape, {line, column}, cells[{line, column}] };
 		mCells[{line, column}] = newCell;
 
-		if (newCell.player != 0) addPlayerShape(shape->getPosition());
+		if (!newCell.player.empty()) addPlayerShape(shape->getPosition(), newCell.player);
 
 		line++;
 		if (i % 3 == 0) line = 0, column++;
 	}
+}
+
+void Window::resetTurn()
+{
+	mHasPlayed = false;
+	mSelectedCell = { -1, -1 };
+}
+
+std::pair<int, int> Window::play()
+{
+	mHasPlayed = true;
+	return mSelectedCell;
 }
 
 void Window::addShape(sf::Shape* shape)
@@ -85,7 +99,7 @@ void Window::addCell(std::pair<int, int> pos, sf::Shape* shape)
 {
 	struct cell newCell;
 	newCell.shape = shape;
-	newCell.player = 0;
+	newCell.player = "";
 
 	mCells[pos] = newCell;
 }
@@ -105,25 +119,26 @@ void Window::checkCollision(sf::Event e)
 
 		for (auto& cell : mCells)
 		{
-			if (cell.second.player != 0) continue; //If the shape has already been selected
+			if (!cell.second.player.empty()) continue; //If the shape has already been selected
 			sf::FloatRect bounds = cell.second.shape->getGlobalBounds();
 
 			if (bounds.contains(pos))
 			{
 				cell.second.player = mTurn % 2 == 0 ? 2 : 1; //Shape has now been selected
-				addPlayerShape(bounds.getPosition());
+				mSelectedCell = cell.second.pos;
+				addPlayerShape(bounds.getPosition(), cell.second.player);
 				return;
 			}
 		}
 	}
 }
 
-void Window::addPlayerShape(sf::Vector2f position)
+void Window::addPlayerShape(sf::Vector2f position, std::string player)
 {
 	sf::CircleShape* shape = new sf::CircleShape(75);
 	shape->setPosition(position);
 
-	if (mTurn % 2 == 0)shape->setFillColor(sf::Color::Green);
+	if (player == mPlayerId)shape->setFillColor(sf::Color::Green);
 	else shape->setFillColor(sf::Color::Red);
 
 	addShape(shape);

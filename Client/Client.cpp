@@ -76,7 +76,7 @@ int Client::initSocket()
 int Client::connectClientServer()
 {
 	printf("Connecting to server...\n");
-	if ((res = connect(ClientSocket, result->ai_addr, (int)result->ai_addrlen)) == SOCKET_ERROR)
+	if ((res = connect(ClientSocket, result->ai_addr, (int)result->ai_addrlen)) == (SOCKET_ERROR | INVALID_SOCKET))
 	{
 		printf("Unable to connect to server!\n");
 		freeaddrinfo(result);
@@ -163,7 +163,8 @@ LRESULT Client::HandleWindowMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 void Client::HandleReadEvent(WPARAM wParam)
 {
-	//printf("Read event\n" + wParam);
+	memset(recvbuf, 0, recvbuflen);
+	//TODO -> remove select to read header then body for size
 	iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
 	printf("Read event :\n %s\n", recvbuf);
 	handleJson(recvbuf);
@@ -193,11 +194,14 @@ void Client::handleJson(std::string dump)
 		if (error == 0)
 		{
 			window->initCells(json["Cells"]);
+			if (json["Player"] == mPlayerId) window->resetTurn();
 		}
 		break;
 	case 4: //Get cells and winner
 		break;
 	case 5: //Get session id
+		mPlayerId = json["Player"];
+		window->setPlayer(json["Player"]);
 		break;
 	default:
 		break;
