@@ -19,7 +19,7 @@ public:
 	void addCell(std::pair<int, int>, sf::Shape*);
 	void initCells(std::map<std::pair<int, int>, std::string>);
 	std::pair<int, int> play();
-	void resetTurn();
+	void resetTurn(bool);
 
 	inline void setPlayer(std::string playerId) { mPlayerId = playerId; };
 	inline std::string getPlayer() { return mPlayerId; };
