@@ -5,7 +5,7 @@ Game* Game::mInstance = nullptr;
 Game::Game()
 {
 	mWinner = 0;
-	mTurnPlayer = 1;
+	mTurnPlayer = "";
 	mTexture = new sf::Texture();
 }
 
@@ -31,7 +31,7 @@ void Game::init()
 		else shape->setFillColor(sf::Color::Blue);
 
 		mCellShapes[{line, column}] = shape;
-		mCells[{line, column}] = 0; //Init cells with no player
+		mCells[{line, column}] = ""; //Init cells with no player
 		line++;
 		if (i % 3 == 0) line = 0, column++;
 	}
@@ -64,7 +64,7 @@ bool Game::hasWin()
 	return false;
 }
 
-void Game::updateCells(std::pair<int, int> cell, int player)
+void Game::updateCells(std::pair<int, int> cell, std::string player)
 {
 	mTurnPlayer = player;
 	mCells[{cell.first, cell.second}] = player;
@@ -72,7 +72,7 @@ void Game::updateCells(std::pair<int, int> cell, int player)
 	sf::CircleShape* shape = new sf::CircleShape(75);
 	shape->setPosition(mCellShapes[{cell.first, cell.second}]->getPosition());
 
-	if (mTurnPlayer == 1) shape->setFillColor(sf::Color::Green);
+	if (mTurnPlayer == mPlayers[0]) shape->setFillColor(sf::Color::Green);
 	else shape->setFillColor(sf::Color::Red);
 
 	mShapes.push_back(shape);
@@ -94,5 +94,11 @@ void Game::createImage()
 
 void Game::changeTurn()
 {
-	mTurnPlayer = mTurnPlayer == 1 ? 2 : 1;
+	mTurnPlayer = mTurnPlayer == mPlayers[0] ? mPlayers[1] : mPlayers[0];
+}
+
+void Game::addPlayer(std::string playerId)
+{
+	if (mTurnPlayer.empty()) mTurnPlayer = playerId;
+	mPlayers.push_back(playerId);
 }

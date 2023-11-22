@@ -7,9 +7,6 @@
 #include <windows.h>
 #include <iostream>
 
-Game* game;
-
-
 DWORD WINAPI startClientServer(LPVOID lpParam) {
 	// Code à exécuter dans le thread
 
@@ -32,17 +29,17 @@ DWORD WINAPI startWebServer(LPVOID lpParam) {
 
 int main(int ac, char const* av[])
 {
-	HANDLE hThreadClient;
-	DWORD threadIdClient;
-	HANDLE hThreadWeb;
-	DWORD threadIdWeb;
-
 #ifdef _DEBUG
 	_CrtMemState memStateInit;
 	_CrtMemCheckpoint(&memStateInit);
 #endif
 
-	game = Game::Instance();
+	HANDLE hThreadClient;
+	DWORD threadIdClient;
+	HANDLE hThreadWeb;
+	DWORD threadIdWeb;
+
+	Game* game = Game::Instance();
 	game->init();
 	game->createImage();
 
@@ -78,6 +75,12 @@ int main(int ac, char const* av[])
 
 	game->reset();
 	WSACleanup();
+	
+	WaitForSingleObject(hThreadClient, INFINITE);// Attendre la fin du thread
+	CloseHandle(hThreadClient);	// Fermer le handle du thread
+
+	WaitForSingleObject(hThreadWeb, INFINITE);// Attendre la fin du thread
+	CloseHandle(hThreadWeb);	// Fermer le handle du thread
 
 #ifdef _DEBUG
 	_CrtMemState memStateEnd, memStateDiff{};
@@ -89,14 +92,6 @@ int main(int ac, char const* av[])
 		MessageBoxA(NULL, "MEMORY LEAKS", "DISCLAIMER", 0);
 	}
 #endif
-
-	
-	WaitForSingleObject(hThreadClient, INFINITE);// Attendre la fin du thread
-	CloseHandle(hThreadClient);	// Fermer le handle du thread
-
-	WaitForSingleObject(hThreadWeb, INFINITE);// Attendre la fin du thread
-	CloseHandle(hThreadWeb);	// Fermer le handle du thread
-
 
 	return 0;
 }

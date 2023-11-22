@@ -6,7 +6,8 @@
 
 struct cell {
 	sf::Shape* shape;
-	int player;
+	std::pair<int, int> pos;
+	std::string player;
 };
 
 class Window
@@ -16,11 +17,18 @@ public:
 	void update();
 	void addShape(sf::Shape*);
 	void addCell(std::pair<int, int>, sf::Shape*);
-	void initCells(std::map<std::pair<int, int>, int>);
+	void initCells(std::map<std::pair<int, int>, std::string>);
+	std::pair<int, int> play();
+	void resetTurn();
 
+	inline void setPlayer(std::string playerId) { mPlayerId = playerId; };
+	inline std::string getPlayer() { return mPlayerId; };
+	inline bool hasPlayed() { return mHasPlayed; };
+	inline bool hasSelectedCell() { return mSelectedCell.first != -1; };
 	inline std::map<std::pair<int, int>, struct cell> getCells() { return mCells; };
 	inline int getTurn() { return mTurn; };
 	inline bool isOpen() { return mWindow->isOpen(); };
+
 	void Finito();
 	void initTextFirstMenu();
 	void initTextSecondMenu();
@@ -28,26 +36,48 @@ public:
 	void changeMenuColor();
 	void checkTextClick();
 
+	enum SceneState {
+		MAIN_MENU,
+		NAME_MENU,
+	};
+
+	void changeScene(SceneState newState);
+
+	SceneState getCurrentScene() const { return currentScene; }
+
 private:
 	Window();
 	~Window();
+
 	static Window* mInstance;
+
+	int mTurn = 1;
+
+	bool endGame = false;
+	bool hasEnterName = true;
+
 	sf::RenderWindow* mWindow;
+
 	std::vector<sf::Shape*> mShapes;
 	std::vector<sf::Text*> mTexts;
 	std::vector<sf::Text*> mTextMenu;
-	std::map<std::pair<int, int>, struct cell> mCells;
+
+	std::map<std::pair<int, int>, cell> mCells;
+
 	sf::Font mFont;
 	sf::Font mFontTitle;
 
-	void checkCollision(sf::Event);
-	void addPlayerShape(sf::Vector2f);
-	int mTurn = 1;
-	bool endGame = false;
-
-	bool hasEnterName = true;
 	std::string mName;
-	sf::Text mEnterName;
-	sf::Event event;
 
+	sf::Text mEnterName;
+
+	sf::Event event;
+	void checkCollision(sf::Event);
+	void addPlayerShape(sf::Vector2f, std::string);
+
+	SceneState currentScene;
+
+	std::pair<int, int> mSelectedCell;
+	bool mHasPlayed;
+	std::string mPlayerId;
 };

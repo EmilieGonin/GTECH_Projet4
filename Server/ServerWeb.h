@@ -8,7 +8,7 @@
 class ServerWeb : public Server {
 private:
     void handleClient();
-    void accepteClient() override;
+    void accepteClient(SOCKET) override;
     std::string processHttpRequest();
     std::string imagePath = "game.png";
 
