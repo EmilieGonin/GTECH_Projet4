@@ -31,9 +31,9 @@ int main(int ac, char const* av[])
 			break;
 		case Window::NAME_MENU:
 			break;
+		case Window::GAME:
+			break;
 		}
-		//w->initTextFirstMenu();
-		//w->initTextSecondMenu();
 		w->update();
 	}
 	return 0;
