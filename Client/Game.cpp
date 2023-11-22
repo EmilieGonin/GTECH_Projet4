@@ -50,41 +50,41 @@ void Game::reset()
 
 void Game::update()
 {
-	mWindow->update();
-	if (hasWin()) mWindow->Finito();
+	/*mWindow->update();
+	if (hasWin()) mWindow->Finito();*/
 }
 
 bool Game::hasWin()
 {
-	std::map<std::pair<int, int>, struct cell> cells = mWindow->getCells();
-	int player = mWindow->getTurn() % 2 == 0 ? 1 : 2;
+	//std::map<std::pair<int, int>, struct cell> cells = mWindow->getCells();
+	//std::string player = mWindow->getTurn() % 2 == 0 ? 1 : 2;
 
-	for (size_t i = 0; i < 3; i++)
-	{
-		//Columns
-		if (cells[{i, 0}].player == player && cells[{i, 1}].player == player && cells[{i, 2}].player == player)
-		{
-			return true;
-		}
+	//for (size_t i = 0; i < 3; i++)
+	//{
+	//	//Columns
+	//	if (cells[{i, 0}].player == player && cells[{i, 1}].player == player && cells[{i, 2}].player == player)
+	//	{
+	//		return true;
+	//	}
 
 
-		//Lines
-		if (cells[{0, i}].player == player && cells[{1, i}].player == player && cells[{2, i}].player == player)
-		{
-			return true;
-		}
+	//	//Lines
+	//	if (cells[{0, i}].player == player && cells[{1, i}].player == player && cells[{2, i}].player == player)
+	//	{
+	//		return true;
+	//	}
 
-		//Diagonales
-		if (cells[{0, 0}].player == player && cells[{1, 1}].player == player && cells[{2, 2}].player == player)
-		{
-			return true;
-		}
+	//	//Diagonales
+	//	if (cells[{0, 0}].player == player && cells[{1, 1}].player == player && cells[{2, 2}].player == player)
+	//	{
+	//		return true;
+	//	}
 
-		if (cells[{0, 2}].player == player && cells[{1, 1}].player == player && cells[{2, 0}].player == player)
-		{
-			return true;
-		}
-	}
+	//	if (cells[{0, 2}].player == player && cells[{1, 1}].player == player && cells[{2, 0}].player == player)
+	//	{
+	//		return true;
+	//	}
+	//}
 
 	return false;
 }

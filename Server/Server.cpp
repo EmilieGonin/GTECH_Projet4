@@ -180,8 +180,10 @@ void Server::shutdownClient(SOCKET clientSocket)
 	// Attendre quelques instants pour permettre la fermeture propre du socket
 	std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
-	clientsPlayer.erase(std::remove_if(clientsPlayer.begin(), clientsPlayer.end(),
-		[clientSocket](SOCKET s) { return s == clientSocket; }), clientsPlayer.end());
+	mPlayers.erase(clientSocket);
+
+	//mPlayers.erase(std::remove_if(mPlayers.begin(), mPlayers.end(),
+		//[clientSocket](SOCKET s) { return s == clientSocket; }), mPlayers.end());
 
 	closesocket(clientSocket);
 
@@ -227,27 +229,22 @@ void Server::handleJson(std::string dump)
 	Game* game = Game::Instance();
 	json json = json::parse(dump);
 	int id = json["Id"];
-	int playerId = json["Player"];
+	std::string playerId = json["Player"];
 	std::pair<int, int> cell = json["Cell"];
 
 	switch (id)
 	{
 	case 1: //Play cell
 		//Check if it's player turn
-		if (game->getPlayerTurn() == playerId)
-		{
-			game->updateCells(cell, playerId);
-			response = JsonHandler(game->getCells());
-			sendJson(response.getDump());
-		}
-		else
-		{
-			response = JsonHandler(game->getCells(), true);
-			sendJson(response.getDump());
-		}
+	{
+		bool error = game->getPlayerTurn() != playerId;
+		if (!error) game->updateCells(cell, playerId);
+		response = JsonHandler(game->getCells(), game->getPlayerTurn(), error);
+		sendJson(response.getDump());
+	}
 		break;
 	case 2: //Get cells after reconnect
-		response = JsonHandler(game->getCells());
+		response = JsonHandler(game->getCells(), game->getPlayerTurn(), false);
 		sendJson(response.getDump());
 		break;
 	default:

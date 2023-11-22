@@ -2,18 +2,19 @@
 
 JsonHandler::JsonHandler() {}
 
-JsonHandler::JsonHandler(std::map<std::pair<int, int>, int> cells, bool error)
+JsonHandler::JsonHandler(std::map<std::pair<int, int>, std::string> cells, std::string player, bool error)
 {
 	mJson["ErrorCode"] = error ? -1 : 0;
 	mJson["JsonType"] = RESPONSE;
 	mJson["Id"] = 3;
+	mJson["Player"] = player;
 
 	if (!error) mJson["Cells"] = cells;
 
 	mDump = mJson.dump();
 }
 
-JsonHandler::JsonHandler(std::map<std::pair<int, int>, int> cells, int player)
+JsonHandler::JsonHandler(std::map<std::pair<int, int>, std::string> cells, std::string player)
 {
 	mJson["ErrorCode"] = 0;
 	mJson["JsonType"] = NOTIF;

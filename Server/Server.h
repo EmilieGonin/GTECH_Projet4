@@ -64,15 +64,13 @@ protected:
     virtual void init();
     HWND hWnd;
 
-    std::vector<SOCKET> clientsPlayer;
+    std::map<SOCKET, std::string> mPlayers;
     std::mutex clientsMutex; 
 
     static Server* pServer;
-
 
 public:
     Server();
     ~Server();
     void sendJson(std::string);
-
 };

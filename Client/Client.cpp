@@ -194,11 +194,14 @@ void Client::handleJson(std::string dump)
 		if (error == 0)
 		{
 			window->initCells(json["Cells"]);
+			if (json["Player"] == mPlayerId) window->resetTurn();
 		}
 		break;
 	case 4: //Get cells and winner
 		break;
 	case 5: //Get session id
+		mPlayerId = json["Player"];
+		window->setPlayer(json["Player"]);
 		break;
 	default:
 		break;

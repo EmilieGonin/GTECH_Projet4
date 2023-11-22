@@ -7,7 +7,7 @@
 struct cell {
 	sf::Shape* shape;
 	std::pair<int, int> pos;
-	int player;
+	std::string player;
 };
 
 class Window
@@ -17,9 +17,12 @@ public:
 	void update();
 	void addShape(sf::Shape*);
 	void addCell(std::pair<int, int>, sf::Shape*);
-	void initCells(std::map<std::pair<int, int>, int>);
+	void initCells(std::map<std::pair<int, int>, std::string>);
 	std::pair<int, int> play();
+	void resetTurn();
 
+	inline void setPlayer(std::string playerId) { mPlayerId = playerId; };
+	inline std::string getPlayer() { return mPlayerId; };
 	inline bool hasPlayed() { return mHasPlayed; };
 	inline bool hasSelectedCell() { return mSelectedCell.first != -1; };
 	inline std::map<std::pair<int, int>, struct cell> getCells() { return mCells; };
@@ -59,7 +62,7 @@ private:
 	std::vector<sf::Text*> mTexts;
 	std::vector<sf::Text*> mTextMenu;
 
-	std::map<std::pair<int, int>, struct cell> mCells;
+	std::map<std::pair<int, int>, cell> mCells;
 
 	sf::Font mFont;
 	sf::Font mFontTitle;
@@ -70,10 +73,11 @@ private:
 
 	sf::Event event;
 	void checkCollision(sf::Event);
-	void addPlayerShape(sf::Vector2f);
+	void addPlayerShape(sf::Vector2f, std::string);
 
 	SceneState currentScene;
 
 	std::pair<int, int> mSelectedCell;
 	bool mHasPlayed;
+	std::string mPlayerId;
 };

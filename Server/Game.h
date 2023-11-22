@@ -9,14 +9,15 @@ public:
 	void init();
 	void reset();
 	bool hasWin();
-	void updateCells(std::pair<int, int>, int);
+	void updateCells(std::pair<int, int>, std::string);
 	void createImage();
 	void changeTurn();
+	void addPlayer(std::string);
 
-	inline int getPlayerTurn() { return mTurnPlayer; };
+	inline std::string getPlayerTurn() { return mTurnPlayer; };
 	inline int getWinner() { return mWinner; };
 	inline bool hasWinner() { return mWinner != 0; };
-	inline std::map<std::pair<int, int>, int> getCells() { return mCells; };
+	inline std::map<std::pair<int, int>, std::string> getCells() { return mCells; };
 	inline std::map<std::pair<int, int>, sf::Shape*> getShapes() { return mCellShapes; };
 
 private:
@@ -24,10 +25,11 @@ private:
 	static Game* mInstance;
 
 	//PlayerId for each game cell
-	std::map<std::pair<int, int>, int> mCells;
+	std::map<std::pair<int, int>, std::string> mCells;
 	std::map<std::pair<int, int>, sf::Shape*> mCellShapes;
 	std::vector<sf::Shape*> mShapes;
 	sf::Texture* mTexture;
 	int mWinner;
-	int mTurnPlayer;
+	std::string mTurnPlayer;
+	std::vector<std::string> mPlayers;
 };
