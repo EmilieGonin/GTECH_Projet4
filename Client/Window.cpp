@@ -251,7 +251,6 @@ void Window::initTextSecondMenu()
 	text->setPosition(300, 300);
 	text->setFillColor(sf::Color::White);
 	mTexts.push_back(text);
-
 }
 
 void Window::menuNameEnter()

@@ -71,4 +71,5 @@ private:
 	void addPlayerShape(sf::Vector2f);
 
 	SceneState currentScene;
+
 };
