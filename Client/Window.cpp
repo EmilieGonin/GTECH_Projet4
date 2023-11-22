@@ -29,7 +29,7 @@ void Window::update()
 		if (event.type == sf::Event::Closed) mWindow->close();
 		if (event.type == sf::Event::MouseButtonReleased)
 		{
-			if (!hasSelectedCell()) checkCollision(event);
+			if (!hasSelectedCell() && !hasPlayed()) checkCollision(event);
 			//checkTextClick();
 		}
 		menuNameEnter();
@@ -79,9 +79,9 @@ void Window::initCells(std::map<std::pair<int, int>, std::string> cells)
 	}
 }
 
-void Window::resetTurn()
+void Window::resetTurn(bool canPlay)
 {
-	mHasPlayed = false;
+	mHasPlayed = !canPlay;
 	mSelectedCell = { -1, -1 };
 }
 
