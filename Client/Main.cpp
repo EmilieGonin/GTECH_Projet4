@@ -26,6 +26,13 @@ int main(int ac, char const* av[])
 		//w->initTextFirstMenu();
 		//w->initTextSecondMenu();
 		w->update();
+
+		if (!w->hasPlayed() && w->hasSelectedCell())
+		{
+			//TODO -> add playerId
+			JsonHandler j(w->play(), 0);
+			c.clientSendData(j.getDump());
+		}
 	}
 
 	return 0;

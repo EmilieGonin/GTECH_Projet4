@@ -163,7 +163,8 @@ LRESULT Client::HandleWindowMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 void Client::HandleReadEvent(WPARAM wParam)
 {
-	//printf("Read event\n" + wParam);
+	memset(recvbuf, 0, recvbuflen);
+	//TODO -> remove select to read header then body for size
 	iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
 	printf("Read event :\n %s\n", recvbuf);
 	handleJson(recvbuf);

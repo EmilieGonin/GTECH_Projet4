@@ -6,6 +6,7 @@
 
 struct cell {
 	sf::Shape* shape;
+	std::pair<int, int> pos;
 	int player;
 };
 
@@ -17,7 +18,10 @@ public:
 	void addShape(sf::Shape*);
 	void addCell(std::pair<int, int>, sf::Shape*);
 	void initCells(std::map<std::pair<int, int>, int>);
+	std::pair<int, int> play();
 
+	inline bool hasPlayed() { return mHasPlayed; };
+	inline bool hasSelectedCell() { return mSelectedCell.first != -1; };
 	inline std::map<std::pair<int, int>, struct cell> getCells() { return mCells; };
 	inline int getTurn() { return mTurn; };
 	inline bool isOpen() { return mWindow->isOpen(); };
@@ -50,4 +54,6 @@ private:
 	sf::Text mEnterName;
 	sf::Event event;
 
+	std::pair<int, int> mSelectedCell;
+	bool mHasPlayed;
 };

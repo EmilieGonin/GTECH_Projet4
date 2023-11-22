@@ -7,7 +7,8 @@ JsonHandler::JsonHandler(std::map<std::pair<int, int>, int> cells, bool error)
 	mJson["ErrorCode"] = error ? -1 : 0;
 	mJson["JsonType"] = RESPONSE;
 	mJson["Id"] = 3;
-	mJson["Cells"] = cells;
+
+	if (!error) mJson["Cells"] = cells;
 
 	mDump = mJson.dump();
 }

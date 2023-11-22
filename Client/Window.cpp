@@ -4,6 +4,8 @@ Window* Window::mInstance = nullptr;
 
 Window::Window()
 {
+	mSelectedCell = { -1, -1 };
+	mHasPlayed = false;
 	mWindow = new sf::RenderWindow(sf::VideoMode(800, 800), "Tic-tac-toe");
 }
 
@@ -27,7 +29,7 @@ void Window::update()
 		if (event.type == sf::Event::Closed) mWindow->close();
 		if (event.type == sf::Event::MouseButtonReleased)
 		{
-			checkCollision(event);
+			if (!hasSelectedCell()) checkCollision(event);
 			checkTextClick();
 		}
 		menuNameEnter();
@@ -66,7 +68,7 @@ void Window::initCells(std::map<std::pair<int, int>, int> cells)
 		if (i % 2 == 0) shape->setFillColor(sf::Color::White);
 		else shape->setFillColor(sf::Color::Blue);
 
-		cell newCell = { shape, cells[{line, column}] };
+		cell newCell = { shape, {line, column}, cells[{line, column}] };
 		mCells[{line, column}] = newCell;
 
 		if (newCell.player != 0) addPlayerShape(shape->getPosition());
@@ -74,6 +76,12 @@ void Window::initCells(std::map<std::pair<int, int>, int> cells)
 		line++;
 		if (i % 3 == 0) line = 0, column++;
 	}
+}
+
+std::pair<int, int> Window::play()
+{
+	mHasPlayed = true;
+	return mSelectedCell;
 }
 
 void Window::addShape(sf::Shape* shape)
@@ -111,6 +119,7 @@ void Window::checkCollision(sf::Event e)
 			if (bounds.contains(pos))
 			{
 				cell.second.player = mTurn % 2 == 0 ? 2 : 1; //Shape has now been selected
+				mSelectedCell = cell.second.pos;
 				addPlayerShape(bounds.getPosition());
 				return;
 			}

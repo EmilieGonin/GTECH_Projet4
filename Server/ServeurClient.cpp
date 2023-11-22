@@ -25,6 +25,7 @@ void ServerClient::accepteClient()
 		JsonHandler j(sessionID);
 		printf("Sending session id : %s\n", sessionID.c_str());
 		send(ClientSocket, j.getDump().c_str(), j.getDump().size(), 0);
+		Sleep(1000);
 
 		//std::lock_guard<std::mutex> lock(clientsMutex);
 		if (clientsPlayer.size() < 2)
