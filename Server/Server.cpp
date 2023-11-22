@@ -55,7 +55,7 @@ void Server::initWSA()
 	// Initialize Winsock
 	iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
 	if (iResult != 0) {
-		printf("WSAStartup failed with error: %d\n", iResult);
+		printf("%s WSAStartup failed with error: %d\n", mName.c_str(), iResult);
 	}
 
 	ZeroMemory(&hints, sizeof(hints));
@@ -69,7 +69,7 @@ void Server::initSocket()
 	// Resolve the server address and port
 	iResult = getaddrinfo(NULL, mPort.c_str(), &hints, &result);
 	if (iResult != 0) {
-		printf("getaddrinfo failed with error: %d\n", iResult);
+		printf("%s getaddrinfo failed with error: %d\n", mName.c_str(), iResult);
 		WSACleanup();
 		return;
 	}
@@ -77,13 +77,13 @@ void Server::initSocket()
 	// Create a SOCKET for the server to listen for client connections.
 	ListenSocket = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
 	if (ListenSocket == INVALID_SOCKET) {
-		printf("socket failed with error: %ld\n", WSAGetLastError());
+		printf("%s socket failed with error: %ld\n", mName.c_str(), WSAGetLastError());
 		freeaddrinfo(result);
 		WSACleanup();
 		return;
 	}
 
-	printf("Socket initialized\n");
+	printf("%s Socket initialized\n", mName.c_str());
 }
 
 
@@ -91,25 +91,25 @@ void Server::listenClient()
 {
 	iResult = bind(ListenSocket, result->ai_addr, static_cast<int>(result->ai_addrlen));
 	if (iResult == SOCKET_ERROR) {
-		printf("bind failed with error: %d\n", WSAGetLastError());
+		printf("%s bind failed with error: %d\n", mName.c_str(), WSAGetLastError());
 		freeaddrinfo(result);
 		closesocket(ListenSocket);
 		WSACleanup();
 		return;
 	}
-	printf("Bind successful.\n");
+	printf("%s Bind successful.\n", mName.c_str());
 
 	freeaddrinfo(result);
 
 	iResult = listen(ListenSocket, SOMAXCONN);
 	if (iResult == SOCKET_ERROR) {
-		printf("listen failed with error: %d\n", WSAGetLastError());
+		printf("%s listen failed with error: %d\n", mName.c_str(), WSAGetLastError());
 		closesocket(ListenSocket);
 		WSACleanup();
 		return;
 	}
 
-	printf("Listening for clients...\n");
+	printf("%s Listening for clients...\n", mName.c_str());
 	WSAAsyncSelect(ListenSocket, hWnd, WM_SOCKET, FD_ACCEPT | FD_CLOSE);
 
 	MSG msg;
@@ -180,7 +180,7 @@ void Server::shutdownClient(SOCKET clientSocket)
 {
 	iResult = shutdown(clientSocket, SD_SEND);
 	if (iResult == SOCKET_ERROR) {
-		printf("shutdown failed with error: %d\n", WSAGetLastError());
+		printf("%s shutdown failed with error: %d\n", mName.c_str(), WSAGetLastError());
 		closesocket(clientSocket);
 		WSACleanup();
 	}
@@ -210,7 +210,7 @@ std::string Server::generateSessionID() const {
 void Server::HandleReadEvent(WPARAM socket)
 {
 	iResult = recv(socket, recvbuf, recvbuflen, 0);
-	printf("Read event :\n %s\n", recvbuf);
+	printf("%s Read event :\n %s\n", mName.c_str(), recvbuf);
 	handleJson(socket, recvbuf);
 }
 
