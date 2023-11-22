@@ -182,10 +182,7 @@ void Window::checkTextClick()
 
 void Window::changeScene(SceneState newState)
 {
-	mShapes.clear();
-	mTexts.clear();
-	mTextMenu.clear();
-	mCells.clear();
+	mWindow->clear();
 
 	currentScene = newState;
 
@@ -199,6 +196,8 @@ void Window::changeScene(SceneState newState)
 	case Window::GAME:
 		break;
 	}
+
+	mWindow->display();
 }
 
 void Window::initTextFirstMenu()
