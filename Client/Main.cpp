@@ -17,16 +17,24 @@ int main(int ac, char const* av[])
 	//c.clientSendData(j.getDump());
 	//c.clientDisconnect();
 
+	w->changeScene(Window::MAIN_MENU);
+
 	MSG msg;
 	while (GetMessage(&msg, NULL, 0, 0))
 	{
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 		
-		w->initTextFirstMenu();
+		switch (w->getCurrentScene())
+		{
+		case Window::MAIN_MENU:
+			break;
+		case Window::NAME_MENU:
+			break;
+		}
+		//w->initTextFirstMenu();
 		//w->initTextSecondMenu();
 		w->update();
 	}
-
 	return 0;
 }
