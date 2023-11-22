@@ -55,6 +55,7 @@ void Window::update()
 
 void Window::initCells(std::map<std::pair<int, int>, std::string> cells)
 {
+	mCells.clear();
 	//Init cells when client connect for the first time
 	int cellNumber = 9;
 	int cellSize = 150;

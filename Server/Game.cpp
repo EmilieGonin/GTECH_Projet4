@@ -48,17 +48,19 @@ void Game::reset()
 
 bool Game::hasWin()
 {
+	std::string previousPlayer = mTurnPlayer == mPlayers[0] ? mPlayers[1] : mPlayers[0];
+
 	for (size_t i = 0; i < 3; i++)
 	{
 		//Columns
-		if (mCells[{i, 0}] == mTurnPlayer && mCells[{i, 1}] == mTurnPlayer && mCells[{i, 2}] == mTurnPlayer) return true;
+		if (mCells[{i, 0}] == previousPlayer && mCells[{i, 1}] == previousPlayer && mCells[{i, 2}] == previousPlayer) return true;
 
 		//Lines
-		if (mCells[{0, i}] == mTurnPlayer && mCells[{1, i}] == mTurnPlayer && mCells[{2, i}] == mTurnPlayer) return true;
+		if (mCells[{0, i}] == previousPlayer && mCells[{1, i}] == previousPlayer && mCells[{2, i}] == previousPlayer) return true;
 
 		//Diagonales
-		if (mCells[{0, 0}] == mTurnPlayer && mCells[{1, 1}] == mTurnPlayer && mCells[{2, 2}] == mTurnPlayer) return true;
-		if (mCells[{0, 2}] == mTurnPlayer && mCells[{1, 1}] == mTurnPlayer && mCells[{2, 0}] == mTurnPlayer) return true;
+		if (mCells[{0, 0}] == previousPlayer && mCells[{1, 1}] == previousPlayer && mCells[{2, 2}] == previousPlayer) return true;
+		if (mCells[{0, 2}] == previousPlayer && mCells[{1, 1}] == previousPlayer && mCells[{2, 0}] == previousPlayer) return true;
 	}
 
 	return false;

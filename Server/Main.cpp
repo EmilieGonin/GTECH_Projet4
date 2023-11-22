@@ -61,14 +61,7 @@ int main(int ac, char const* av[])
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 
-		if (game->hasWin())
-		{
-			//Send winner
-			//j = JsonHandler(game->getCells(), game->getWinner());
-			//serverClient.sendJson(j.getDump());
-
-			//TODO->close window
-		}
+		//if (game->hasWin())
 	}
 
 	game->reset();

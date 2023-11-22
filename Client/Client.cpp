@@ -198,6 +198,8 @@ void Client::handleJson(std::string dump)
 		}
 		break;
 	case 4: //Get cells and winner
+		window->initCells(json["Cells"]);
+		//TODO -> show winner
 		break;
 	case 5: //Get session id
 		mPlayerId = json["Player"];
