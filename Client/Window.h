@@ -46,8 +46,9 @@ private:
 	bool endGame = false;
 
 	bool hasEnterName = true;
+	int mWidth = 800;
+	int mLength = 800;
 	std::string mName;
 	sf::Text mEnterName;
 	sf::Event event;
-
 };

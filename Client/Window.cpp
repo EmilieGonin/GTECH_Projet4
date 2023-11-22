@@ -4,7 +4,7 @@ Window* Window::mInstance = nullptr;
 
 Window::Window()
 {
-	mWindow = new sf::RenderWindow(sf::VideoMode(800, 800), "Tic-tac-toe");
+	mWindow = new sf::RenderWindow(sf::VideoMode(mWidth, mLength), "Tic-tac-toe");
 }
 
 Window::~Window()
@@ -217,6 +217,7 @@ void Window::initTextSecondMenu()
 void Window::menuNameEnter()
 {
 	if (event.type == sf::Event::TextEntered && hasEnterName) {
+		//Récupère les valeurs de la table ASCII
 		if (event.text.unicode < 128) {
 			if (event.text.unicode == 13) {
 				hasEnterName = false;
@@ -235,8 +236,10 @@ void Window::menuNameEnter()
 
 void Window::changeMenuColor()
 {
+	//Récupère la position de la souris sur la fenêtre
 	sf::Vector2f pos = sf::Vector2f(sf::Mouse::getPosition(*mWindow));
 
+	//Boucle sur notre texte
 	for (auto& text : mTextMenu)
 	{
 		auto gb = text->getGlobalBounds();

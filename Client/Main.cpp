@@ -9,7 +9,7 @@ int main(int ac, char const* av[])
 	if (c.init() == 1)
 	{
 		printf("Error during client initialization.");
-		return 1;
+		//return 1;
 	}
 
 	//std::pair<int, int> cell = { 0, 0 };
@@ -23,7 +23,7 @@ int main(int ac, char const* av[])
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 		
-		//w->initTextFirstMenu();
+		w->initTextFirstMenu();
 		//w->initTextSecondMenu();
 		w->update();
 	}
