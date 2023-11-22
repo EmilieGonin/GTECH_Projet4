@@ -168,7 +168,14 @@ void Window::checkTextClick()
 
 			else if (text->getString() == "New Game")
 			{
+				// Lance la seconde scène
 				changeScene(NAME_MENU);
+			}
+
+			else if (text->getString() == "Let's go!")
+			{
+				// Lance le jeu
+				changeScene(GAME);
 			}
 		}
 	}
@@ -191,6 +198,8 @@ void Window::changeScene(SceneState newState)
 	case Window::NAME_MENU:
 		initTextSecondMenu();
 		break;
+	case Window::GAME:
+		break;
 	}
 }
 
@@ -201,6 +210,7 @@ void Window::initTextFirstMenu()
 
 	sf::Vector2i localPosition = sf::Mouse::getPosition(*mWindow);
 
+	// Tic-Tac-Toe text
 	sf::Text* text = new sf::Text();
 	text->setFont(mFontTitle);
 	text->setString("Tic-Tac-Toe");
@@ -209,6 +219,7 @@ void Window::initTextFirstMenu()
 	text->setFillColor(sf::Color(31, 222, 190));
 	mTexts.push_back(text);
 
+	// New Game text
 	text = new sf::Text();
 	text->setFont(mFont);
 	text->setString("New Game");
@@ -217,6 +228,7 @@ void Window::initTextFirstMenu()
 	text->setFillColor(sf::Color::White);
 	mTextMenu.push_back(text);
 
+	// Join text
 	text = new sf::Text();
 	text->setFont(mFont);
 	text->setString("Join");
@@ -225,6 +237,7 @@ void Window::initTextFirstMenu()
 	text->setFillColor(sf::Color::White);
 	mTextMenu.push_back(text);
 
+	// Quit text
 	text = new sf::Text();
 	text->setFont(mFont);
 	text->setString("Quit");
@@ -236,6 +249,7 @@ void Window::initTextFirstMenu()
 
 void Window::initTextSecondMenu()
 {
+	// Enter name text
 	mFont.loadFromFile("arial.ttf");
 	sf::Text* text = new sf::Text();
 	mEnterName.setFont(mFont);
@@ -243,6 +257,7 @@ void Window::initTextSecondMenu()
 	mEnterName.setPosition(200, 100);
 	mEnterName.setFillColor(sf::Color::White);
 
+	// Let's go text
 	mFont.loadFromFile("arial.ttf");
 	text = new sf::Text();
 	text->setFont(mFont);
@@ -251,7 +266,6 @@ void Window::initTextSecondMenu()
 	text->setPosition(300, 300);
 	text->setFillColor(sf::Color::White);
 	mTexts.push_back(text);
-
 }
 
 void Window::menuNameEnter()

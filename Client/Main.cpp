@@ -12,9 +12,6 @@ int main(int ac, char const* av[])
 		return 1;
 	}
 
-	//std::pair<int, int> cell = { 0, 0 };
-	//JsonHandler j(cell, 1);
-	//c.clientSendData(j.getDump());
 	//c.clientDisconnect();
 
 	//w->changeScene(Window::MAIN_MENU);
@@ -25,15 +22,16 @@ int main(int ac, char const* av[])
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 		
-		/*switch (w->getCurrentScene())
+		switch (w->getCurrentScene())
 		{
 		case Window::MAIN_MENU:
 			break;
 		case Window::NAME_MENU:
 			break;
-		}*/
-		//w->initTextFirstMenu();
-		//w->initTextSecondMenu();
+		case Window::GAME:
+			break;
+		}
+
 		w->update();
 
 		if (!w->hasPlayed() && w->hasSelectedCell())
