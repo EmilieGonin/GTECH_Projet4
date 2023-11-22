@@ -11,7 +11,7 @@ Server* Server::pServer = nullptr;
 
 void Server::init()
 {
-	initHWND();
+	//initHWND();
 	initWSA();
 	initSocket();
 	listenClient();
@@ -24,29 +24,30 @@ void Server::init()
 
 int Server::initHWND()
 {
-	WNDCLASS wc = { 0 };
-	wc.lpfnWndProc = WindowProc;
-	wc.hInstance = GetModuleHandle(NULL);
-	wc.lpszClassName = L"AsyncSelectWindowClass";
-
-	if (!RegisterClass(&wc)) {
-		printf("RegisterClass failed: %d\n", GetLastError());
-		return 1;
-	}
-
-	hWnd = CreateWindowEx(0, L"AsyncSelectWindowClass", L"AsyncSelectWindow", 0, 0, 0, 0, 0, HWND_MESSAGE, NULL, GetModuleHandle(NULL), NULL);
-	if (hWnd == NULL) {
-		printf("CreateWindowEx failed: %d\n", GetLastError());
-		return 1;
-	}
-
-	SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
-
-	ShowWindow(hWnd, SW_NORMAL);
-	UpdateWindow(hWnd);
-	pServer = reinterpret_cast<Server*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
-
-	printf("HWND created\n");
+	//WNDCLASS wc = { 0 };
+	//wc.lpfnWndProc = WindowProc;
+	//wc.hInstance = GetModuleHandle(NULL);
+	//wc.lpszClassName = L"AsyncSelectWindowClass";
+	//
+	//if (!RegisterClass(&wc)) {
+	//	printf("RegisterClass failed: %d\n", GetLastError());
+	//	return 1;
+	//}
+	//
+	//hWnd = CreateWindowEx(0, L"AsyncSelectWindowClass", L"AsyncSelectWindow", 0, 0, 0, 0, 0, HWND_MESSAGE, NULL, GetModuleHandle(NULL), NULL);
+	//if (hWnd == NULL) {
+	//	printf("CreateWindowEx failed: %d\n", GetLastError());
+	//	return 1;
+	//}
+	//
+	//SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
+	//
+	//ShowWindow(hWnd, SW_NORMAL);
+	//UpdateWindow(hWnd);
+	//pServer = reinterpret_cast<Server*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
+	//
+	//printf("HWND created\n");
+	return 1;
 }
 
 void Server::initWSA()

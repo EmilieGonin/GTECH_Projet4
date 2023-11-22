@@ -18,14 +18,14 @@ int Client::initHWND()
 	WNDCLASS wc = { 0 };
 	wc.lpfnWndProc = WindowProc;
 	wc.hInstance = GetModuleHandle(NULL);
-	wc.lpszClassName = L"AsyncSelectWindowClass";
+	wc.lpszClassName = L"AsyncSelectWindowClassC";
 
 	if (!RegisterClass(&wc)) {
 		printf("RegisterClass failed: %d\n", GetLastError());
 		return 1;
 	}
 
-	hWnd = CreateWindowEx(0, L"AsyncSelectWindowClass", L"AsyncSelectWindow", 0, 0, 0, 0, 0, HWND_MESSAGE, NULL, GetModuleHandle(NULL), NULL);
+	hWnd = CreateWindowEx(0, L"AsyncSelectWindowClassC", L"AsyncSelectWindowC", 0, 0, 0, 0, 0, HWND_MESSAGE, NULL, GetModuleHandle(NULL), NULL);
 	if (hWnd == NULL) {
 		printf("CreateWindowEx failed: %d\n", GetLastError());
 		return 1;
@@ -149,7 +149,7 @@ LRESULT Client::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) /
 		default:
 			break;
 		}
-		return 0; // Indique que le message a été traité
+		return 0; // Indique que le message a ï¿½tï¿½ traitï¿½
 	}
 	}
 

@@ -5,6 +5,34 @@ ServerWeb::ServerWeb() { };
 void ServerWeb::init()
 {
 	mPort = "8888";
+
+
+	WNDCLASS wcb = { 0 };
+	wcb.lpfnWndProc = WindowProc;
+	wcb.hInstance = GetModuleHandle(NULL);
+	wcb.lpszClassName = L"AsyncSelectWindowClassB";
+
+
+
+	if (!RegisterClass(&wcb)) {
+		printf("RegisterClassB failed: %d\n", GetLastError());
+		return;
+	}
+
+	hWnd = CreateWindowEx(0, L"AsyncSelectWindowClassB", L"AsyncSelectWindowB", 0, 0, 0, 0, 0, HWND_MESSAGE, NULL, GetModuleHandle(NULL), NULL);
+	if (hWnd == NULL) {
+		printf("CreateWindowEx failed: %d\n", GetLastError());
+		return;
+	}
+
+	SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
+
+	ShowWindow(hWnd, SW_NORMAL);
+	UpdateWindow(hWnd);
+	pServer = reinterpret_cast<Server*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
+
+	printf("HWND created\n");
+
 	Server::init();
 }
 

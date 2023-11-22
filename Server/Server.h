@@ -37,7 +37,6 @@ private:
     virtual void accepteClient(SOCKET);
     void handleJson(SOCKET, std::string dump);
 
-    static LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
     LRESULT HandleWindowMessage(UINT uMsg, WPARAM wParam, LPARAM lParam);
 
     void HandleReadEvent(WPARAM wParam);
@@ -53,6 +52,7 @@ protected:
     std::string mPort;
     std::string generateSessionID() const;
 
+    static LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
     int iResult;
     int iSendResult;
     int recvbuflen = DEFAULT_BUFLEN;
@@ -65,7 +65,6 @@ protected:
     HWND hWnd;
 
     std::map<SOCKET, std::string> mPlayers;
-    std::mutex clientsMutex; 
 
     static Server* pServer;
 

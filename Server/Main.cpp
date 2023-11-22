@@ -7,9 +7,8 @@
 #include <windows.h>
 #include <iostream>
 
-DWORD WINAPI startClientServer(LPVOID lpParam) {
-	// Code à exécuter dans le thread
-
+DWORD WINAPI startClientServer(LPVOID lpParam) 
+{
 	ServerClient serverClient;
 	serverClient.init();
 
@@ -17,9 +16,8 @@ DWORD WINAPI startClientServer(LPVOID lpParam) {
 	return 0;
 }
 
-DWORD WINAPI startWebServer(LPVOID lpParam) {
-	// Code à exécuter dans le thread
-
+DWORD WINAPI startWebServer(LPVOID lpParam) 
+{
 	ServerWeb serverWeb;
 	serverWeb.init();
 
@@ -51,7 +49,7 @@ int main(int ac, char const* av[])
 	}
 	
 	// Création du thread WebServeur
-	hThreadWeb = CreateThread(NULL, 0, startClientServer, NULL, 0, &threadIdWeb);
+	hThreadWeb = CreateThread(NULL, 0, startWebServer, NULL, 0, &threadIdWeb);
 	if (hThreadWeb == NULL) {
 		std::cerr << "Erreur lors de la création du thread : " << GetLastError() << std::endl;
 		return 1;
