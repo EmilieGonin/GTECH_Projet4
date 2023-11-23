@@ -66,6 +66,15 @@ void Server::listenClient()
 	}
 	printf("%s Bind successful.\n", mName.c_str());
 
+	sockaddr_in serverAddr;
+	int len = sizeof(serverAddr);
+	if (getsockname(ListenSocket, reinterpret_cast<sockaddr*>(&serverAddr), &len) == 0) {
+		char ipAddress[INET_ADDRSTRLEN];
+		if (inet_ntop(AF_INET, &serverAddr.sin_addr, ipAddress, INET_ADDRSTRLEN) != nullptr) {
+			printf("%s Server bound to IP address: %s\n", mName.c_str(), ipAddress);
+		}
+	}
+
 	freeaddrinfo(result);
 
 	iResult = listen(ListenSocket, SOMAXCONN);
