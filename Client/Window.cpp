@@ -155,13 +155,13 @@ void Window::checkTextClick()
 	// Récupère la position du clic de souris
 	sf::Vector2f mousePosition = sf::Vector2f(sf::Mouse::getPosition(*mWindow));
 
-	// Parcours des textes pour v�rifier si l'un d'eux a été cliqué
+	// Parcours des textes pour vérifier si l'un d'eux a été cliqué
 	for (auto& text : mTextMenu)
 	{
-		// R�cup�re les limites de la zone occup�e par le texte
+		// Récupère les limites de la zone occupée par le texte
 		sf::FloatRect bounds = text->getGlobalBounds();
 
-		// V�rifie la collision avec la position du clic de souris
+		// Vérifie la collision avec la position du clic de souris
 		if (bounds.contains(mousePosition))
 		{
 			// Actions spécifiques au texte cliqué
