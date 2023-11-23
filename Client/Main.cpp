@@ -14,7 +14,7 @@ int main(int ac, char const* av[])
 
 	//c.clientDisconnect();
 
-	w->changeScene(Window::MAIN_MENU);
+	w->changeScene(Window::END_GAME);
 	//w->screenEndGame();
 
 	MSG msg;
@@ -30,6 +30,8 @@ int main(int ac, char const* av[])
 		case Window::JOIN:
 			break;
 		case Window::GAME:
+			break;
+		case Window::END_GAME:
 			break;
 		}
 

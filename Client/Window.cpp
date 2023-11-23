@@ -155,7 +155,7 @@ void Window::checkTextClick()
 	// Récupère la position du clic de souris
 	sf::Vector2f mousePosition = sf::Vector2f(sf::Mouse::getPosition(*mWindow));
 
-	// Parcours des textes pour v�rifier si l'un d'eux a �t� cliqu�
+	// Parcours des textes pour v�rifier si l'un d'eux a été cliqué
 	for (auto& text : mTextMenu)
 	{
 		// R�cup�re les limites de la zone occup�e par le texte
@@ -164,7 +164,7 @@ void Window::checkTextClick()
 		// V�rifie la collision avec la position du clic de souris
 		if (bounds.contains(mousePosition))
 		{
-			// Actions sp�cifiques au texte cliqué
+			// Actions spécifiques au texte cliqué
 			if (text->getString() == "Quit")
 			{
 				// Quitte le jeu
@@ -183,6 +183,10 @@ void Window::checkTextClick()
 			{
 				// Lance le jeu
 				changeScene(GAME);
+			}
+			else if (text->getString() == "Menu")
+			{
+				changeScene(MAIN_MENU);
 			}
 			else if (text->getString() == "Join")
 			{
@@ -215,6 +219,9 @@ void Window::changeScene(SceneState newState)
 		break;
 	case Window::GAME:
 		windowTest(); //test a supp
+		break;
+	case Window::END_GAME:
+		screenEndGame();
 		break;
 	}
 	mWindow->display();
