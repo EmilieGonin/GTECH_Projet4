@@ -32,6 +32,7 @@ public:
 	void Finito();
 	void initTextFirstMenu();
 	void addBackgroundText();
+	void screenEndGame();
 	void menuNameEnter();
 	void changeMenuColor();
 	void checkTextClick();
