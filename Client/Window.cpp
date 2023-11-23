@@ -190,7 +190,7 @@ void Window::checkTextClick()
 			}
 			else if (text->getString() == "Join")
 			{
-
+				changeScene(JOIN);
 			}
 		}
 	}
