@@ -5,23 +5,21 @@ ServerWeb::ServerWeb() { };
 void ServerWeb::init()
 {
 	mPort = "8888";
-
+	mName = "Serveur web -";
 
 	WNDCLASS wcb = { 0 };
 	wcb.lpfnWndProc = WindowProc;
 	wcb.hInstance = GetModuleHandle(NULL);
 	wcb.lpszClassName = L"AsyncSelectWindowClassB";
 
-
-
 	if (!RegisterClass(&wcb)) {
-		printf("RegisterClassB failed: %d\n", GetLastError());
+		printf("%s RegisterClassB failed: %d\n", mName.c_str(), GetLastError());
 		return;
 	}
 
 	hWnd = CreateWindowEx(0, L"AsyncSelectWindowClassB", L"AsyncSelectWindowB", 0, 0, 0, 0, 0, HWND_MESSAGE, NULL, GetModuleHandle(NULL), NULL);
 	if (hWnd == NULL) {
-		printf("CreateWindowEx failed: %d\n", GetLastError());
+		printf("%s CreateWindowEx failed: %d\n", mName.c_str(), GetLastError());
 		return;
 	}
 
@@ -31,7 +29,7 @@ void ServerWeb::init()
 	UpdateWindow(hWnd);
 	pServer = reinterpret_cast<Server*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
 
-	printf("HWND created\n");
+	printf("%s HWND created\n", mName.c_str());
 
 	Server::init();
 }
@@ -78,12 +76,12 @@ void ServerWeb::accepteClient(SOCKET client)
 	// Accept a client socket
 	client = accept(ListenSocket, NULL, NULL);
 	if (client == INVALID_SOCKET) {
-		printf("accept failed with error: %d\n", WSAGetLastError());
+		printf("%s accept failed with error: %d\n", mName.c_str(), WSAGetLastError());
 		closesocket(ListenSocket);
 		WSACleanup();
 		return;
 	}
-	printf("Client accepted.\n");
+	printf("%s Client accepted.\n", mName.c_str());
 
 	handleClient();
 }

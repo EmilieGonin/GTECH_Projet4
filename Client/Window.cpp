@@ -26,13 +26,14 @@ void Window::update()
 {
 	while (mWindow->pollEvent(event))
 	{
+		menuNameEnter();
+
 		if (event.type == sf::Event::Closed) mWindow->close();
 		if (event.type == sf::Event::MouseButtonReleased)
 		{
-			if (!hasSelectedCell()) checkCollision(event);
-			//checkTextClick();
+			if (!hasSelectedCell() && !hasPlayed()) checkCollision(event);
+			checkTextClick();
 		}
-		menuNameEnter();
 	}
 
 	changeMenuColor();
@@ -47,6 +48,7 @@ void Window::update()
 			mWindow->draw(mEnterName);
 		}
 		for (auto& text : mTexts) mWindow->draw(*text);
+		for (auto& button : mButton) mWindow->draw(*button);
 		for (auto& text : mTextMenu) mWindow->draw(*text);
 		mWindow->display();
 	}
@@ -54,6 +56,7 @@ void Window::update()
 
 void Window::initCells(std::map<std::pair<int, int>, std::string> cells)
 {
+	mCells.clear();
 	//Init cells when client connect for the first time
 	int cellNumber = 9;
 	int cellSize = 150;
@@ -78,9 +81,9 @@ void Window::initCells(std::map<std::pair<int, int>, std::string> cells)
 	}
 }
 
-void Window::resetTurn()
+void Window::resetTurn(bool canPlay)
 {
-	mHasPlayed = false;
+	mHasPlayed = !canPlay;
 	mSelectedCell = { -1, -1 };
 }
 
@@ -145,7 +148,7 @@ void Window::addPlayerShape(sf::Vector2f position, std::string player)
 	mTurn++;
 }
 
-/*void Window::checkTextClick()
+void Window::checkTextClick()
 {
 	// R�cup�re la position du clic de souris
 	sf::Vector2f mousePosition = sf::Vector2f(sf::Mouse::getPosition(*mWindow));
@@ -165,21 +168,22 @@ void Window::addPlayerShape(sf::Vector2f position, std::string player)
 				// Quitte le jeu
 				mWindow->close();
 			}
-			else if (text->getString() == "Let's go!")
+			else if (text->getString() == "Play")
 			{
 				// Lance le jeu
 				changeScene(GAME);
 			}
+			else if (text->getString() == "Join")
+			{
+
+			}
 		}
 	}
-}*/
+}
 
-/*void Window::changeScene(SceneState newState)
+void Window::changeScene(SceneState newState)
 {
-	mShapes.clear();
-	mTexts.clear();
-	mTextMenu.clear();
-	mCells.clear();
+	mWindow->clear();
 
 	currentScene = newState;
 
@@ -187,11 +191,16 @@ void Window::addPlayerShape(sf::Vector2f position, std::string player)
 	{
 	case Window::MAIN_MENU:
 		initTextFirstMenu();
+		addBackgroundText();
+		break;
+	case Window::JOIN:
 		break;
 	case Window::GAME:
 		break;
 	}
-}*/
+
+	mWindow->display();
+}
 
 void Window::initTextFirstMenu()
 {
@@ -221,7 +230,7 @@ void Window::initTextFirstMenu()
 	text->setFont(mFont);
 	text->setString("Play");
 	text->setCharacterSize(50);
-	text->setPosition(300, 450);
+	text->setPosition(350, 520);
 	text->setFillColor(sf::Color::White);
 	mTextMenu.push_back(text);
 
@@ -230,7 +239,7 @@ void Window::initTextFirstMenu()
 	text->setFont(mFont);
 	text->setString("Join");
 	text->setCharacterSize(50);
-	text->setPosition(300, 550);
+	text->setPosition(200, 670);
 	text->setFillColor(sf::Color::White);
 	mTextMenu.push_back(text);
 
@@ -239,28 +248,62 @@ void Window::initTextFirstMenu()
 	text->setFont(mFont);
 	text->setString("Quit");
 	text->setCharacterSize(50);
-	text->setPosition(300, 600);
+	text->setPosition(500, 670);
 	text->setFillColor(sf::Color::White);
 	mTextMenu.push_back(text);
 }
 
+void Window::addBackgroundText()
+{
+	sf::RectangleShape* button = new sf::RectangleShape();
+
+	//Rectangle "Play"
+	button->setSize(sf::Vector2f(500.f, 100.f));
+	//button->setRadius(40.0);
+	button->setPosition(150, 500);
+	button->setFillColor(sf::Color(150, 50, 250));
+	mButton.push_back(button);
+
+	//Rectangle "Join"
+	button = new sf::RectangleShape();
+	button->setSize(sf::Vector2f(200.f, 100.f));
+	//button->setRadius(40.0);
+	button->setPosition(150, 650);
+	button->setFillColor(sf::Color(150, 50, 250));
+	mButton.push_back(button);
+
+	//Rectangle "Quit"
+	button = new sf::RectangleShape();
+	button->setSize(sf::Vector2f(200.f, 100.f));
+	//button->setRadius(40.0);
+	button->setPosition(450, 650);
+	button->setFillColor(sf::Color(150, 50, 250));
+	mButton.push_back(button);
+}
+
 void Window::menuNameEnter()
 {
-	if (event.type == sf::Event::TextEntered && hasEnterName) {
-		//R�cup�re les valeurs de la table ASCII
-		if (event.text.unicode < 128) {
-			if (event.text.unicode == 13) {
-				hasEnterName = false;
-			}
-			else if (event.text.unicode == 8) {
-				if (!mName.empty()) {
-					mName.pop_back();
+	if (hasEnterName && event.type == sf::Event::TextEntered)
+	{
+		auto processInput = [&](char inputChar)
+			{
+				if (inputChar == 13) // Touche "Enter"
+				{
+					hasEnterName = false;
 				}
-			}
-			else {
-				mName += static_cast<char>(event.text.unicode);
-			}
-		}
+				else if (inputChar == 8) // Touche "Backspace"
+				{
+					if (!mName.empty())
+					{
+						mName.pop_back();
+					}
+				}
+				else if (inputChar < 128 && mName.length() < maxNameLength)
+				{
+					mName += static_cast<char>(inputChar);
+				}
+			};
+		processInput(event.text.unicode);
 	}
 }
 

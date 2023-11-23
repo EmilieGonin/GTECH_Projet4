@@ -19,7 +19,7 @@ public:
 	void addCell(std::pair<int, int>, sf::Shape*);
 	void initCells(std::map<std::pair<int, int>, std::string>);
 	std::pair<int, int> play();
-	void resetTurn();
+	void resetTurn(bool);
 
 	inline void setPlayer(std::string playerId) { mPlayerId = playerId; };
 	inline std::string getPlayer() { return mPlayerId; };
@@ -31,12 +31,14 @@ public:
 
 	void Finito();
 	void initTextFirstMenu();
+	void addBackgroundText();
 	void menuNameEnter();
 	void changeMenuColor();
 	void checkTextClick();
 
 	enum SceneState {
 		MAIN_MENU,
+		JOIN,
 		GAME,
 	};
 
@@ -52,6 +54,8 @@ private:
 
 	int mTurn = 1;
 
+	const unsigned int maxNameLength = 15;
+
 	bool endGame = false;
 	bool hasEnterName = true;
 
@@ -60,6 +64,7 @@ private:
 	std::vector<sf::Shape*> mShapes;
 	std::vector<sf::Text*> mTexts;
 	std::vector<sf::Text*> mTextMenu;
+	std::vector<sf::RectangleShape*> mButton;
 
 	std::map<std::pair<int, int>, cell> mCells;
 

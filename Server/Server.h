@@ -69,6 +69,7 @@ protected:
     std::map<SOCKET, std::string> mAllClient;
 
     static Server* pServer;
+    std::string mName;
 
 public:
     Server();

@@ -5,7 +5,7 @@ ServerClient::ServerClient() {}
 void ServerClient::init()
 {
 	mPort = "1027";
-
+	mName = "Serveur du jeu -";
 
 	WNDCLASS wca = { 0 };
 	wca.lpfnWndProc = WindowProc;
@@ -14,14 +14,14 @@ void ServerClient::init()
 
 
 	if (!RegisterClass(&wca)) {
-		printf("RegisterClass failed: %d\n", GetLastError());
-		return;
+		printf("%s RegisterClass failed: %d\n", mName.c_str(), GetLastError());
+		return ;
 	}
 
 	hWnd = CreateWindowEx(0, L"AsyncSelectWindowClassA", L"AsyncSelectWindowA", 0, 0, 0, 0, 0, HWND_MESSAGE, NULL, GetModuleHandle(NULL), NULL);
 	if (hWnd == NULL) {
-		printf("CreateWindowEx failed: %d\n", GetLastError());
-		return;
+		printf("%s CreateWindowEx failed: %d\n", mName.c_str(), GetLastError());
+		return ;
 	}
 
 	SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
@@ -30,7 +30,7 @@ void ServerClient::init()
 	UpdateWindow(hWnd);
 	pServer = reinterpret_cast<Server*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
 
-	printf("HWND created\n");
+	printf("%s HWND created\n", mName.c_str());
 
 	Server::init();
 }
@@ -42,15 +42,15 @@ void ServerClient::accepteClient(SOCKET client)
 	// Accept a client socket
 	client = accept(ListenSocket, NULL, NULL);
 	if (client == INVALID_SOCKET) {
-		printf("accept failed with error: %d\n", WSAGetLastError());
+		printf("%s accept failed with error: %d\n", mName.c_str(), WSAGetLastError());
 		closesocket(ListenSocket);
 		WSACleanup();
 		return;
 	}
 
-	printf("Client accepted.\n");
+	printf("%s Client accepted.\n", mName.c_str());
 
-	//Regarde si le client est déja enregistré et le met en jeu ou spectate
+	//Regarde si le client est dï¿½ja enregistrï¿½ et le met en jeu ou spectate
 	DispatchClient(game, client);
 
 	//TODO -> check if game has started
@@ -61,7 +61,7 @@ void ServerClient::accepteClient(SOCKET client)
 		JsonHandler j(game->getCells(), mPlayers.begin()->second, false);
 
 		//Send cells to all players
-		printf("Sending cells to players...\n");
+		printf("%s Sending cells to players...\n", mName.c_str());
 		std::string t = j.getDump();
 		for (auto& player : mPlayers) send(player.first, j.getDump().c_str(), j.getDump().size(), 0);
 	}
@@ -74,7 +74,7 @@ std::string ServerClient::GiveSessionID(SOCKET client)
 	// Attribuer un identifiant de session au client
 	std::string sessionID = generateSessionID();
 	JsonHandler j(sessionID);
-	printf("Sending session id : %s\n", sessionID.c_str());
+	printf("%s Sending session id : %s\n", mName.c_str(), sessionID.c_str());
 	send(client, j.getDump().c_str(), j.getDump().size(), 0);
 	Sleep(1000);
 	return sessionID;
@@ -82,7 +82,7 @@ std::string ServerClient::GiveSessionID(SOCKET client)
 
 void ServerClient::DispatchClient(Game* game, SOCKET client)
 {
-	//Verifier si le joueurs est déjà enregistrer
+	//Verifier si le joueurs est dï¿½jï¿½ enregistrer
 	bool enregistre = false;
 	for (auto it = mAllClient.begin(); it != mAllClient.end(); ++it)
 	{
@@ -103,7 +103,7 @@ void ServerClient::DispatchClient(Game* game, SOCKET client)
 		}
 	}
 
-	//Si le Joueur n'était pas déja enregistré
+	//Si le Joueur n'ï¿½tait pas dï¿½ja enregistrï¿½
 	if (!enregistre)
 	{
 		//Genere un ID et l'envoi au client
