@@ -79,13 +79,14 @@ void Game::updateCells(std::pair<int, int> cell, std::string player)
 
 	mShapes.push_back(shape);
 	changeTurn();
+	createImage();
 }
 
 void Game::createImage()
 {
 	sf::RenderWindow window(sf::VideoMode(800, 800), "Tic-tac-toe");
-	for (auto& shape : mShapes) window.draw(*shape);
 	for (auto& cell : mCellShapes) window.draw(*cell.second);
+	for (auto& shape : mShapes) window.draw(*shape);
 
 	mTexture->create(800, 800);
 	mTexture->update(window);

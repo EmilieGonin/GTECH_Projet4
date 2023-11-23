@@ -89,7 +89,7 @@ void Server::listenClient()
 	while (true)
 	{
 		while (PeekMessage(&msg, hWnd, 0, 0, PM_REMOVE)) {
-			printf("%s Getting message\n", mName.c_str());
+			//printf("%s Getting message\n", mName.c_str());
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}

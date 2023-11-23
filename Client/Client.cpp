@@ -205,7 +205,6 @@ void Client::handleJson(std::string dump)
 	case 5: //Get session id
 		mPlayerId = json["Player"];
 		window->setPlayer(json["Player"]);
-		window->resetTurn(json["Player"] == mPlayerId);
 		break;
 	default:
 		break;
