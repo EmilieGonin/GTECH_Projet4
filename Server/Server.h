@@ -30,9 +30,9 @@ private:
     //Game* game = Game::Instance();
     void shutdownClient(SOCKET clientSocket);
     virtual void handleClient(UINT uMsg, WPARAM wParam, LPARAM lParam);
+    virtual void initHWND();
     void initWSA();
     void initSocket();
-    int initHWND();
     void listenClient();
     virtual void accepteClient(SOCKET);
     void handleJson(SOCKET, std::string dump);
@@ -65,6 +65,8 @@ protected:
     HWND hWnd;
 
     std::map<SOCKET, std::string> mPlayers;
+    std::map<SOCKET, std::string> mSpectate;
+    std::map<SOCKET, std::string> mAllClient;
 
     static Server* pServer;
     std::string mName;

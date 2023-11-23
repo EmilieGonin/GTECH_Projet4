@@ -45,6 +45,7 @@ public:
 		MAIN_MENU,
 		JOIN,
 		GAME,
+		END_GAME,
 	};
 
 	void changeScene(SceneState newState);

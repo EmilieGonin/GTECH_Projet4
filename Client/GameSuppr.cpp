@@ -1,4 +1,4 @@
-#include "Game.h"
+#include "GameSuppr.h"
 #include "SFML/Graphics/Color.hpp"
 
 Game* Game::mInstance = nullptr;
