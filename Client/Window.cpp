@@ -113,13 +113,6 @@ void Window::addCell(std::pair<int, int> pos, sf::Shape* shape)
 	mCells[pos] = newCell;
 }
 
-void Window::Finito()
-{
-	endGame = true;
-	if (mTurn % 2 == 0)	mWindow->setTitle("Red Win !");
-	else mWindow->setTitle("Green Win !");
-}
-
 void Window::checkCollision(sf::Event e)
 {
 	if (!endGame)
@@ -133,9 +126,9 @@ void Window::checkCollision(sf::Event e)
 
 			if (bounds.contains(pos))
 			{
-				cell.second.player = mTurn % 2 == 0 ? 2 : 1; //Shape has now been selected
-				mSelectedCell = cell.second.pos;
+				cell.second.player = mPlayerId; //Shape has now been selected
 				addPlayerShape(bounds.getPosition(), cell.second.player);
+				mSelectedCell = cell.second.pos;
 				return;
 			}
 		}
@@ -147,11 +140,13 @@ void Window::addPlayerShape(sf::Vector2f position, std::string player)
 	sf::CircleShape* shape = new sf::CircleShape(75);
 	shape->setPosition(position);
 
-	if (player == mPlayerId)shape->setFillColor(sf::Color::Green);
+	if (player == mPlayerId)
+	{
+		shape->setFillColor(sf::Color::Green);
+	}
 	else shape->setFillColor(sf::Color::Red);
 
 	addShape(shape);
-	mTurn++;
 }
 
 int Window::checkTextClick()

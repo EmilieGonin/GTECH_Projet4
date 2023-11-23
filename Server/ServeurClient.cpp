@@ -72,7 +72,7 @@ void ServerClient::accepteClient(SOCKET client)
 	{
 		game->init();
 
-		JsonHandler j(game->getCells(), mPlayers.begin()->second, false);
+		JsonHandler j(game->getCells(), game->getPlayerTurn(), false);
 
 		//Send cells to all players
 		printf("%s Sending cells to players...\n", mName.c_str());
@@ -160,6 +160,7 @@ void ServerClient::handleJson(SOCKET client, std::string dump)
 	case 1: //Play cell
 	{
 		//Check if it's player turn
+		std::string playerTurn = game->getPlayerTurn();
 		bool error = game->getPlayerTurn() != playerId;
 		if (!error)
 		{
