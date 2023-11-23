@@ -30,6 +30,7 @@ public:
 	void initCells(std::map<std::pair<int, int>, std::string>);
 	std::pair<int, int> play();
 	void resetTurn(bool);
+	void initTurnsList(std::map<std::pair<int, int>, std::string>, std::pair<int, int>);
 
 	inline void setWinner(std::string winnerId) { mWinner = winnerId; };
 	inline void setPlayer(std::string playerId) { mPlayerId = playerId; };
@@ -101,6 +102,7 @@ private:
 	bool mHasPlayed;
 	std::string mPlayerId;
 	std::string mWinner;
+	std::string mTurns;
 
 	Client* client;
 };
