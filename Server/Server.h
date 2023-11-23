@@ -4,6 +4,7 @@
 #define WM_SOCKET_EVENT (WM_USER + 1)
 #define FD_READ_EVENT   FD_READ | FD_WRITE | FD_OOB | FD_ACCEPT | FD_CONNECT | FD_CLOSE
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
+#define ADDRESS "192.168.1.72"
 
 #include <windows.h>
 #include <winsock2.h>

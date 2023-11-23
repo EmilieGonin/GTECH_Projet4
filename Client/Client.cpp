@@ -195,6 +195,7 @@ void Client::handleJson(std::string dump)
 		if (window->getCurrentScene() != GAME) window->changeScene(GAME);
 		if (error == 0)
 		{
+			window->initTurnsList(json["Cells"], json["LastCell"]);
 			window->initCells(json["Cells"]);
 			window->resetTurn(json["Player"] == mPlayerId);
 		}

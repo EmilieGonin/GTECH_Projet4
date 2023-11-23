@@ -77,15 +77,14 @@ std::string ServerWeb::processHttpRequest()
 	std::string base64 = base64_encode(imageData);
 
 	std::string html = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n";
-	/*html += "<script>";
-	html += "document.getElementById(\"content\").innerHTML = \"\";";
-	html += "</script>";*/
 	html += "<script>";
 	html += "setTimeout(function() { location.reload(); }, 1000);";
 	html += "</script>";
-	html += "<div id=\"content\" style=\"text-align:center\"><h1>Tic - Tac - Toe</h1>";
+	html += "<div style=\"text-align:center\"><h1>Tic - Tac - Toe</h1>";
 	if (!g->getPlayerTurn().empty()) html += "<h2>Waiting for " + g->getPlayerTurn() + "</h2>";
-	html += "<img src=\"data:image/png;base64," + base64 + "\" /></div>";
+	html += "<img src=\"data:image/png;base64," + base64 + "\" />";
+	html += "<div style=\"position:absolute;top:0\">" + g->getTurnsList() + "</div>";
+	html += "</div>";
 	return html;
 }
 

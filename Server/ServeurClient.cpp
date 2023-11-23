@@ -72,7 +72,7 @@ void ServerClient::accepteClient(SOCKET client)
 	{
 		game->init();
 
-		JsonHandler j(game->getCells(), game->getPlayerTurn(), false);
+		JsonHandler j(game->getCells(), game->getLastCell(), game->getPlayerTurn(), false);
 
 		//Send cells to all players
 		printf("%s Sending cells to players...\n", mName.c_str());
@@ -169,13 +169,13 @@ void ServerClient::handleJson(SOCKET client, std::string dump)
 			//Check if player has win
 			switch (game->hasWin()) {
 			case -1: //No win
-				response = JsonHandler(game->getCells(), game->getPlayerTurn(), error);
+				response = JsonHandler(game->getCells(), game->getLastCell(), game->getPlayerTurn(), error);
 				break;
 			case 0: //Tie
-				response = JsonHandler(game->getCells(), "None");
+				response = JsonHandler(game->getCells(), game->getLastCell(), "None");
 				break;
 			case 1: //Win
-				response = JsonHandler(game->getCells(), playerId);
+				response = JsonHandler(game->getCells(), game->getLastCell(), playerId);
 				break;
 			}
 		}
@@ -188,7 +188,7 @@ void ServerClient::handleJson(SOCKET client, std::string dump)
 	}
 	break;
 	case 2: //Get cells after reconnect
-		response = JsonHandler(game->getCells(), game->getPlayerTurn(), false);
+		response = JsonHandler(game->getCells(), game->getLastCell(), game->getPlayerTurn(), false);
 		sendJson(client, response.getDump());
 		break;
 	default:

@@ -14,6 +14,8 @@ public:
 	void changeTurn();
 	void addPlayer(std::string);
 
+	inline std::string getTurnsList() { return mTurns; };
+	inline std::pair<int, int> getLastCell() { return mLastCell; };
 	inline std::string getPlayerTurn() { return mTurnPlayer; };
 	inline int getWinner() { return mWinner; };
 	inline bool hasWinner() { return mWinner != 0; };
@@ -32,4 +34,6 @@ private:
 	int mWinner;
 	std::string mTurnPlayer;
 	std::vector<std::string> mPlayers;
+	std::pair<int, int> mLastCell;
+	std::string mTurns;
 };

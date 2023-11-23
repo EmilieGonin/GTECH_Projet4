@@ -31,6 +31,7 @@ public:
 	void initCells(std::map<std::pair<int, int>, std::string>);
 	std::pair<int, int> play();
 	void resetTurn(bool);
+	void initTurnsList(std::map<std::pair<int, int>, std::string>, std::pair<int, int>);
 
 	inline void setWinner(std::string winnerId) { mWinner = winnerId; };
 	inline void setPlayer(std::string playerId) { mPlayerId = playerId; };
@@ -66,6 +67,7 @@ private:
 	static Window* mInstance;
 
 	int mTurn = 1;
+	int cote = 175.f;
 
 	const unsigned int maxNameLength = 10;
 
@@ -102,6 +104,7 @@ private:
 	bool mHasPlayed;
 	std::string mPlayerId;
 	std::string mWinner;
+	std::string mTurns;
 
 	Client* client;
 };

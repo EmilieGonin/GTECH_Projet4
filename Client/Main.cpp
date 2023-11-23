@@ -14,7 +14,7 @@ int main(int ac, char const* av[])
 
 	//c.clientDisconnect();
 
-	w->changeScene(MAIN_MENU);
+	w->changeScene(SKINS);
 
 	MSG msg;
 	while (GetMessage(&msg, NULL, 0, 0))
