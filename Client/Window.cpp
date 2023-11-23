@@ -7,6 +7,7 @@ Window::Window()
 	mWindow = new sf::RenderWindow(sf::VideoMode(mWidth, mLength), "Tic-tac-toe");
 	mSelectedCell = { -1, -1 };
 	mHasPlayed = false;
+	hasError = false;
 }
 
 Window::~Window()
@@ -23,7 +24,7 @@ Window* Window::Instance(Client* mClient)
 	return mInstance;
 }
 
-void Window::update()
+int Window::update()
 {
 	while (mWindow->pollEvent(event))
 	{
@@ -33,7 +34,7 @@ void Window::update()
 		if (event.type == sf::Event::MouseButtonReleased)
 		{
 			if (!hasSelectedCell() && !hasPlayed()) checkCollision(event);
-			checkTextClick();
+			if (checkTextClick() == 1) return 1;
 		}
 	}
 
@@ -44,17 +45,19 @@ void Window::update()
 		mWindow->clear();
 		for (auto& cell : mCells) mWindow->draw(*cell.second.shape);
 		for (auto& shape : mShapes) mWindow->draw(*shape);
-		if (mEnterName != nullptr && hasEnterName) {
+		if (mEnterName != nullptr) {
 			mEnterName->setString("Enter your name: " + mName);
 			mWindow->draw(*mEnterName);
 		}
+		if (hasError) mWindow->draw(*mErrorMessage);
 		for (auto& text : mTexts) mWindow->draw(*text);
 		for (auto& button : mButton) mWindow->draw(*button);
 		for (auto& text : mTextMenu) mWindow->draw(*text);
-		//for (auto& text : mErrorMessage) mWindow->draw(*text);
 
 		mWindow->display();
 	}
+
+	return 0;
 }
 
 void Window::initCells(std::map<std::pair<int, int>, std::string> cells)
@@ -151,7 +154,7 @@ void Window::addPlayerShape(sf::Vector2f position, std::string player)
 	mTurn++;
 }
 
-void Window::checkTextClick()
+int Window::checkTextClick()
 {
 	// Récupère la position du clic de souris
 	sf::Vector2f mousePosition = sf::Vector2f(sf::Mouse::getPosition(*mWindow));
@@ -159,6 +162,7 @@ void Window::checkTextClick()
 	// Parcours des textes pour vérifier si l'un d'eux a été cliqué
 	for (auto& text : mTextMenu)
 	{
+		if (text == nullptr) continue;
 		// Récupère les limites de la zone occupée par le texte
 		sf::FloatRect bounds = text->getGlobalBounds();
 
@@ -170,31 +174,35 @@ void Window::checkTextClick()
 			{
 				// Quitte le jeu
 				mWindow->close();
-				//std::exit(0);
+				return 1;
 			}
 			else if (text->getString() == "Play" && mName.empty())
 			{
-				// Affiche message d'erreur
-				//for (auto& errorMessage : mErrorMessage)
-				//{
-				//	mWindow->draw(*errorMessage);
-				//}
+				// Lance le jeu
+				hasError = false;
+				changeScene(GAME);
+				break;
 			}
 			else if (text->getString() == "Play" && !mName.empty())
 			{
 				// Lance le jeu
 				changeScene(GAME);
+				break;
 			}
 			else if (text->getString() == "Menu")
 			{
 				changeScene(MAIN_MENU);
+				break;
 			}
 			else if (text->getString() == "Join")
 			{
 				changeScene(JOIN);
+				break;
 			}
 		}
 	}
+
+	return 0;
 }
 
 void Window::changeScene(SceneState newState)
@@ -205,8 +213,6 @@ void Window::changeScene(SceneState newState)
 	mButton.clear();
 	mCells.clear();
 	mEnterName = nullptr;
-
-	mWindow->clear();
 
 	currentScene = newState;
 
@@ -225,7 +231,6 @@ void Window::changeScene(SceneState newState)
 		screenEndGame();
 		break;
 	}
-	mWindow->display();
 }
 
 void Window::namePlayerWin()
@@ -301,14 +306,13 @@ void Window::textMainMenu()
 	mEnterName->setPosition(mWidth / 4.7, mLength / 2.6);
 	mEnterName->setFillColor(sf::Color::White);
 
-	// Error enterName text
-	//text = new sf::Text();
-	//text->setFont(mFont);
-	//text->setString("Please, enter a name to play.");
-	//text->setCharacterSize(30);
-	//text->setPosition(250, 400);
-	//text->setFillColor(sf::Color::Red);
-	//mErrorMessage.push_back(text);
+	//Error enterName text
+	mErrorMessage = new sf::Text();
+	mErrorMessage->setFont(mFont);
+	mErrorMessage->setString("Please, enter a name to play.");
+	mErrorMessage->setCharacterSize(30);
+	mErrorMessage->setPosition(250, 400);
+	mErrorMessage->setFillColor(sf::Color::Red);
 
 	// Play text
 	text = new sf::Text();
@@ -366,32 +370,19 @@ void Window::shapeMainMenu()
 	mButton.push_back(button);
 }
 
-void Window::windowTest() //test a supp
-{
-	mWindow->clear();
-
-	// Ajoutez ici le code pour afficher votre nouveau menu ou contenu
-	sf::Text* testText = new sf::Text();
-	testText->setFont(mFont);
-	testText->setString("Welcome to the Game Scene!");
-	testText->setCharacterSize(30);
-	testText->setPosition(200, 200);
-	testText->setFillColor(sf::Color::White);
-
-	mTexts.push_back(testText);
-
-	mWindow->display();
-}
-
 void Window::menuNameEnter()
 {
-	if (hasEnterName && event.type == sf::Event::TextEntered)
+	if (mEnterName != nullptr && event.type == sf::Event::TextEntered)
 	{
 		auto processInput = [&](char inputChar)
 			{
 				if (inputChar == 13) // Touche "Enter"
 				{
-					hasEnterName = false;
+					if (!mName.empty())
+					{
+						hasError = false;
+						changeScene(GAME);
+					}
 				}
 				else if (inputChar == 8) // Touche "Backspace"
 				{

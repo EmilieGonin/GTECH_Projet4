@@ -14,8 +14,7 @@ int main(int ac, char const* av[])
 
 	//c.clientDisconnect();
 
-	w->changeScene(Window::MAIN_MENU);
-	//w->screenEndGame();
+	w->changeScene(Window::END_GAME);
 
 	MSG msg;
 	while (GetMessage(&msg, NULL, 0, 0))
@@ -34,8 +33,8 @@ int main(int ac, char const* av[])
 		case Window::END_GAME:
 			break;
 		}
-		
-		w->update();
+
+		if (w->update() == 1) return 1;
 
 		if (!w->hasPlayed() && w->hasSelectedCell())
 		{
