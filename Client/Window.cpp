@@ -91,6 +91,22 @@ void Window::resetTurn(bool canPlay)
 {
 	mHasPlayed = !canPlay;
 	mSelectedCell = { -1, -1 };
+
+	//Init texts
+	mTexts.clear();
+
+	mFont.loadFromFile("arial.ttf");
+	sf::Text* text = new sf::Text();
+	text->setFont(mFont);
+	text->setString("The winner is ");
+	text->setCharacterSize(50);
+	text->setPosition(mWidth / 5.3, mLength / 9);
+	//text->setFillColor(sf::Color(245, 148, 0));
+
+	if (canPlay) text->setString("It's your turn to play !");
+	else text->setString("Waiting for your opponent...");
+
+	mTexts.push_back(text);
 }
 
 std::pair<int, int> Window::play()
