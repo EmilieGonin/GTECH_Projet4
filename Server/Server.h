@@ -30,9 +30,9 @@ private:
     //Game* game = Game::Instance();
     void shutdownClient(SOCKET clientSocket);
     virtual void handleClient(UINT uMsg, WPARAM wParam, LPARAM lParam);
+    virtual void initHWND();
     void initWSA();
     void initSocket();
-    int initHWND();
     void listenClient();
     virtual void accepteClient(SOCKET);
     void handleJson(SOCKET, std::string dump);

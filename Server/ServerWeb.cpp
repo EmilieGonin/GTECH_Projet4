@@ -1,5 +1,6 @@
 #include "ServerWeb.h"
 
+
 ServerWeb::ServerWeb() { };
 
 void ServerWeb::init()
@@ -7,6 +8,11 @@ void ServerWeb::init()
 	mPort = "8888";
 	mName = "Serveur web -";
 
+	Server::init();
+}
+
+void ServerWeb::initHWND()
+{
 	WNDCLASS wcb = { 0 };
 	wcb.lpfnWndProc = WindowProc;
 	wcb.hInstance = GetModuleHandle(NULL);
@@ -30,8 +36,6 @@ void ServerWeb::init()
 	pServer = reinterpret_cast<Server*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
 
 	printf("%s HWND created\n", mName.c_str());
-
-	Server::init();
 }
 
 void ServerWeb::handleClient() {

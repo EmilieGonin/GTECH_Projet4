@@ -10,6 +10,7 @@ private:
 protected:
 	void handleClient(UINT uMsg, WPARAM wParam, LPARAM lParam) override;
 	void accepteClient(SOCKET) override;
+	void initHWND()override;
 
 public:
 	ServerClient();

@@ -7,6 +7,11 @@ void ServerClient::init()
 	mPort = "1027";
 	mName = "Serveur du jeu -";
 
+	Server::init();
+}
+
+void ServerClient::initHWND()
+{
 	WNDCLASS wca = { 0 };
 	wca.lpfnWndProc = WindowProc;
 	wca.hInstance = GetModuleHandle(NULL);
@@ -15,13 +20,13 @@ void ServerClient::init()
 
 	if (!RegisterClass(&wca)) {
 		printf("%s RegisterClass failed: %d\n", mName.c_str(), GetLastError());
-		return ;
+		return;
 	}
 
 	hWnd = CreateWindowEx(0, L"AsyncSelectWindowClassA", L"AsyncSelectWindowA", 0, 0, 0, 0, 0, HWND_MESSAGE, NULL, GetModuleHandle(NULL), NULL);
 	if (hWnd == NULL) {
 		printf("%s CreateWindowEx failed: %d\n", mName.c_str(), GetLastError());
-		return ;
+		return;
 	}
 
 	SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
@@ -31,8 +36,6 @@ void ServerClient::init()
 	pServer = reinterpret_cast<Server*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
 
 	printf("%s HWND created\n", mName.c_str());
-
-	Server::init();
 }
 
 void ServerClient::accepteClient(SOCKET client)
@@ -41,13 +44,12 @@ void ServerClient::accepteClient(SOCKET client)
 
 	// Accept a client socket
 	client = accept(ListenSocket, NULL, NULL);
-	if (client == INVALID_SOCKET) {
+	if (client == INVALID_SOCKET && client == SOCKET_ERROR) {
 		printf("%s accept failed with error: %d\n", mName.c_str(), WSAGetLastError());
 		closesocket(ListenSocket);
 		WSACleanup();
 		return;
 	}
-
 	printf("%s Client accepted.\n", mName.c_str());
 
 	//Regarde si le client est d�ja enregistr� et le met en jeu ou spectate
