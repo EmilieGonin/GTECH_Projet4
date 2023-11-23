@@ -11,44 +11,17 @@ Server* Server::pServer = nullptr;
 
 void Server::init()
 {
-	//initHWND();
+	initHWND();
 	initWSA();
 	initSocket();
 	listenClient();
-	//closesocket(ListenSocket);
 
 	// cleanup
 	//closesocket(ClientSocket);
 	//WSACleanup();
 }
 
-int Server::initHWND()
-{
-	//WNDCLASS wc = { 0 };
-	//wc.lpfnWndProc = WindowProc;
-	//wc.hInstance = GetModuleHandle(NULL);
-	//wc.lpszClassName = L"AsyncSelectWindowClass";
-	//
-	//if (!RegisterClass(&wc)) {
-	//	printf("RegisterClass failed: %d\n", GetLastError());
-	//	return 1;
-	//}
-	//
-	//hWnd = CreateWindowEx(0, L"AsyncSelectWindowClass", L"AsyncSelectWindow", 0, 0, 0, 0, 0, HWND_MESSAGE, NULL, GetModuleHandle(NULL), NULL);
-	//if (hWnd == NULL) {
-	//	printf("CreateWindowEx failed: %d\n", GetLastError());
-	//	return 1;
-	//}
-	//
-	//SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
-	//
-	//ShowWindow(hWnd, SW_NORMAL);
-	//UpdateWindow(hWnd);
-	//pServer = reinterpret_cast<Server*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
-	//
-	//printf("HWND created\n");
-	return 1;
-}
+void Server::initHWND(){}
 
 void Server::initWSA()
 {
@@ -113,7 +86,7 @@ void Server::listenClient()
 	WSAAsyncSelect(ListenSocket, hWnd, WM_SOCKET, FD_ACCEPT | FD_CLOSE);
 
 	MSG msg;
-	while (GetMessage(&msg, NULL, 0, 0))
+	while (GetMessage(&msg, hWnd, 0, 0))
 	{
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
