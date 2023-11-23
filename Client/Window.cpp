@@ -218,7 +218,6 @@ int Window::checkTextClick()
 	return 0;
 }
 
-
 void Window::changeScene(SceneState newState)
 {
 	mShapes.clear();
@@ -465,13 +464,114 @@ void Window::skinsScreen()
 	mButton.push_back(button);
 }
 
+//void Window::shapesWindow()
+//{
+//	int cote = 175.f;
+//	int col2 = ((mWidth/2) - (cote / 2));
+//	int col1 = ((col2 / 2) - (cote / 2));
+//	int col3 = ((col2 * 2) - (cote / 2));
+//
+//	//Texts
+//	mFont.loadFromFile("arial.ttf");
+//	sf::Text* text = new sf::Text();
+//
+//	//Sphapes Text
+//	text = new sf::Text();
+//	text->setFont(mFont);
+//	text->setString("Shapes");
+//	text->setCharacterSize(50);
+//	text->setPosition(10, 20);
+//	text->setFillColor(sf::Color::White);
+//	mTextMenu.push_back(text);
+//
+//	//Shapes
+//	sf::RectangleShape* button = new sf::RectangleShape();
+//
+//	//Button "Shapes"
+//	button = new sf::RectangleShape();
+//	button->setSize(sf::Vector2f(200.f, 100.f));
+//	button->setPosition(0, 0);
+//	button->setFillColor(sf::Color(150, 50, 250));
+//	mButton.push_back(button);
+//
+//	//Bg "Shapes"
+//	button = new sf::RectangleShape();
+//	button->setSize(sf::Vector2f(800.f, 700.f));
+//	button->setPosition(0, 100);
+//	button->setFillColor(sf::Color(150, 50, 250));
+//	mButton.push_back(button);
+//
+//	//Slot1
+//	button = new sf::RectangleShape();
+//	button->setSize(sf::Vector2f(cote, cote));
+//	button->setPosition(col1, 150);
+//	button->setFillColor(sf::Color(211, 211, 211));
+//	mButton.push_back(button);
+//
+//	//Slot2
+//	button = new sf::RectangleShape();
+//	button->setSize(sf::Vector2f(cote, cote));
+//	button->setPosition(col2, 150);
+//	button->setFillColor(sf::Color(211, 211, 211));
+//	mButton.push_back(button);
+//
+//	//Slot3
+//	button = new sf::RectangleShape();
+//	button->setSize(sf::Vector2f(cote, cote));
+//	button->setPosition(col3, 150);
+//	button->setFillColor(sf::Color(211, 211, 211));
+//	mButton.push_back(button);
+//
+//	//Slot4
+//	button = new sf::RectangleShape();
+//	button->setSize(sf::Vector2f(cote, cote));
+//	button->setPosition(col1, 375);
+//	button->setFillColor(sf::Color(211, 211, 211));
+//	mButton.push_back(button);
+//
+//	//Slot5
+//	button = new sf::RectangleShape();
+//	button->setSize(sf::Vector2f(cote, cote));
+//	button->setPosition(col2, 375);
+//	button->setFillColor(sf::Color(211, 211, 211));
+//	mButton.push_back(button);
+//
+//	//Slot6
+//	button = new sf::RectangleShape();
+//	button->setSize(sf::Vector2f(cote, cote));
+//	button->setPosition(col3, 375);
+//	button->setFillColor(sf::Color(211, 211, 211));
+//	mButton.push_back(button);
+//
+//	//Slot7
+//	button = new sf::RectangleShape();
+//	button->setSize(sf::Vector2f(cote, cote));
+//	button->setPosition(col1, 600);
+//	button->setFillColor(sf::Color(211, 211, 211));
+//	mButton.push_back(button);
+//
+//	//Slot8
+//	button = new sf::RectangleShape();
+//	button->setSize(sf::Vector2f(cote, cote));
+//	button->setPosition(col2, 600);
+//	button->setFillColor(sf::Color(211, 211, 211));
+//	mButton.push_back(button);
+//
+//	//Slot9
+//	button = new sf::RectangleShape();
+//	button->setSize(sf::Vector2f(cote, cote));
+//	button->setPosition(col3, 600);
+//	button->setFillColor(sf::Color(211, 211, 211));
+//	mButton.push_back(button);
+//}
+
 void Window::shapesWindow()
 {
 	//Texts
 	mFont.loadFromFile("arial.ttf");
 	sf::Text* text = new sf::Text();
 
-	//Sphapes Text
+	//Shapes Text
 	text = new sf::Text();
 	text->setFont(mFont);
 	text->setString("Shapes");
@@ -480,7 +580,6 @@ void Window::shapesWindow()
 	text->setFillColor(sf::Color::White);
 	mTextMenu.push_back(text);
 
-	//Shapes
 	sf::RectangleShape* button = new sf::RectangleShape();
 
 	//Button "Shapes"
@@ -496,7 +595,21 @@ void Window::shapesWindow()
 	button->setPosition(0, 100);
 	button->setFillColor(sf::Color(150, 50, 250));
 	mButton.push_back(button);
+
+	// Slot shapes
+	for (int i = 0; i < 3; ++i)
+	{
+		for (int j = 0; j < 3; ++j)
+		{
+			sf::RectangleShape* button = new sf::RectangleShape();
+			button->setSize(sf::Vector2f(cote, cote));
+			button->setPosition(62.5 + j * 250, 150 + i * 225);
+			button->setFillColor(sf::Color(211, 211, 211));
+			mButton.push_back(button);
+		}
+	}
 }
+
 
 void Window::colorsWindow()
 {
@@ -528,4 +641,17 @@ void Window::colorsWindow()
 	button->setPosition(0, 100);
 	button->setFillColor(sf::Color(0, 97, 245));
 	mButton.push_back(button);
+
+	// Slot colors
+	for (int i = 0; i < 3; ++i)
+	{
+		for (int j = 0; j < 3; ++j)
+		{
+			sf::RectangleShape* button = new sf::RectangleShape();
+			button->setSize(sf::Vector2f(cote, cote));
+			button->setPosition(62.5 + j * 250, 150 + i * 225);
+			button->setFillColor(sf::Color(211, 211, 211));
+			mButton.push_back(button);
+		}
+	}
 }
