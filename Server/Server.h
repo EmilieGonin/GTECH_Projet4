@@ -65,6 +65,8 @@ protected:
     HWND hWnd;
 
     std::map<SOCKET, std::string> mPlayers;
+    std::map<SOCKET, std::string> mSpectate;
+    std::map<SOCKET, std::string> mAllClient;
 
     static Server* pServer;
 

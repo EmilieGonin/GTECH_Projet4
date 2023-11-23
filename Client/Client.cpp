@@ -1,3 +1,4 @@
+#include "Window.h"
 #include "Client.h"
 
 Client::Client() {}
