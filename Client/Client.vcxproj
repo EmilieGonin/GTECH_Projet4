@@ -134,13 +134,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Client.h" />
-    <ClInclude Include="Game.h" />
+    <ClInclude Include="GameSuppr.h" />
     <ClInclude Include="JsonHandler.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp" />
-    <ClCompile Include="Game.cpp" />
+    <ClCompile Include="GameSuppr.cpp" />
     <ClCompile Include="JsonHandler.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Window.cpp" />

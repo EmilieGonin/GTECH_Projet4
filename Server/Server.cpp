@@ -1,4 +1,4 @@
-﻿#include "ServerClient.h"
+#include "ServerClient.h"
 #include <thread>
 #include <windows.h>
 #include "../WindowsProject1/framework.h"
@@ -11,16 +11,17 @@ Server* Server::pServer = nullptr;
 
 void Server::init()
 {
-	//initHWND();
+	initHWND();
 	initWSA();
 	initSocket();
 	listenClient();
-	//closesocket(ListenSocket);
 
 	// cleanup
 	//closesocket(ClientSocket);
 	//WSACleanup();
 }
+
+void Server::initHWND(){}
 
 void Server::initWSA()
 {

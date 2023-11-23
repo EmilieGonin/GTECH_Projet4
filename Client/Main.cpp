@@ -15,6 +15,7 @@ int main(int ac, char const* av[])
 	//c.clientDisconnect();
 
 	w->changeScene(Window::MAIN_MENU);
+	//w->screenEndGame();
 
 	MSG msg;
 	while (GetMessage(&msg, NULL, 0, 0))

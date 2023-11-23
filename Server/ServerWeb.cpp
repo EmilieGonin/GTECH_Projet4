@@ -15,6 +15,11 @@ void ServerWeb::init()
 	mPort = "8888";
 	mName = "Serveur web -";
 
+	Server::init();
+}
+
+void ServerWeb::initHWND()
+{
 	WNDCLASS wcb = { 0 };
 	wcb.lpfnWndProc = WindowProc;
 	wcb.hInstance = GetModuleHandle(NULL);

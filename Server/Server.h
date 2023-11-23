@@ -29,6 +29,7 @@ class Server {
 private:
     //Game* game = Game::Instance();
     void shutdownClient(SOCKET clientSocket);
+    virtual void initHWND();
     void initWSA();
     void initSocket();
     void listenClient();
@@ -61,6 +62,8 @@ protected:
     HWND hWnd;
 
     std::map<SOCKET, std::string> mPlayers;
+    std::map<SOCKET, std::string> mSpectate;
+    std::map<SOCKET, std::string> mAllClient;
 
     static Server* pServer;
     std::string mName;

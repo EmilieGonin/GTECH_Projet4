@@ -14,6 +14,9 @@ private:
     std::string processHttpRequest();
     std::string imagePath = "game.png";
 
+protected:
+    void initHWND() override;
+
 public:
     static ServerWeb* Instance();
     void init() override;
