@@ -202,6 +202,51 @@ void Window::changeScene(SceneState newState)
 	mWindow->display();
 }
 
+void Window::screenEndGame()
+{
+	mFont.loadFromFile("arial.ttf");
+	sf::Text* text = new sf::Text();
+	text->setFont(mFont);
+	text->setString("The winner is ");
+	text->setCharacterSize(80);
+	text->setPosition(mWidth / 5.3, mLength / 8);
+	text->setFillColor(sf::Color(245, 148, 0));
+	mTexts.push_back(text);
+
+	text = new sf::Text();
+	text->setFont(mFont);
+	text->setString("Menu");
+	text->setCharacterSize(50);
+	text->setPosition(200, 670);
+	text->setFillColor(sf::Color::White);
+	mTextMenu.push_back(text);
+
+	text = new sf::Text();
+	text->setFont(mFont);
+	text->setString("Quit");
+	text->setCharacterSize(50);
+	text->setPosition(500, 670);
+	text->setFillColor(sf::Color::White);
+	mTextMenu.push_back(text);
+
+	sf::RectangleShape* button = new sf::RectangleShape();
+
+	//Rectangle "Menu"
+	button = new sf::RectangleShape();
+	button->setSize(sf::Vector2f(200.f, 100.f));
+	button->setPosition(160, 650);
+	button->setFillColor(sf::Color(0, 97, 245));
+	mButton.push_back(button);
+
+	//Rectangle "Quit"
+	button = new sf::RectangleShape();
+	button->setSize(sf::Vector2f(200.f, 100.f));
+	button->setPosition(450, 650);
+	button->setFillColor(sf::Color(0, 97, 245));
+	mButton.push_back(button);
+}
+
+
 void Window::initTextFirstMenu()
 {
 	mFontTitle.loadFromFile("valoon.ttf");
