@@ -9,15 +9,15 @@
 
 DWORD WINAPI startClientServer(LPVOID lpParam) 
 {
-	ServerClient serverClient;
-	serverClient.init();
+	ServerClient* c = ServerClient::Instance();
+	c->init();
 	return 0;
 }
 
 DWORD WINAPI startWebServer(LPVOID lpParam)
 {
-	ServerWeb* serverWeb = ServerWeb::Instance();
-	serverWeb->init();
+	ServerWeb* w = ServerWeb::Instance();
+	w->init();
 	return 0;
 }
 

@@ -1,13 +1,9 @@
 #include "ServerClient.h"
 #include <thread>
 #include <windows.h>
-#include "../WindowsProject1/framework.h"
-
 
 Server::Server() {}
 Server::~Server() {}
-
-Server* Server::pServer = nullptr;
 
 void Server::init()
 {
@@ -27,9 +23,7 @@ void Server::initWSA()
 {
 	// Initialize Winsock
 	iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
-	if (iResult != 0) {
-		printf("%s WSAStartup failed with error: %d\n", mName.c_str(), iResult);
-	}
+	if (iResult != 0) printf("%s WSAStartup failed with error: %d\n", mName.c_str(), iResult);
 
 	ZeroMemory(&hints, sizeof(hints));
 	hints.ai_family = AF_INET;
@@ -102,64 +96,6 @@ void Server::listenClient()
 	}
 }
 
-void Server::accepteClient(SOCKET client) {}
-
-LRESULT Server::WindowProc(HWND hWnd, UINT uMsg, WPARAM socket, LPARAM lParam) //static
-{
-	//pServer = reinterpret_cast<Server*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
-
-	if (pServer == nullptr)
-	{
-		printf("Failed to retrieve pServer\n");
-		return 1;
-	}
-
-	switch (uMsg)
-	{
-	case WM_SOCKET:
-	{
-		switch (LOWORD(lParam))
-		{
-		case FD_READ:
-			pServer->HandleReadEvent(socket);
-			break;
-		case FD_ACCEPT:
-			pServer->HandleAcceptEvent(socket);
-			break;
-		case FD_CLOSE:
-			pServer->HandleCloseEvent(socket);
-			break;
-		default:
-			break;
-		}
-		return 0; // Indique que le message a été traité
-	}
-	//pServer->handleClient(uMsg,socket, lParam);
-	}
-	return DefWindowProc(hWnd, uMsg, socket, lParam);
-}
-
-LRESULT Server::HandleWindowMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
-{
-	/*int requestID = static_cast<int>(wParam);
-	std::string requestData(reinterpret_cast<const char*>(lParam));
-	if (requestData.find("close") != std::string::npos)
-	{
-		printf("close connexion since you asked it");
-		std::this_thread::sleep_for(std::chrono::milliseconds(5000));
-		closesocket(ClientSocket);
-		WSACleanup();
-	}*/
-
-
-	/*switch (uMsg)
-	{
-
-	}*/
-
-	return DefWindowProc(hWnd, uMsg, wParam, lParam);
-}
-
 void Server::shutdownClient(SOCKET clientSocket)
 {
 	iResult = shutdown(clientSocket, SD_SEND);
@@ -178,7 +114,6 @@ void Server::shutdownClient(SOCKET clientSocket)
 		//[clientSocket](SOCKET s) { return s == clientSocket; }), mPlayers.end());
 
 	closesocket(clientSocket);
-
 }
 
 std::string Server::generateSessionID() const {
@@ -192,18 +127,4 @@ std::string Server::generateSessionID() const {
 }
 
 void Server::HandleReadEvent(WPARAM socket) {}
-
-void Server::HandleAcceptEvent(WPARAM socket)
-{
-	accepteClient(socket);
-}
-
-void Server::HandleCloseEvent(WPARAM wParam)
-{
-	//printf("Close event\n %lu\n", wParam);
-}
-
-void Server::sendJson(SOCKET client, std::string json)
-{
-	send(client, json.c_str(), json.size(), 0);
-}
+void Server::HandleCloseEvent(WPARAM wParam) {}

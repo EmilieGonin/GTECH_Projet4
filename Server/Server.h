@@ -33,10 +33,6 @@ private:
     void initWSA();
     void initSocket();
     void listenClient();
-    virtual void accepteClient(SOCKET);
-
-    LRESULT HandleWindowMessage(UINT uMsg, WPARAM wParam, LPARAM lParam);
-    void HandleCloseEvent(WPARAM wParam);
 
     WSADATA wsaData;
 
@@ -46,8 +42,6 @@ private:
 protected:
     std::string mPort;
     std::string generateSessionID() const;
-
-    static LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
     int iResult;
     int iSendResult;
     int recvbuflen = DEFAULT_BUFLEN;
@@ -63,14 +57,14 @@ protected:
     std::map<SOCKET, std::string> mSpectate;
     std::map<SOCKET, std::string> mAllClient;
 
-    static Server* pServer;
+    //static Server* pServer;
     std::string mName;
 
     virtual void HandleReadEvent(WPARAM wParam);
-    virtual void HandleAcceptEvent(WPARAM wParam);
+    virtual void HandleCloseEvent(WPARAM wParam);
+    //static LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 public:
     Server();
     ~Server();
-    void sendJson(SOCKET, std::string);
 };

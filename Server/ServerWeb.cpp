@@ -2,7 +2,12 @@
 
 ServerWeb* ServerWeb::mInstance = nullptr;
 
-ServerWeb::ServerWeb() { };
+ServerWeb::ServerWeb() {}
+
+ServerWeb::~ServerWeb()
+{
+	UnregisterClass(L"AsyncSelectWindowClassB", GetModuleHandle(NULL));
+}
 
 ServerWeb* ServerWeb::Instance()
 {
@@ -41,8 +46,8 @@ void ServerWeb::initHWND()
 
 	printf("%s HWND created\n", mName.c_str());
 
-	SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
-	pServer = reinterpret_cast<Server*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
+	//SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
+	//mInstance = reinterpret_cast<ServerWeb*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
 }
 
 void ServerWeb::accepteClient(SOCKET client)
@@ -89,7 +94,34 @@ void ServerWeb::HandleReadEvent(WPARAM socket)
 	showHTML();
 }
 
-void ServerWeb::HandleAcceptEvent(WPARAM socket)
+LRESULT ServerWeb::WindowProc(HWND hWnd, UINT uMsg, WPARAM socket, LPARAM lParam) //static
 {
-	accepteClient(socket);
+	if (mInstance == nullptr) return 1;
+
+	switch (uMsg) {
+	case WM_SOCKET:
+	{
+		switch (LOWORD(lParam))
+		{
+		case FD_READ:
+			mInstance->HandleReadEvent(socket);
+			break;
+		case FD_ACCEPT:
+			mInstance->accepteClient(socket);
+			break;
+		case FD_CLOSE:
+			mInstance->HandleCloseEvent(socket);
+			break;
+		default:
+			break;
+		}
+		return 0; // Indique que le message a été traité
+	}}
+
+	return DefWindowProc(hWnd, uMsg, socket, lParam);
+}
+
+void ServerWeb::HandleCloseEvent(WPARAM wParam)
+{
+	//printf("Close event\n %lu\n", wParam);
 }

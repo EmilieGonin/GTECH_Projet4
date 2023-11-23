@@ -1,10 +1,18 @@
 #include "ServerClient.h"
 
+ServerClient* ServerClient::mInstance = nullptr;
+
 ServerClient::ServerClient() {}
 
 ServerClient::~ServerClient()
 {
 	UnregisterClass(L"AsyncSelectWindowClassA", GetModuleHandle(NULL));
+}
+
+ServerClient* ServerClient::Instance()
+{
+	if (mInstance == nullptr) mInstance = new ServerClient();
+	return mInstance;
 }
 
 void ServerClient::init()
@@ -38,8 +46,8 @@ void ServerClient::initHWND()
 
 	printf("%s HWND created\n", mName.c_str());
 
-	SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
-	pServer = reinterpret_cast<Server*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
+	//SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
+	//mInstance = reinterpret_cast<ServerClient*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
 }
 
 void ServerClient::accepteClient(SOCKET client)
@@ -150,8 +158,8 @@ void ServerClient::handleJson(SOCKET client, std::string dump)
 	switch (id)
 	{
 	case 1: //Play cell
-		//Check if it's player turn
 	{
+		//Check if it's player turn
 		bool error = game->getPlayerTurn() != playerId;
 		if (!error)
 		{
@@ -161,8 +169,8 @@ void ServerClient::handleJson(SOCKET client, std::string dump)
 			if (game->hasWin()) response = JsonHandler(game->getCells(), playerId);
 			else response = JsonHandler(game->getCells(), game->getPlayerTurn(), error);
 
-			//ServerWeb* w = ServerWeb::Instance();
-			//w->showHTML();
+			ServerWeb* w = ServerWeb::Instance();
+			w->showHTML();
 		}
 
 		for (auto& player : mPlayers)
@@ -181,7 +189,39 @@ void ServerClient::handleJson(SOCKET client, std::string dump)
 	}
 }
 
-void ServerClient::HandleAcceptEvent(WPARAM socket)
+void ServerClient::sendJson(SOCKET client, std::string json)
 {
-	accepteClient(socket);
+	send(client, json.c_str(), json.size(), 0);
+}
+
+LRESULT ServerClient::WindowProc(HWND hWnd, UINT uMsg, WPARAM socket, LPARAM lParam) //static
+{
+	if (mInstance == nullptr) return 1;
+
+	switch (uMsg) {
+	case WM_SOCKET:
+	{
+		switch (LOWORD(lParam))
+		{
+		case FD_READ:
+			mInstance->HandleReadEvent(socket);
+			break;
+		case FD_ACCEPT:
+			mInstance->accepteClient(socket);
+			break;
+		case FD_CLOSE:
+			mInstance->HandleCloseEvent(socket);
+			break;
+		default:
+			break;
+		}
+		return 0; // Indique que le message a été traité
+	}}
+
+	return DefWindowProc(hWnd, uMsg, socket, lParam);
+}
+
+void ServerClient::HandleCloseEvent(WPARAM wParam)
+{
+	//printf("Close event\n %lu\n", wParam);
 }

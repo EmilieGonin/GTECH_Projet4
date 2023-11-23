@@ -8,8 +8,9 @@
 class ServerWeb : public Server {
 private:
     ServerWeb();
+    ~ServerWeb();
     static ServerWeb* mInstance;
-    void accepteClient(SOCKET) override;
+    void accepteClient(SOCKET);
 
     std::string processHttpRequest();
     std::string imagePath = "game.png";
@@ -20,7 +21,9 @@ protected:
 public:
     static ServerWeb* Instance();
     void init() override;
-    void HandleReadEvent(WPARAM wParam) override;
     void showHTML();
-    void HandleAcceptEvent(WPARAM socket) override;
+    void HandleReadEvent(WPARAM wParam) override;
+    void HandleCloseEvent(WPARAM wParam) override;
+
+    static LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 };
