@@ -65,6 +65,7 @@ private:
 	static Window* mInstance;
 
 	int mTurn = 1;
+	int cote = 175.f;
 
 	const unsigned int maxNameLength = 10;
 
