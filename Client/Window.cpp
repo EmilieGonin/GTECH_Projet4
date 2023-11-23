@@ -16,9 +16,10 @@ Window::~Window()
 	for (auto& cell : mCells) delete cell.second.shape;
 }
 
-Window* Window::Instance()
+Window* Window::Instance(Client* mClient)
 {
 	if (mInstance == nullptr) mInstance = new Window();
+	mInstance->client = mClient;
 	return mInstance;
 }
 
@@ -218,7 +219,7 @@ void Window::changeScene(SceneState newState)
 	case Window::JOIN:
 		break;
 	case Window::GAME:
-		windowTest(); //test a supp
+		client->connectClientServer();
 		break;
 	case Window::END_GAME:
 		screenEndGame();

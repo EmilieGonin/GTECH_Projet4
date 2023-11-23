@@ -3,8 +3,8 @@
 
 int main(int ac, char const* av[])
 {
-	Window* w = Window::Instance();
 	Client c;
+	Window* w = Window::Instance(&c);
 
 	if (c.init() == 1)
 	{
@@ -34,7 +34,7 @@ int main(int ac, char const* av[])
 		case Window::END_GAME:
 			break;
 		}
-
+		
 		w->update();
 
 		if (!w->hasPlayed() && w->hasSelectedCell())
