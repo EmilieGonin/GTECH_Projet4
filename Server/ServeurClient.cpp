@@ -167,8 +167,17 @@ void ServerClient::handleJson(SOCKET client, std::string dump)
 			game->updateCells(cell, playerId);
 
 			//Check if player has win
-			if (game->hasWin()) response = JsonHandler(game->getCells(), playerId);
-			else response = JsonHandler(game->getCells(), game->getPlayerTurn(), error);
+			switch (game->hasWin()) {
+			case -1: //No win
+				response = JsonHandler(game->getCells(), game->getPlayerTurn(), error);
+				break;
+			case 0: //Tie
+				response = JsonHandler(game->getCells(), "None");
+				break;
+			case 1: //Win
+				response = JsonHandler(game->getCells(), playerId);
+				break;
+			}
 		}
 
 		for (auto& player : mPlayers)
