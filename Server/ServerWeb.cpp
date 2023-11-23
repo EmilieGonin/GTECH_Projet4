@@ -34,43 +34,6 @@ void ServerWeb::init()
 	Server::init();
 }
 
-void ServerWeb::handleClient() {
-	//do {
-
-	//	iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
-	//	if (iResult > 0)
-	//	{
-	//		printf("request received: %s\n", recvbuf);
-	//		// Analyser la requête HTTP
-	//		std::string httpResponse = processHttpRequest();
-
-	//		iSendResult = send(ClientSocket, httpResponse.c_str(), httpResponse.size(), 0);
-
-	//		if (iSendResult == SOCKET_ERROR)
-	//		{
-	//			printf("send failed with error: %d\n", WSAGetLastError());
-	//			closesocket(ClientSocket);
-	//			WSACleanup();
-	//			break; // Sortir de la boucle si l'envoi échoue
-	//		}
-	//	}
-	//	else if (iResult == 0)
-	//	{
-	//		printf("Connection closing from server...\n");
-	//		break; // Sortir de la boucle si la connexion est fermée
-	//	}
-	//	else
-	//	{
-	//		int error = WSAGetLastError();
-	//		if (error != WSAEWOULDBLOCK) {
-	//			// Gérer l'erreur, mais ne pas fermer la connexion en cas de WSAEWOULDBLOCK
-	//			printf("recv failed with error: %d\n", error);
-	//			break; // Sortir de la boucle pour d'autres erreurs que WSAEWOULDBLOCK
-	//		}
-	//	}
-	//} while (iResult > 0);
-}
-
 void ServerWeb::accepteClient(SOCKET client)
 {
 	// Accept a client socket
@@ -83,7 +46,7 @@ void ServerWeb::accepteClient(SOCKET client)
 	}
 	printf("%s Client accepted.\n", mName.c_str());
 
-	handleClient();
+	WSAAsyncSelect(client, hWnd, WM_SOCKET, FD_READ | FD_CLOSE);
 }
 
 std::string ServerWeb::processHttpRequest()
@@ -99,4 +62,16 @@ std::string ServerWeb::processHttpRequest()
 	std::string html = "HTTP / 1.1 200 OK\r\nContent-Type: text/html\r\n\r\n<h1>Tic-Tac-Toe</h1><img src=\"data:image/png;base64," + base64 + "\" />";
 
 	return html;
+}
+
+void ServerWeb::showHTML(SOCKET client)
+{
+	send(client, processHttpRequest().c_str(), processHttpRequest().size(), 0);
+}
+
+void ServerWeb::HandleReadEvent(WPARAM socket)
+{
+	iResult = recv(socket, recvbuf, recvbuflen, 0);
+	printf("%s Read event :\n %s\n", mName.c_str(), recvbuf);
+	showHTML(socket);
 }

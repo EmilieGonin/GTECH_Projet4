@@ -4,10 +4,11 @@
 class ServerClient : public Server {
 
 protected:
-	void handleClient(UINT uMsg, WPARAM wParam, LPARAM lParam) override;
 	void accepteClient(SOCKET) override;
+	void handleJson(SOCKET, std::string dump);
 
 public:
 	ServerClient();
 	void init() override;
+	void HandleReadEvent(WPARAM wParam) override;
 };

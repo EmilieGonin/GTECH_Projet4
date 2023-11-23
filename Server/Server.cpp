@@ -174,8 +174,6 @@ LRESULT Server::HandleWindowMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
 
-void Server::handleClient(UINT uMsg, WPARAM wParam, LPARAM lParam) {}
-
 void Server::shutdownClient(SOCKET clientSocket)
 {
 	iResult = shutdown(clientSocket, SD_SEND);
@@ -207,12 +205,7 @@ std::string Server::generateSessionID() const {
 	return "SessionID_" + std::to_string(timestamp);
 }
 
-void Server::HandleReadEvent(WPARAM socket)
-{
-	iResult = recv(socket, recvbuf, recvbuflen, 0);
-	printf("%s Read event :\n %s\n", mName.c_str(), recvbuf);
-	handleJson(socket, recvbuf);
-}
+void Server::HandleReadEvent(WPARAM socket) {}
 
 void Server::HandleAcceptEvent(WPARAM socket)
 {
@@ -227,44 +220,4 @@ void Server::HandleCloseEvent(WPARAM wParam)
 void Server::sendJson(SOCKET client, std::string json)
 {
 	send(client, json.c_str(), json.size(), 0);
-}
-
-void Server::handleJson(SOCKET client, std::string dump)
-{
-	JsonHandler response;
-	Game* game = Game::Instance();
-	json json = json::parse(dump);
-	int id = json["Id"];
-	std::string playerId = json["Player"];
-	std::pair<int, int> cell = json["Cell"];
-
-	switch (id)
-	{
-	case 1: //Play cell
-		//Check if it's player turn
-	{
-		bool error = game->getPlayerTurn() != playerId;
-		if (!error)
-		{
-			game->updateCells(cell, playerId);
-
-			//Check if player has win
-			if (game->hasWin()) response = JsonHandler(game->getCells(), playerId);
-			else response = JsonHandler(game->getCells(), game->getPlayerTurn(), error);
-		}
-
-		for (auto& player : mPlayers)
-		{
-			if (player.second != playerId && error) continue;
-			sendJson(player.first, response.getDump());
-		}
-	}
-		break;
-	case 2: //Get cells after reconnect
-		response = JsonHandler(game->getCells(), game->getPlayerTurn(), false);
-		sendJson(client, response.getDump());
-		break;
-	default:
-		break;
-	}
 }

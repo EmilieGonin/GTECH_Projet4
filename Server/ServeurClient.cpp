@@ -83,30 +83,49 @@ void ServerClient::accepteClient(SOCKET client)
 	WSAAsyncSelect(client, hWnd, WM_SOCKET, FD_READ | FD_CLOSE);
 }
 
-void ServerClient::handleClient(UINT uMsg, WPARAM wParam, LPARAM lParam)
+void ServerClient::HandleReadEvent(WPARAM socket)
 {
-	//if (iResult > 0)
-	//{
-	//	printf("Bytes received: %d\n", uMsg);
+	iResult = recv(socket, recvbuf, recvbuflen, 0);
+	printf("%s Read event :\n %s\n", mName.c_str(), recvbuf);
+	handleJson(socket, recvbuf);
+}
 
-	//	// Echo the buffer back to the sender
-	//	iSendResult = send(ClientSocket, recvbuf, iResult, 0);
-	//	if (iSendResult == SOCKET_ERROR)
-	//	{
-	//		printf("send failed with error: %d\n", WSAGetLastError());
-	//		closesocket(ClientSocket);
-	//		WSACleanup();
-	//	}
-	//	printf("Bytes sent: %d\n", iSendResult);
-	//}
-	//else if (iResult == 0)
-	//{
-	//	//printf("Connection closing from server...\n");
+void ServerClient::handleJson(SOCKET client, std::string dump)
+{
+	JsonHandler response;
+	Game* game = Game::Instance();
+	json json = json::parse(dump);
+	int id = json["Id"];
+	std::string playerId = json["Player"];
+	std::pair<int, int> cell = json["Cell"];
 
-	//}
-	///*else
-	//{
-	//	printf("recv failed with error: %d\n", WSAGetLastError());
+	switch (id)
+	{
+	case 1: //Play cell
+		//Check if it's player turn
+	{
+		bool error = game->getPlayerTurn() != playerId;
+		if (!error)
+		{
+			game->updateCells(cell, playerId);
 
-	//}*/
+			//Check if player has win
+			if (game->hasWin()) response = JsonHandler(game->getCells(), playerId);
+			else response = JsonHandler(game->getCells(), game->getPlayerTurn(), error);
+		}
+
+		for (auto& player : mPlayers)
+		{
+			if (player.second != playerId && error) continue;
+			sendJson(player.first, response.getDump());
+		}
+	}
+	break;
+	case 2: //Get cells after reconnect
+		response = JsonHandler(game->getCells(), game->getPlayerTurn(), false);
+		sendJson(client, response.getDump());
+		break;
+	default:
+		break;
+	}
 }

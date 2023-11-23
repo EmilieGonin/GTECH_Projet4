@@ -29,17 +29,14 @@ class Server {
 private:
     //Game* game = Game::Instance();
     void shutdownClient(SOCKET clientSocket);
-    virtual void handleClient(UINT uMsg, WPARAM wParam, LPARAM lParam);
     void initWSA();
     void initSocket();
     int initHWND();
     void listenClient();
     virtual void accepteClient(SOCKET);
-    void handleJson(SOCKET, std::string dump);
 
     LRESULT HandleWindowMessage(UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-    void HandleReadEvent(WPARAM wParam);
     void HandleAcceptEvent(WPARAM wParam);
     void HandleCloseEvent(WPARAM wParam);
 
@@ -68,6 +65,7 @@ protected:
 
     static Server* pServer;
     std::string mName;
+    virtual void HandleReadEvent(WPARAM wParam);
 
 public:
     Server();
