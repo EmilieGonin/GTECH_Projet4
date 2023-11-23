@@ -202,6 +202,11 @@ void Window::changeScene(SceneState newState)
 	mWindow->display();
 }
 
+void Window::namePlayerWin()
+{
+
+}
+
 void Window::screenEndGame()
 {
 	mFont.loadFromFile("arial.ttf");

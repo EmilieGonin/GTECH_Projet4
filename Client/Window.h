@@ -34,6 +34,7 @@ public:
 	void addBackgroundText();
 	void screenEndGame();
 	void menuNameEnter();
+	void namePlayerWin();
 	void changeMenuColor();
 	void checkTextClick();
 
