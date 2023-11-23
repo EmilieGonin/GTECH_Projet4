@@ -4,6 +4,7 @@
 #include <map>
 #include <string>
 #include <iostream>
+#include "Client.h"
 
 struct cell {
 	sf::Shape* shape;
@@ -14,7 +15,7 @@ struct cell {
 class Window
 {
 public:
-	static Window* Instance();
+	static Window* Instance(Client* client);
 	void update();
 	void addShape(sf::Shape*);
 	void addCell(std::pair<int, int>, sf::Shape*);
@@ -93,4 +94,6 @@ private:
 	std::pair<int, int> mSelectedCell;
 	bool mHasPlayed;
 	std::string mPlayerId;
+
+	Client* client;
 };
