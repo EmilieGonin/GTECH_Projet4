@@ -42,6 +42,9 @@ public:
 	void waitingScreen();
 	void skinsScreen();
 
+	void shapesWindow();
+	void colorsWindow();
+
 	enum SceneState {
 		MAIN_MENU,
 		WAITING,
