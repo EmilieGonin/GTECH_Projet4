@@ -40,11 +40,12 @@ public:
 	void shapeMainMenu();
 	void screenEndGame();
 	void waitingScreen();
+	void skinsScreen();
 
 	enum SceneState {
 		MAIN_MENU,
 		WAITING,
-		JOIN,
+		SKINS,
 		GAME,
 		END_GAME,
 	};
