@@ -33,17 +33,21 @@ public:
 	inline bool isOpen() { return mWindow->isOpen(); };
 
 	void Finito();
-	void textMainMenu();
-	void shapeMainMenu();
 	void menuNameEnter();
 	void namePlayerWin();
 	void changeMenuColor();
 	int checkTextClick();
+
+	void textMainMenu();
+	void shapeMainMenu();
 	void screenEndGame();
+	void waitingScreen();
+	void skinsScreen();
 
 	enum SceneState {
 		MAIN_MENU,
-		JOIN,
+		WAITING,
+		SKINS,
 		GAME,
 		END_GAME,
 	};

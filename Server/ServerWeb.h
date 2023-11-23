@@ -21,7 +21,7 @@ protected:
 public:
     static ServerWeb* Instance();
     void init() override;
-    void showHTML();
+    void showHTML(SOCKET);
     void HandleReadEvent(WPARAM wParam) override;
     void HandleCloseEvent(WPARAM wParam) override;
 

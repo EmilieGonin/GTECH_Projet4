@@ -60,9 +60,7 @@ void ServerWeb::accepteClient(SOCKET client)
 		WSACleanup();
 		return;
 	}
-	printf("%s Client accepted.\n", mName.c_str());
-
-	mPlayers[client] = generateSessionID(); //Replace with spectators map
+	//printf("%s Client accepted.\n", mName.c_str());
 
 	WSAAsyncSelect(client, hWnd, WM_SOCKET, FD_READ | FD_CLOSE);
 }
@@ -77,21 +75,27 @@ std::string ServerWeb::processHttpRequest()
 	std::string imageData = imageStream.str();
 	std::string base64 = base64_encode(imageData);
 
-	std::string html = "HTTP / 1.1 200 OK\r\nContent-Type: text/html\r\n\r\n<h1>Tic-Tac-Toe</h1><img src=\"data:image/png;base64," + base64 + "\" />";
-
+	std::string html = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n";
+	/*html += "<script>";
+	html += "document.getElementById(\"content\").innerHTML = \"\";";
+	html += "</script>";*/
+	html += "<script>";
+	html += "setTimeout(function() { location.reload(); }, 1000);";
+	html += "</script>";
+	html += "<div id=\"content\"><h1>Tic-Tac-Toe</h1><img src=\"data:image/png;base64," + base64 + "\" /></div>";
 	return html;
 }
 
-void ServerWeb::showHTML()
+void ServerWeb::showHTML(SOCKET client)
 {
-	for (auto& client : mPlayers) send(client.first, processHttpRequest().c_str(), processHttpRequest().size(), 0);
+	send(client, processHttpRequest().c_str(), processHttpRequest().size(), 0);
 }
 
 void ServerWeb::HandleReadEvent(WPARAM socket)
 {
 	iResult = recv(socket, recvbuf, recvbuflen, 0);
-	printf("%s Read event :\n %s\n", mName.c_str(), recvbuf);
-	showHTML();
+	//printf("%s Read event :\n %s\n", mName.c_str(), recvbuf);
+	showHTML(socket);
 }
 
 LRESULT ServerWeb::WindowProc(HWND hWnd, UINT uMsg, WPARAM socket, LPARAM lParam) //static

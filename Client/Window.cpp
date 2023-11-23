@@ -113,13 +113,6 @@ void Window::addCell(std::pair<int, int> pos, sf::Shape* shape)
 	mCells[pos] = newCell;
 }
 
-void Window::Finito()
-{
-	endGame = true;
-	if (mTurn % 2 == 0)	mWindow->setTitle("Red Win !");
-	else mWindow->setTitle("Green Win !");
-}
-
 void Window::checkCollision(sf::Event e)
 {
 	if (!endGame)
@@ -133,9 +126,9 @@ void Window::checkCollision(sf::Event e)
 
 			if (bounds.contains(pos))
 			{
-				cell.second.player = mTurn % 2 == 0 ? 2 : 1; //Shape has now been selected
-				mSelectedCell = cell.second.pos;
+				cell.second.player = mPlayerId; //Shape has now been selected
 				addPlayerShape(bounds.getPosition(), cell.second.player);
+				mSelectedCell = cell.second.pos;
 				return;
 			}
 		}
@@ -147,11 +140,13 @@ void Window::addPlayerShape(sf::Vector2f position, std::string player)
 	sf::CircleShape* shape = new sf::CircleShape(75);
 	shape->setPosition(position);
 
-	if (player == mPlayerId)shape->setFillColor(sf::Color::Green);
+	if (player == mPlayerId)
+	{
+		shape->setFillColor(sf::Color::Green);
+	}
 	else shape->setFillColor(sf::Color::Red);
 
 	addShape(shape);
-	mTurn++;
 }
 
 int Window::checkTextClick()
@@ -182,8 +177,6 @@ int Window::checkTextClick()
 			{
 				// Lance le jeu
 				hasError = false;
-				changeScene(GAME);
-				break;
 			}
 			else if (text->getString() == "Play" && !mName.empty())
 			{
@@ -199,7 +192,7 @@ int Window::checkTextClick()
 			}
 			else if (text->getString() == "Join")
 			{
-				changeScene(JOIN);
+				changeScene(SKINS);
 				break;
 			}
 		}
@@ -225,7 +218,11 @@ void Window::changeScene(SceneState newState)
 		textMainMenu();
 		shapeMainMenu();
 		break;
-	case Window::JOIN:
+	case Window::WAITING:
+		waitingScreen();
+		break;
+	case Window::SKINS:
+		skinsScreen();
 		break;
 	case Window::GAME:
 		client->connectClientServer();
@@ -326,12 +323,12 @@ void Window::textMainMenu()
 	text->setFillColor(sf::Color::White);
 	mTextMenu.push_back(text);
 
-	// Join text
+	// Skins text
 	text = new sf::Text();
 	text->setFont(mFont);
-	text->setString("Join");
+	text->setString("Skins");
 	text->setCharacterSize(50);
-	text->setPosition(200, 670);
+	text->setPosition(190, 670);
 	text->setFillColor(sf::Color::White);
 	mTextMenu.push_back(text);
 
@@ -351,15 +348,13 @@ void Window::shapeMainMenu()
 
 	//Rectangle "Play"
 	button->setSize(sf::Vector2f(500.f, 100.f));
-	//button->setRadius(40.0);
 	button->setPosition(150, 500);
 	button->setFillColor(sf::Color(150, 50, 250));
 	mButton.push_back(button);
 
-	//Rectangle "Join"
+	//Rectangle "Skins"
 	button = new sf::RectangleShape();
 	button->setSize(sf::Vector2f(200.f, 100.f));
-	//button->setRadius(40.0);
 	button->setPosition(150, 650);
 	button->setFillColor(sf::Color(150, 50, 250));
 	mButton.push_back(button);
@@ -367,7 +362,6 @@ void Window::shapeMainMenu()
 	//Rectangle "Quit"
 	button = new sf::RectangleShape();
 	button->setSize(sf::Vector2f(200.f, 100.f));
-	//button->setRadius(40.0);
 	button->setPosition(450, 650);
 	button->setFillColor(sf::Color(150, 50, 250));
 	mButton.push_back(button);
@@ -415,4 +409,89 @@ void Window::changeMenuColor()
 		if (gb.contains(pos)) text->setFillColor(sf::Color(222, 31, 63));
 		else text->setFillColor(sf::Color::White);
 	}
+}
+
+void Window::waitingScreen()
+{
+	//Waiting text
+	mFont.loadFromFile("arial.ttf");
+	sf::Text* text = new sf::Text();
+	text->setFont(mFont);
+	text->setString("Waiting for players...");
+	text->setCharacterSize(50);
+	text->setPosition(mWidth/4 , mLength / 3);
+	text->setFillColor(sf::Color(255, 255, 255));
+	mTexts.push_back(text);
+}
+
+void Window::skinsScreen()
+{
+	//Texts
+	mFont.loadFromFile("arial.ttf");
+	sf::Text* text = new sf::Text();
+
+	//Sphapes Text
+	text = new sf::Text();
+	text->setFont(mFont);
+	text->setString("Shapes");
+	text->setCharacterSize(50);
+	text->setPosition(10, 20);
+	text->setFillColor(sf::Color::White);
+	mTextMenu.push_back(text);
+
+	//Colors Text
+	text = new sf::Text();
+	text->setFont(mFont);
+	text->setString("Colors");
+	text->setCharacterSize(50);
+	text->setPosition(220, 20);
+	text->setFillColor(sf::Color::White);
+	mTextMenu.push_back(text);
+
+	//Return Text
+	text = new sf::Text();
+	text->setFont(mFont);
+	text->setString("Return");
+	text->setCharacterSize(50);
+	text->setPosition(625, 20);
+	text->setFillColor(sf::Color::White);
+	mTextMenu.push_back(text);
+
+	//Shapes
+	sf::RectangleShape* button = new sf::RectangleShape();
+
+	//Button "Shapes"
+	button = new sf::RectangleShape();
+	button->setSize(sf::Vector2f(200.f, 100.f));
+	button->setPosition(0, 0);
+	button->setFillColor(sf::Color(150, 50, 250));
+	mButton.push_back(button);
+
+	//Button "Colors"
+	button = new sf::RectangleShape();
+	button->setSize(sf::Vector2f(200.f, 100.f));
+	button->setPosition(200, 0);
+	button->setFillColor(sf::Color(0, 97, 245));
+	mButton.push_back(button);
+
+	//Button "Return"
+	button = new sf::RectangleShape();
+	button->setSize(sf::Vector2f(200.f, 100.f));
+	button->setPosition(600, 0);
+	button->setFillColor(sf::Color(150, 50, 50));
+	mButton.push_back(button);
+
+	//Bg "Shapes"
+	button = new sf::RectangleShape();
+	button->setSize(sf::Vector2f(800.f, 700.f));
+	button->setPosition(0, 100);
+	button->setFillColor(sf::Color(150, 50, 250));
+	mButton.push_back(button);
+
+	//Bg "Colors"
+	button = new sf::RectangleShape();
+	button->setSize(sf::Vector2f(800.f, 700.f));
+	button->setPosition(0, 100);
+	button->setFillColor(sf::Color(0, 97, 245));
+	mButton.push_back(button);
 }
