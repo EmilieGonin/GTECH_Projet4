@@ -3,6 +3,7 @@
 #include <SFML/Window/Mouse.hpp>
 #include <map>
 #include <string>
+#include <iostream>
 
 struct cell {
 	sf::Shape* shape;
@@ -66,6 +67,7 @@ private:
 	std::vector<sf::Shape*> mShapes;
 	std::vector<sf::Text*> mTexts;
 	std::vector<sf::Text*> mTextMenu;
+	std::vector<sf::Text*> mErrorMessage;
 	std::vector<sf::RectangleShape*> mButton;
 
 	std::map<std::pair<int, int>, cell> mCells;

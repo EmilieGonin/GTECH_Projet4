@@ -50,6 +50,8 @@ void Window::update()
 		for (auto& text : mTexts) mWindow->draw(*text);
 		for (auto& button : mButton) mWindow->draw(*button);
 		for (auto& text : mTextMenu) mWindow->draw(*text);
+		//for (auto& text : mErrorMessage) mWindow->draw(*text);
+
 		mWindow->display();
 	}
 }
@@ -150,7 +152,7 @@ void Window::addPlayerShape(sf::Vector2f position, std::string player)
 
 void Window::checkTextClick()
 {
-	// R�cup�re la position du clic de souris
+	// Récupère la position du clic de souris
 	sf::Vector2f mousePosition = sf::Vector2f(sf::Mouse::getPosition(*mWindow));
 
 	// Parcours des textes pour v�rifier si l'un d'eux a �t� cliqu�
@@ -162,13 +164,22 @@ void Window::checkTextClick()
 		// V�rifie la collision avec la position du clic de souris
 		if (bounds.contains(mousePosition))
 		{
-			// Actions sp�cifiques au texte cliqu�
+			// Actions sp�cifiques au texte cliqué
 			if (text->getString() == "Quit")
 			{
 				// Quitte le jeu
 				mWindow->close();
+				//std::exit(0);
 			}
-			else if (text->getString() == "Play")
+			else if (text->getString() == "Play" && mName.empty())
+			{
+				// Affiche message d'erreur
+				//for (auto& errorMessage : mErrorMessage)
+				//{
+				//	mWindow->draw(*errorMessage);
+				//}
+			}
+			else if (text->getString() == "Play" && !mName.empty())
 			{
 				// Lance le jeu
 				changeScene(GAME);
@@ -190,9 +201,6 @@ void Window::changeScene(SceneState newState)
 	mCells.clear();
 	mEnterName = nullptr;
 
-	//delete mEnterName.getFont(); // Libère la mémoire associée à la police (évite les fuites de mémoire)
-	//delete &mEnterName;
-
 	mWindow->clear();
 
 	currentScene = newState;
@@ -209,7 +217,6 @@ void Window::changeScene(SceneState newState)
 		windowTest(); //test a supp
 		break;
 	}
-
 	mWindow->display();
 }
 
@@ -229,7 +236,7 @@ void Window::textMainMenu()
 	text->setFillColor(sf::Color(31, 222, 190));
 	mTexts.push_back(text);
 
-	// Enter name text
+	// Entername text
 	mFont.loadFromFile("arial.ttf");
 	mEnterName = new sf::Text();
 	mEnterName->setFont(mFont);
@@ -237,7 +244,16 @@ void Window::textMainMenu()
 	mEnterName->setPosition(mWidth / 4.7, mLength / 2.6);
 	mEnterName->setFillColor(sf::Color::White);
 
-	// New Game text
+	// Error enterName text
+	//text = new sf::Text();
+	//text->setFont(mFont);
+	//text->setString("Please, enter a name to play.");
+	//text->setCharacterSize(30);
+	//text->setPosition(250, 400);
+	//text->setFillColor(sf::Color::Red);
+	//mErrorMessage.push_back(text);
+
+	// Play text
 	text = new sf::Text();
 	text->setFont(mFont);
 	text->setString("Play");
@@ -338,7 +354,7 @@ void Window::menuNameEnter()
 
 void Window::changeMenuColor()
 {
-	//R�cup�re la position de la souris sur la fen�tre
+	//Récupère la position de la souris sur la fenêtre
 	sf::Vector2f pos = sf::Vector2f(sf::Mouse::getPosition(*mWindow));
 
 	//Boucle sur notre texte
