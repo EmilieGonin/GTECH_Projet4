@@ -13,6 +13,14 @@ struct cell {
 	std::string player;
 };
 
+enum SceneState {
+	MAIN_MENU,
+	WAITING,
+	SKINS,
+	GAME,
+	END_GAME,
+};
+
 class Window
 {
 public:
@@ -44,13 +52,8 @@ public:
 	void waitingScreen();
 	void skinsScreen();
 
-	enum SceneState {
-		MAIN_MENU,
-		WAITING,
-		SKINS,
-		GAME,
-		END_GAME,
-	};
+	void shapesWindow();
+	void colorsWindow();
 
 	void changeScene(SceneState newState);
 

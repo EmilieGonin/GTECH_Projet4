@@ -167,52 +167,52 @@ void Window::addPlayerShape(sf::Vector2f position, std::string player)
 
 int Window::checkTextClick()
 {
-	// Récupère la position du clic de souris
 	sf::Vector2f mousePosition = sf::Vector2f(sf::Mouse::getPosition(*mWindow));
 
-	// Parcours des textes pour vérifier si l'un d'eux a été cliqué
 	for (auto& text : mTextMenu)
 	{
 		if (text == nullptr) continue;
-		// Récupère les limites de la zone occupée par le texte
+
 		sf::FloatRect bounds = text->getGlobalBounds();
 
-		// Vérifie la collision avec la position du clic de souris
 		if (bounds.contains(mousePosition))
 		{
-			// Actions spécifiques au texte cliqué
-			if (text->getString() == "Quit")
+			const std::string& buttonText = text->getString();
+
+			if (buttonText == "Quit")
 			{
-				// Quitte le jeu
 				mWindow->close();
 				return 1;
 			}
-			else if (text->getString() == "Play" && mName.empty())
+			else if (buttonText == "Play")
 			{
-				// Lance le jeu
-				hasError = false;
+				if (mName.empty()) hasError = true;
+				else {
+					hasError = false;
+					changeScene(WAITING);
+					return 0;
+				}
 			}
-			else if (text->getString() == "Play" && !mName.empty())
-			{
-				// Lance le jeu
-				changeScene(GAME);
-				break;
-			}
-			else if (text->getString() == "Menu")
+			else if (buttonText == "Menu" || buttonText == "Return")
 			{
 				changeScene(MAIN_MENU);
-				break;
+				return 0;
 			}
-			else if (text->getString() == "Join")
+			else if (buttonText == "Skins")
 			{
 				changeScene(SKINS);
-				break;
+				return 0;
+			}
+			else if (buttonText == "Shapes")
+			{
+				changeScene(SKINS);
+				return 0;
 			}
 		}
 	}
-
 	return 0;
 }
+
 
 void Window::changeScene(SceneState newState)
 {
@@ -227,20 +227,20 @@ void Window::changeScene(SceneState newState)
 
 	switch (currentScene)
 	{
-	case Window::MAIN_MENU:
+	case MAIN_MENU:
 		textMainMenu();
 		shapeMainMenu();
 		break;
-	case Window::WAITING:
+	case WAITING:
 		waitingScreen();
-		break;
-	case Window::SKINS:
-		skinsScreen();
-		break;
-	case Window::GAME:
 		client->connectClientServer();
 		break;
-	case Window::END_GAME:
+	case SKINS:
+		skinsScreen();
+		break;
+	case GAME:
+		break;
+	case END_GAME:
 		screenEndGame();
 		break;
 	}
@@ -391,7 +391,7 @@ void Window::menuNameEnter()
 					if (!mName.empty())
 					{
 						hasError = false;
-						changeScene(GAME);
+						changeScene(WAITING);
 					}
 				}
 				else if (inputChar == 8) // Touche "Backspace"
@@ -432,7 +432,7 @@ void Window::waitingScreen()
 	text->setFont(mFont);
 	text->setString("Waiting for players...");
 	text->setCharacterSize(50);
-	text->setPosition(mWidth/4 , mLength / 3);
+	text->setPosition(mWidth / 4, mLength / 3);
 	text->setFillColor(sf::Color(255, 255, 255));
 	mTexts.push_back(text);
 }
@@ -507,4 +507,14 @@ void Window::skinsScreen()
 	button->setPosition(0, 100);
 	button->setFillColor(sf::Color(0, 97, 245));
 	mButton.push_back(button);
+}
+
+void Window::shapesWindow()
+{
+
+}
+
+void Window::colorsWindow()
+{
+
 }
