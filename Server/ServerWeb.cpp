@@ -77,8 +77,11 @@ std::string ServerWeb::processHttpRequest()
 	std::string imageData = imageStream.str();
 	std::string base64 = base64_encode(imageData);
 
-	std::string html = "HTTP / 1.1 200 OK\r\nContent-Type: text/html\r\n\r\n<h1>Tic-Tac-Toe</h1><img src=\"data:image/png;base64," + base64 + "\" />";
-
+	std::string html = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nCache-Control: no-cache, no-store, must-revalidate\r\n\r\n";
+	html += "<script>";
+	html += "document.getElementById(\"content\").innerHTML = \"\";";
+	html += "</script>";
+	html += "<div id=\"content\"><h1>Tic-Tac-Toe</h1><img src=\"data:image/png;base64," + base64 + "\" /></div>";
 	return html;
 }
 
