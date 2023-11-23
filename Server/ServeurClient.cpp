@@ -169,9 +169,6 @@ void ServerClient::handleJson(SOCKET client, std::string dump)
 			//Check if player has win
 			if (game->hasWin()) response = JsonHandler(game->getCells(), playerId);
 			else response = JsonHandler(game->getCells(), game->getPlayerTurn(), error);
-
-			ServerWeb* w = ServerWeb::Instance();
-			w->showHTML();
 		}
 
 		for (auto& player : mPlayers)
