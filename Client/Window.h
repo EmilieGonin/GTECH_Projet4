@@ -3,6 +3,7 @@
 #include <SFML/Window/Mouse.hpp>
 #include <map>
 #include <string>
+#include <iostream>
 
 struct cell {
 	sf::Shape* shape;
@@ -30,12 +31,14 @@ public:
 	inline bool isOpen() { return mWindow->isOpen(); };
 
 	void Finito();
-	void initTextFirstMenu();
-	void addBackgroundText();
-	void screenEndGame();
+	void textMainMenu();
+	void shapeMainMenu();
 	void menuNameEnter();
 	void changeMenuColor();
 	void checkTextClick();
+	void screenEndGame();
+
+	void windowTest(); //test a supp
 
 	enum SceneState {
 		MAIN_MENU,
@@ -55,7 +58,7 @@ private:
 
 	int mTurn = 1;
 
-	const unsigned int maxNameLength = 15;
+	const unsigned int maxNameLength = 10;
 
 	bool endGame = false;
 	bool hasEnterName = true;
@@ -65,6 +68,7 @@ private:
 	std::vector<sf::Shape*> mShapes;
 	std::vector<sf::Text*> mTexts;
 	std::vector<sf::Text*> mTextMenu;
+	std::vector<sf::Text*> mErrorMessage;
 	std::vector<sf::RectangleShape*> mButton;
 
 	std::map<std::pair<int, int>, cell> mCells;
@@ -79,7 +83,7 @@ private:
 	int mLength = 800;
 	std::string mName;
 
-	sf::Text mEnterName;
+	sf::Text* mEnterName;
 
 	sf::Event event;
 
