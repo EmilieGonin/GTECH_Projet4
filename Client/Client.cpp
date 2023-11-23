@@ -142,6 +142,8 @@ LRESULT CALLBACK Client::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM 
 		case FD_CLOSE:
 			client->HandleCloseEvent(wParam);
 			break;
+		case WM_CLOSE:
+			client->HandleCloseEvent(wParam);
 		default:
 			break;
 		}
@@ -170,7 +172,7 @@ void Client::HandleReadEvent(WPARAM wParam)
 
 void Client::HandleCloseEvent(WPARAM wParam)
 {
-	printf("Close event\n %lu\n", wParam);
+	printf("Close event du client\n %lu\n", wParam);
 	Sleep(2000);
 	clientDisconnect();
 
