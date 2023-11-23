@@ -30,11 +30,13 @@ public:
 	inline bool isOpen() { return mWindow->isOpen(); };
 
 	void Finito();
-	void initTextFirstMenu();
-	void addBackgroundText();
+	void textMainMenu();
+	void shapeMainMenu();
 	void menuNameEnter();
 	void changeMenuColor();
 	void checkTextClick();
+
+	void windowTest(); //test a supp
 
 	enum SceneState {
 		MAIN_MENU,
@@ -54,7 +56,7 @@ private:
 
 	int mTurn = 1;
 
-	const unsigned int maxNameLength = 15;
+	const unsigned int maxNameLength = 10;
 
 	bool endGame = false;
 	bool hasEnterName = true;
@@ -78,7 +80,7 @@ private:
 	int mLength = 800;
 	std::string mName;
 
-	sf::Text mEnterName;
+	sf::Text* mEnterName;
 
 	sf::Event event;
 

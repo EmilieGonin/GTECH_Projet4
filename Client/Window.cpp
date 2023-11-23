@@ -43,9 +43,9 @@ void Window::update()
 		mWindow->clear();
 		for (auto& cell : mCells) mWindow->draw(*cell.second.shape);
 		for (auto& shape : mShapes) mWindow->draw(*shape);
-		if (hasEnterName) {
-			mEnterName.setString("Enter your name: " + mName);
-			mWindow->draw(mEnterName);
+		if (mEnterName != nullptr && hasEnterName) {
+			mEnterName->setString("Enter your name: " + mName);
+			mWindow->draw(*mEnterName);
 		}
 		for (auto& text : mTexts) mWindow->draw(*text);
 		for (auto& button : mButton) mWindow->draw(*button);
@@ -183,6 +183,16 @@ void Window::checkTextClick()
 
 void Window::changeScene(SceneState newState)
 {
+	mShapes.clear();
+	mTexts.clear();
+	mTextMenu.clear();
+	mButton.clear();
+	mCells.clear();
+	mEnterName = nullptr;
+
+	//delete mEnterName.getFont(); // Libère la mémoire associée à la police (évite les fuites de mémoire)
+	//delete &mEnterName;
+
 	mWindow->clear();
 
 	currentScene = newState;
@@ -190,19 +200,20 @@ void Window::changeScene(SceneState newState)
 	switch (currentScene)
 	{
 	case Window::MAIN_MENU:
-		initTextFirstMenu();
-		addBackgroundText();
+		textMainMenu();
+		shapeMainMenu();
 		break;
 	case Window::JOIN:
 		break;
 	case Window::GAME:
+		windowTest(); //test a supp
 		break;
 	}
 
 	mWindow->display();
 }
 
-void Window::initTextFirstMenu()
+void Window::textMainMenu()
 {
 	mFontTitle.loadFromFile("valoon.ttf");
 	mFont.loadFromFile("arial.ttf");
@@ -220,10 +231,11 @@ void Window::initTextFirstMenu()
 
 	// Enter name text
 	mFont.loadFromFile("arial.ttf");
-	mEnterName.setFont(mFont);
-	mEnterName.setCharacterSize(40);
-	mEnterName.setPosition(mWidth / 4.7, mLength / 2.6);
-	mEnterName.setFillColor(sf::Color::White);
+	mEnterName = new sf::Text();
+	mEnterName->setFont(mFont);
+	mEnterName->setCharacterSize(40);
+	mEnterName->setPosition(mWidth / 4.7, mLength / 2.6);
+	mEnterName->setFillColor(sf::Color::White);
 
 	// New Game text
 	text = new sf::Text();
@@ -253,7 +265,7 @@ void Window::initTextFirstMenu()
 	mTextMenu.push_back(text);
 }
 
-void Window::addBackgroundText()
+void Window::shapeMainMenu()
 {
 	sf::RectangleShape* button = new sf::RectangleShape();
 
@@ -279,6 +291,23 @@ void Window::addBackgroundText()
 	button->setPosition(450, 650);
 	button->setFillColor(sf::Color(150, 50, 250));
 	mButton.push_back(button);
+}
+
+void Window::windowTest() //test a supp
+{
+	mWindow->clear();
+
+	// Ajoutez ici le code pour afficher votre nouveau menu ou contenu
+	sf::Text* testText = new sf::Text();
+	testText->setFont(mFont);
+	testText->setString("Welcome to the Game Scene!");
+	testText->setCharacterSize(30);
+	testText->setPosition(200, 200);
+	testText->setFillColor(sf::Color::White);
+
+	mTexts.push_back(testText);
+
+	mWindow->display();
 }
 
 void Window::menuNameEnter()
