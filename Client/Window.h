@@ -51,6 +51,9 @@ public:
 	void waitingScreen();
 	void skinsScreen();
 
+	void shapesWindow();
+	void colorsWindow();
+
 	void changeScene(SceneState newState);
 
 	SceneState getCurrentScene() const { return currentScene; }
