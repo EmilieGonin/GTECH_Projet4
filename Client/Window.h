@@ -15,7 +15,7 @@ class Window
 {
 public:
 	static Window* Instance();
-	void update();
+	int update();
 	void addShape(sf::Shape*);
 	void addCell(std::pair<int, int>, sf::Shape*);
 	void initCells(std::map<std::pair<int, int>, std::string>);
@@ -35,10 +35,8 @@ public:
 	void shapeMainMenu();
 	void menuNameEnter();
 	void changeMenuColor();
-	void checkTextClick();
+	int checkTextClick();
 	void screenEndGame();
-
-	void windowTest(); //test a supp
 
 	enum SceneState {
 		MAIN_MENU,
@@ -62,14 +60,12 @@ private:
 	const unsigned int maxNameLength = 10;
 
 	bool endGame = false;
-	bool hasEnterName = true;
 
 	sf::RenderWindow* mWindow;
 
 	std::vector<sf::Shape*> mShapes;
 	std::vector<sf::Text*> mTexts;
 	std::vector<sf::Text*> mTextMenu;
-	std::vector<sf::Text*> mErrorMessage;
 	std::vector<sf::RectangleShape*> mButton;
 
 	std::map<std::pair<int, int>, cell> mCells;
@@ -85,6 +81,8 @@ private:
 	std::string mName;
 
 	sf::Text* mEnterName;
+	sf::Text* mErrorMessage;
+	bool hasError;
 
 	sf::Event event;
 
