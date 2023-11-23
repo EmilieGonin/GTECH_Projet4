@@ -188,7 +188,7 @@ int Window::checkTextClick()
 			{
 				if (mName.empty()) hasError = true;
 				else {
-					hasError = false
+					hasError = false;
 					changeScene(WAITING);
 					return 0;
 				}
