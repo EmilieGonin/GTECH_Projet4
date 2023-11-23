@@ -205,7 +205,12 @@ int Window::checkTextClick()
 			}
 			else if (buttonText == "Shapes")
 			{
-				changeScene(SKINS);
+				shapesWindow();
+				return 0;
+			}
+			else if (buttonText == "Colors")
+			{
+				colorsWindow();
 				return 0;
 			}
 		}
@@ -434,27 +439,11 @@ void Window::waitingScreen()
 
 void Window::skinsScreen()
 {
-	//Texts
+	shapesWindow();
+	colorsWindow();
+
 	mFont.loadFromFile("arial.ttf");
 	sf::Text* text = new sf::Text();
-
-	//Sphapes Text
-	text = new sf::Text();
-	text->setFont(mFont);
-	text->setString("Shapes");
-	text->setCharacterSize(50);
-	text->setPosition(10, 20);
-	text->setFillColor(sf::Color::White);
-	mTextMenu.push_back(text);
-
-	//Colors Text
-	text = new sf::Text();
-	text->setFont(mFont);
-	text->setString("Colors");
-	text->setCharacterSize(50);
-	text->setPosition(220, 20);
-	text->setFillColor(sf::Color::White);
-	mTextMenu.push_back(text);
 
 	//Return Text
 	text = new sf::Text();
@@ -468,25 +457,37 @@ void Window::skinsScreen()
 	//Shapes
 	sf::RectangleShape* button = new sf::RectangleShape();
 
-	//Button "Shapes"
-	button = new sf::RectangleShape();
-	button->setSize(sf::Vector2f(200.f, 100.f));
-	button->setPosition(0, 0);
-	button->setFillColor(sf::Color(150, 50, 250));
-	mButton.push_back(button);
-
-	//Button "Colors"
-	button = new sf::RectangleShape();
-	button->setSize(sf::Vector2f(200.f, 100.f));
-	button->setPosition(200, 0);
-	button->setFillColor(sf::Color(0, 97, 245));
-	mButton.push_back(button);
-
 	//Button "Return"
 	button = new sf::RectangleShape();
 	button->setSize(sf::Vector2f(200.f, 100.f));
 	button->setPosition(600, 0);
 	button->setFillColor(sf::Color(150, 50, 50));
+	mButton.push_back(button);
+}
+
+void Window::shapesWindow()
+{
+	//Texts
+	mFont.loadFromFile("arial.ttf");
+	sf::Text* text = new sf::Text();
+
+	//Sphapes Text
+	text = new sf::Text();
+	text->setFont(mFont);
+	text->setString("Shapes");
+	text->setCharacterSize(50);
+	text->setPosition(10, 20);
+	text->setFillColor(sf::Color::White);
+	mTextMenu.push_back(text);
+
+	//Shapes
+	sf::RectangleShape* button = new sf::RectangleShape();
+
+	//Button "Shapes"
+	button = new sf::RectangleShape();
+	button->setSize(sf::Vector2f(200.f, 100.f));
+	button->setPosition(0, 0);
+	button->setFillColor(sf::Color(150, 50, 250));
 	mButton.push_back(button);
 
 	//Bg "Shapes"
@@ -495,6 +496,31 @@ void Window::skinsScreen()
 	button->setPosition(0, 100);
 	button->setFillColor(sf::Color(150, 50, 250));
 	mButton.push_back(button);
+}
+
+void Window::colorsWindow()
+{
+	mFont.loadFromFile("arial.ttf");
+	sf::Text* text = new sf::Text();
+
+	//Colors Text
+	text = new sf::Text();
+	text->setFont(mFont);
+	text->setString("Colors");
+	text->setCharacterSize(50);
+	text->setPosition(220, 20);
+	text->setFillColor(sf::Color::White);
+	mTextMenu.push_back(text);
+
+	//Shapes
+	sf::RectangleShape* button = new sf::RectangleShape();
+
+	//Button "Colors"
+	button = new sf::RectangleShape();
+	button->setSize(sf::Vector2f(200.f, 100.f));
+	button->setPosition(200, 0);
+	button->setFillColor(sf::Color(0, 97, 245));
+	mButton.push_back(button);
 
 	//Bg "Colors"
 	button = new sf::RectangleShape();
@@ -502,14 +528,4 @@ void Window::skinsScreen()
 	button->setPosition(0, 100);
 	button->setFillColor(sf::Color(0, 97, 245));
 	mButton.push_back(button);
-}
-
-void Window::shapesWindow()
-{
-
-}
-
-void Window::colorsWindow()
-{
-
 }
