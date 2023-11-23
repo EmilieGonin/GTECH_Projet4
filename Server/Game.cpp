@@ -78,8 +78,8 @@ void Game::updateCells(std::pair<int, int> cell, std::string player)
 	else shape->setFillColor(sf::Color::Red);
 
 	mShapes.push_back(shape);
-	createImage();
 	changeTurn();
+	createImage();
 }
 
 void Game::createImage()
