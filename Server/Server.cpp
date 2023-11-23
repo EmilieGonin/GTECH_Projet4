@@ -1,13 +1,9 @@
-﻿#include "ServerClient.h"
+#include "ServerClient.h"
 #include <thread>
 #include <windows.h>
-#include "../WindowsProject1/framework.h"
-
 
 Server::Server() {}
 Server::~Server() {}
-
-Server* Server::pServer = nullptr;
 
 void Server::init()
 {
@@ -21,15 +17,13 @@ void Server::init()
 	//WSACleanup();
 }
 
-void Server::initHWND(){}
+void Server::initHWND() {}
 
 void Server::initWSA()
 {
 	// Initialize Winsock
 	iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
-	if (iResult != 0) {
-		printf("%s WSAStartup failed with error: %d\n", mName.c_str(), iResult);
-	}
+	if (iResult != 0) printf("%s WSAStartup failed with error: %d\n", mName.c_str(), iResult);
 
 	ZeroMemory(&hints, sizeof(hints));
 	hints.ai_family = AF_INET;
@@ -86,68 +80,21 @@ void Server::listenClient()
 	WSAAsyncSelect(ListenSocket, hWnd, WM_SOCKET, FD_ACCEPT | FD_CLOSE);
 
 	MSG msg;
-	while (GetMessage(&msg, hWnd, 0, 0))
+	/*while (GetMessage(&msg, hWnd, 0, 0))
 	{
+		printf("%s Getting message\n", mName.c_str());
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
-	}
-}
-
-void Server::accepteClient(SOCKET client) {}
-
-LRESULT Server::WindowProc(HWND hWnd, UINT uMsg, WPARAM socket, LPARAM lParam) //static
-{
-	//pServer = reinterpret_cast<Server*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
-	//if (pServer)
-	//	pServer->HandleWindowMessage(uMsg, wParam, lParam);
-
-	switch (uMsg)
+	}*/
+	while (true)
 	{
-	case WM_SOCKET:
-	{
-		switch (LOWORD(lParam))
-		{
-		case FD_READ:
-			pServer->HandleReadEvent(socket);
-			break;
-		case FD_ACCEPT:
-			pServer->HandleAcceptEvent(socket);
-			break;
-		case FD_CLOSE:
-			pServer->HandleCloseEvent(socket);
-			break;
-		default:
-			break;
+		while (PeekMessage(&msg, hWnd, 0, 0, PM_REMOVE)) {
+			printf("%s Getting message\n", mName.c_str());
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
 		}
-		return 0; // Indique que le message a été traité
 	}
-	//pServer->handleClient(uMsg,socket, lParam);
-	}
-	return DefWindowProc(hWnd, uMsg, socket, lParam);
 }
-
-LRESULT Server::HandleWindowMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
-{
-	/*int requestID = static_cast<int>(wParam);
-	std::string requestData(reinterpret_cast<const char*>(lParam));
-	if (requestData.find("close") != std::string::npos)
-	{
-		printf("close connexion since you asked it");
-		std::this_thread::sleep_for(std::chrono::milliseconds(5000));
-		closesocket(ClientSocket);
-		WSACleanup();
-	}*/
-
-
-	/*switch (uMsg)
-	{
-
-	}*/
-
-	return DefWindowProc(hWnd, uMsg, wParam, lParam);
-}
-
-void Server::handleClient(UINT uMsg, WPARAM wParam, LPARAM lParam) {}
 
 void Server::shutdownClient(SOCKET clientSocket)
 {
@@ -167,7 +114,6 @@ void Server::shutdownClient(SOCKET clientSocket)
 		//[clientSocket](SOCKET s) { return s == clientSocket; }), mPlayers.end());
 
 	closesocket(clientSocket);
-
 }
 
 std::string Server::generateSessionID() const {
@@ -180,64 +126,5 @@ std::string Server::generateSessionID() const {
 	return "SessionID_" + std::to_string(timestamp);
 }
 
-void Server::HandleReadEvent(WPARAM socket)
-{
-	iResult = recv(socket, recvbuf, recvbuflen, 0);
-	printf("%s Read event :\n %s\n", mName.c_str(), recvbuf);
-	handleJson(socket, recvbuf);
-}
-
-void Server::HandleAcceptEvent(WPARAM socket)
-{
-	accepteClient(socket);
-}
-
-void Server::HandleCloseEvent(WPARAM wParam)
-{
-	//printf("Close event\n %lu\n", wParam);
-}
-
-void Server::sendJson(SOCKET client, std::string json)
-{
-	send(client, json.c_str(), json.size(), 0);
-}
-
-void Server::handleJson(SOCKET client, std::string dump)
-{
-	JsonHandler response;
-	Game* game = Game::Instance();
-	json json = json::parse(dump);
-	int id = json["Id"];
-	std::string playerId = json["Player"];
-	std::pair<int, int> cell = json["Cell"];
-
-	switch (id)
-	{
-	case 1: //Play cell
-		//Check if it's player turn
-	{
-		bool error = game->getPlayerTurn() != playerId;
-		if (!error)
-		{
-			game->updateCells(cell, playerId);
-
-			//Check if player has win
-			if (game->hasWin()) response = JsonHandler(game->getCells(), playerId);
-			else response = JsonHandler(game->getCells(), game->getPlayerTurn(), error);
-		}
-
-		for (auto& player : mPlayers)
-		{
-			if (player.second != playerId && error) continue;
-			sendJson(player.first, response.getDump());
-		}
-	}
-		break;
-	case 2: //Get cells after reconnect
-		response = JsonHandler(game->getCells(), game->getPlayerTurn(), false);
-		sendJson(client, response.getDump());
-		break;
-	default:
-		break;
-	}
-}
+void Server::HandleReadEvent(WPARAM socket) {}
+void Server::HandleCloseEvent(WPARAM wParam) {}
