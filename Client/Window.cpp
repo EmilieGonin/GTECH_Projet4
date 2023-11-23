@@ -17,9 +17,10 @@ Window::~Window()
 	for (auto& cell : mCells) delete cell.second.shape;
 }
 
-Window* Window::Instance()
+Window* Window::Instance(Client* mClient)
 {
 	if (mInstance == nullptr) mInstance = new Window();
+	mInstance->client = mClient;
 	return mInstance;
 }
 
@@ -166,6 +167,40 @@ int Window::checkTextClick()
 			// Récupère les limites de la zone occupée par le texte
 			sf::FloatRect bounds = text->getGlobalBounds();
 
+		// Vérifie la collision avec la position du clic de souris
+		if (bounds.contains(mousePosition))
+		{
+			// Actions spécifiques au texte cliqué
+			if (text->getString() == "Quit")
+			{
+				// Quitte le jeu
+				mWindow->close();
+				//std::exit(0);
+			}
+			else if (text->getString() == "Play" && mName.empty())
+			{
+				// Affiche message d'erreur
+				//for (auto& errorMessage : mErrorMessage)
+				//{
+				//	mWindow->draw(*errorMessage);
+				//}
+			}
+			else if (text->getString() == "Play" && !mName.empty())
+			{
+				// Lance le jeu
+				changeScene(GAME);
+			}
+			else if (text->getString() == "Menu")
+			{
+				changeScene(MAIN_MENU);
+			}
+			else if (text->getString() == "Join")
+			{
+				changeScene(JOIN);
+			}
+		}
+	}
+}
 			// Vérifie la collision avec la position du clic de souris
 			if (bounds.left >= 0 && bounds.top >= 0 && bounds.contains(mousePosition))
 			{
@@ -224,6 +259,7 @@ void Window::changeScene(SceneState newState)
 	case Window::JOIN:
 		break;
 	case Window::GAME:
+		client->connectClientServer();
 		break;
 	case Window::END_GAME:
 		screenEndGame();
