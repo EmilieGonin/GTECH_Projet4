@@ -189,13 +189,13 @@ int Window::checkTextClick()
 			}
 			else if (text->getString() == "Play" && mName.empty())
 			{
-				// Lance le jeu
-				hasError = false;
+				hasError = true;
 			}
 			else if (text->getString() == "Play" && !mName.empty())
 			{
 				// Lance le jeu
-				changeScene(GAME);
+				hasError = false;
+				changeScene(WAITING);
 				break;
 			}
 			else if (text->getString() == "Menu")
@@ -227,20 +227,20 @@ void Window::changeScene(SceneState newState)
 
 	switch (currentScene)
 	{
-	case Window::MAIN_MENU:
+	case MAIN_MENU:
 		textMainMenu();
 		shapeMainMenu();
 		break;
-	case Window::WAITING:
+	case WAITING:
 		waitingScreen();
-		break;
-	case Window::SKINS:
-		skinsScreen();
-		break;
-	case Window::GAME:
 		client->connectClientServer();
 		break;
-	case Window::END_GAME:
+	case SKINS:
+		skinsScreen();
+		break;
+	case GAME:
+		break;
+	case END_GAME:
 		screenEndGame();
 		break;
 	}
@@ -386,7 +386,7 @@ void Window::menuNameEnter()
 					if (!mName.empty())
 					{
 						hasError = false;
-						changeScene(GAME);
+						changeScene(WAITING);
 					}
 				}
 				else if (inputChar == 8) // Touche "Backspace"
