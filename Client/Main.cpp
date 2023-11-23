@@ -26,7 +26,9 @@ int main(int ac, char const* av[])
 		{
 		case Window::MAIN_MENU:
 			break;
-		case Window::JOIN:
+		case Window::WAITING:
+			break;
+		case Window::SKINS:
 			break;
 		case Window::GAME:
 			break;
