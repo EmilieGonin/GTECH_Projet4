@@ -1,5 +1,9 @@
 #include "Window.h"
 #include "Client.h"
+#include <fstream>
+#include <io.h>
+
+
 
 Client::Client() {}
 
@@ -85,9 +89,12 @@ int Client::connectClientServer()
 		WSACleanup();
 		return 1;
 	}
-
 	printf("Client connected\n");
 	freeaddrinfo(result);
+
+	//Si le Client était en partie il renvoie son ID
+	if (IsDataExist()) clientSendData(ReadData().dump());
+
 	WSAAsyncSelect(ClientSocket, hWnd, WM_SOCKET, FD_READ | FD_CLOSE);
 	return 0;
 }
@@ -95,15 +102,13 @@ int Client::connectClientServer()
 int Client::clientSendData(std::string data)
 {
 	res = send(ClientSocket, data.c_str(), data.size(), 0);
-	if (res  == SOCKET_ERROR || res == INVALID_SOCKET)
+	if (res == SOCKET_ERROR || res == INVALID_SOCKET)
 	{
 		printf("send failed: %d\n", WSAGetLastError());
 		closesocket(ClientSocket);
 		WSACleanup();
 		return 1;
 	}
-	//printf(sendbuf);
-	//std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
 	printf("Bytes Sent: %ld\n", res);
 }
@@ -133,7 +138,7 @@ int Client::clientSendData(std::string data)
 
 LRESULT Client::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) //static
 {
-	Client* client= reinterpret_cast<Client*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
+	Client* client = reinterpret_cast<Client*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
 
 	switch (uMsg)
 	{
@@ -204,10 +209,70 @@ void Client::handleJson(std::string dump)
 		break;
 	case 5: //Get session id
 		mPlayerId = json["Player"];
+		if (!IsDataExist()) WriteData(mPlayerId);
 		window->setPlayer(json["Player"]);
 		window->resetTurn(json["Player"] == mPlayerId);
 		break;
 	default:
 		break;
 	}
+}
+
+
+void Client::WriteData(std::string sessionID)
+{
+	json mJson;
+	std::string mDump;
+
+	mJson["ErrorCode"] = 0;
+	mJson["JsonType"] = NOTIF;
+	mJson["Id"] = 6;
+	mJson["Player"] = sessionID;
+
+	mDump = mJson.dump();
+
+	// Ouvrir un fichier en écriture
+	std::ofstream fichier("donnees.json");
+
+	// Écrire l'objet JSON dans le fichier
+	fichier << mDump;
+
+	// Fermer le fichier
+	fichier.close();
+
+
+}
+
+json Client::ReadData()
+{
+	// Ouvrir un fichier en lecture
+	std::ifstream fichier("donnees.json");
+
+	// Créer un objet JSON
+	json donnees;
+
+	// Vérifier si le fichier est bien ouvert
+	if (fichier.is_open()) {
+		// Lire l'objet JSON depuis le fichier
+		fichier >> donnees;
+
+		// Fermer le fichier
+		fichier.close();
+	}
+	else {
+		std::cerr << "Erreur lors de l'ouverture du fichier." << std::endl;
+	}
+
+	return donnees;
+}
+
+void Client::DeleteData()
+{
+	if (std::remove("donnees.txt") == 0) puts("Fichier supprime avec succes");
+	else perror("Erreur lors de la suppression du fichier");
+}
+
+bool Client::IsDataExist()
+{
+	return _access("donnees.txt", 0) == 0;
 }

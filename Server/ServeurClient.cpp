@@ -96,7 +96,7 @@ std::string ServerClient::GiveSessionID(SOCKET client)
 
 void ServerClient::DispatchClient(Game* game, SOCKET client)
 {
-	//Verifier si le joueurs est d�j� enregistrer
+	//Verifier si le joueurs est deja enregistrer
 	bool enregistre = false;
 	for (auto it = mAllClient.begin(); it != mAllClient.end(); ++it)
 	{
@@ -184,6 +184,8 @@ void ServerClient::handleJson(SOCKET client, std::string dump)
 		response = JsonHandler(game->getCells(), game->getPlayerTurn(), false);
 		sendJson(client, response.getDump());
 		break;
+	case 6:
+
 	default:
 		break;
 	}

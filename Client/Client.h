@@ -45,6 +45,11 @@ public:
 private:
 	void sendJson(std::string json);
 	void handleJson(std::string dump);
+	void WriteData(std::string sessionID);
+	json ReadData();
+	void DeleteData();
+	bool IsDataExist();
+
 
 	int res;
 	WSADATA wsaData;
