@@ -45,9 +45,6 @@ void ServerClient::initHWND()
 	UpdateWindow(hWnd);
 
 	printf("%s HWND created\n", mName.c_str());
-
-	//SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
-	//mInstance = reinterpret_cast<ServerClient*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
 }
 
 void ServerClient::accepteClient(SOCKET client)
@@ -67,7 +64,6 @@ void ServerClient::accepteClient(SOCKET client)
 	//Regarde si le client est d�ja enregistr� et le met en jeu ou spectate
 	DispatchClient(game, client);
 
-	//TODO -> check if game has started
 	if (mPlayers.size() == 2)
 	{
 		game->init();
@@ -230,5 +226,5 @@ LRESULT ServerClient::WindowProc(HWND hWnd, UINT uMsg, WPARAM socket, LPARAM lPa
 
 void ServerClient::HandleCloseEvent(WPARAM wParam)
 {
-	//printf("Close event\n %lu\n", wParam);
+	printf("Close event\n %lu\n", wParam);
 }

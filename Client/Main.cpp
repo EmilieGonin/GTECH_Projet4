@@ -9,7 +9,7 @@ int main(int ac, char const* av[])
 	if (c.init() == 1)
 	{
 		printf("Error during client initialization.");
-		//return 1;
+		return 1;
 	}
 
 	//c.clientDisconnect();
@@ -26,7 +26,6 @@ int main(int ac, char const* av[])
 
 		if (!w->hasPlayed() && w->hasSelectedCell())
 		{
-			//TODO -> add playerId
 			JsonHandler j(w->play(), w->getPlayer());
 			c.clientSendData(j.getDump());
 		}
