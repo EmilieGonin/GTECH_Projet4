@@ -22,4 +22,5 @@ public:
     void init() override;
     void HandleReadEvent(WPARAM wParam) override;
     void showHTML();
+    void HandleAcceptEvent(WPARAM socket) override;
 };

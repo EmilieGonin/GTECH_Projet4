@@ -21,7 +21,7 @@ void Server::init()
 	//WSACleanup();
 }
 
-void Server::initHWND(){}
+void Server::initHWND() {}
 
 void Server::initWSA()
 {

@@ -17,4 +17,5 @@ public:
 	~ServerClient();
 	void init() override;
 	void HandleReadEvent(WPARAM wParam) override;
+	void HandleAcceptEvent(WPARAM socket) override;
 };

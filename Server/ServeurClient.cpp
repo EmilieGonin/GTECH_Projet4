@@ -11,7 +11,6 @@ void ServerClient::init()
 {
 	mPort = "1027";
 	mName = "Serveur du jeu -";
-
 	Server::init();
 }
 
@@ -39,10 +38,8 @@ void ServerClient::initHWND()
 
 	printf("%s HWND created\n", mName.c_str());
 
-	SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pServer));
+	SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
 	pServer = reinterpret_cast<Server*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
-
-	Server::init();
 }
 
 void ServerClient::accepteClient(SOCKET client)
@@ -182,4 +179,9 @@ void ServerClient::handleJson(SOCKET client, std::string dump)
 	default:
 		break;
 	}
+}
+
+void ServerClient::HandleAcceptEvent(WPARAM socket)
+{
+	accepteClient(socket);
 }

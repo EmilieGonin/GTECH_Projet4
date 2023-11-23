@@ -41,10 +41,8 @@ void ServerWeb::initHWND()
 
 	printf("%s HWND created\n", mName.c_str());
 
-	SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pServer));
+	SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
 	pServer = reinterpret_cast<Server*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
-
-	Server::init();
 }
 
 void ServerWeb::accepteClient(SOCKET client)
@@ -89,4 +87,9 @@ void ServerWeb::HandleReadEvent(WPARAM socket)
 	iResult = recv(socket, recvbuf, recvbuflen, 0);
 	printf("%s Read event :\n %s\n", mName.c_str(), recvbuf);
 	showHTML();
+}
+
+void ServerWeb::HandleAcceptEvent(WPARAM socket)
+{
+	accepteClient(socket);
 }

@@ -36,8 +36,6 @@ private:
     virtual void accepteClient(SOCKET);
 
     LRESULT HandleWindowMessage(UINT uMsg, WPARAM wParam, LPARAM lParam);
-
-    void HandleAcceptEvent(WPARAM wParam);
     void HandleCloseEvent(WPARAM wParam);
 
     WSADATA wsaData;
@@ -67,7 +65,9 @@ protected:
 
     static Server* pServer;
     std::string mName;
+
     virtual void HandleReadEvent(WPARAM wParam);
+    virtual void HandleAcceptEvent(WPARAM wParam);
 
 public:
     Server();
