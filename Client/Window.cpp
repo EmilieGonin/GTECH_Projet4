@@ -60,6 +60,12 @@ int Window::update()
 	return 0;
 }
 
+void Window::initTurnsList(std::map<std::pair<int, int>, std::string> cells, std::pair<int, int> cell)
+{
+	if (cell.first == -1) return;
+	mTurns += cells[cell] + " played " + std::to_string(cell.first) + ":" + std::to_string(cell.second) + "\n";
+}
+
 void Window::initCells(std::map<std::pair<int, int>, std::string> cells)
 {
 	mCells.clear();
@@ -103,6 +109,14 @@ void Window::resetTurn(bool canPlay)
 
 	if (canPlay) text->setString("It's your turn to play !");
 	else text->setString("Waiting for your opponent...");
+
+	mTexts.push_back(text);
+
+	text = new sf::Text();
+	text->setFont(mFont);
+	text->setCharacterSize(10);
+	text->setPosition(0, 0);
+	text->setString(mTurns);
 
 	mTexts.push_back(text);
 }

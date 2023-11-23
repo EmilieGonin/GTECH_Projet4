@@ -6,7 +6,9 @@ Game::Game()
 {
 	mWinner = 0;
 	mTurnPlayer = "";
+	mTurns = "";
 	mTexture = new sf::Texture();
+	mLastCell = { -1, -1 };
 }
 
 Game* Game::Instance()
@@ -70,6 +72,7 @@ int Game::hasWin()
 
 void Game::updateCells(std::pair<int, int> cell, std::string player)
 {
+	mLastCell = cell;
 	mTurnPlayer = player;
 	mCells[{cell.first, cell.second}] = player;
 
@@ -80,6 +83,9 @@ void Game::updateCells(std::pair<int, int> cell, std::string player)
 	else shape->setFillColor(sf::Color::Red);
 
 	mShapes.push_back(shape);
+
+	mTurns += mCells[cell] + " played " + std::to_string(cell.first) + ":" + std::to_string(cell.second) + "<br />";
+
 	changeTurn();
 	createImage();
 }
