@@ -264,8 +264,6 @@ void Window::screenEndGame()
 	mButton.push_back(button);
 }
 
-
-void Window::initTextFirstMenu()
 void Window::textMainMenu()
 {
 	mFontTitle.loadFromFile("valoon.ttf");

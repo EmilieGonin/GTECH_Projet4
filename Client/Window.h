@@ -36,6 +36,7 @@ public:
 	void menuNameEnter();
 	void changeMenuColor();
 	void checkTextClick();
+	void screenEndGame();
 
 	void windowTest(); //test a supp
 
