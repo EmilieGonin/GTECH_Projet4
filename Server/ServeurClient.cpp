@@ -217,7 +217,7 @@ LRESULT ServerClient::WindowProc(HWND hWnd, UINT uMsg, WPARAM socket, LPARAM lPa
 		default:
 			break;
 		}
-		return 0; // Indique que le message a été traité
+		//return 0; // Indique que le message a été traité
 	}}
 
 	return DefWindowProc(hWnd, uMsg, socket, lParam);

@@ -113,30 +113,20 @@ int Client::clientSendData(std::string data)
 	printf("Bytes Sent: %ld\n", res);
 }
 
-//int Client::clientDisconnect()
-//{
-//	/*if (res = shutdown(ClientSocket, SD_SEND) == SOCKET_ERROR)
-//	{
-//		printf("shutdown failed: %d\n", WSAGetLastError());
-//		closesocket(ClientSocket);
-//		WSACleanup();
-//		return 1;
-//	}*/
-//
-//	//do {
-//		res = recv(ClientSocket, recvbuf, recvbuflen, 0);
-//		if (res > 0)
-//			printf("Bytes received: %s\n", recvbuf);
-//		else if (res == 0)
-//			printf("Connection closed\n");
-//		//else
-//			//printf("recv failed: %d\n", WSAGetLastError());
-//	//} while (true);
-//
-//	return 0;
-//}
+int Client::clientDisconnect()
+{
+	if (res = shutdown(ClientSocket, SD_SEND) == SOCKET_ERROR)
+	{
+		printf("shutdown failed: %d\n", WSAGetLastError());
+		closesocket(ClientSocket);
+		WSACleanup();
+		return 1;
+	}
 
-LRESULT Client::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) //static
+	return 0;
+}
+
+LRESULT CALLBACK Client::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) //static
 {
 	Client* client = reinterpret_cast<Client*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
 
@@ -157,6 +147,8 @@ LRESULT Client::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) /
 		}
 		return 0; // Indique que le message a �t� trait�
 	}
+	case WM_CLOSE :
+		client->HandleCloseEvent(wParam);
 	}
 
 	return DefWindowProc(hWnd, uMsg, wParam, lParam);
@@ -179,6 +171,9 @@ void Client::HandleReadEvent(WPARAM wParam)
 void Client::HandleCloseEvent(WPARAM wParam)
 {
 	printf("Close event\n %lu\n", wParam);
+	Sleep(2000);
+	clientDisconnect();
+
 }
 
 void Client::sendJson(std::string json)

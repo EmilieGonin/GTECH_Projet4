@@ -104,6 +104,7 @@ void Server::shutdownClient(SOCKET clientSocket)
 		closesocket(clientSocket);
 		WSACleanup();
 	}
+	printf("shutdown client");
 
 	// Attendre quelques instants pour permettre la fermeture propre du socket
 	std::this_thread::sleep_for(std::chrono::milliseconds(500));
