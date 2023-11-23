@@ -60,6 +60,12 @@ int Window::update()
 	return 0;
 }
 
+void Window::initTurnsList(std::map<std::pair<int, int>, std::string> cells, std::pair<int, int> cell)
+{
+	if (cell.first == -1) return;
+	mTurns += cells[cell] + " played " + std::to_string(cell.first) + ":" + std::to_string(cell.second) + "\n";
+}
+
 void Window::initCells(std::map<std::pair<int, int>, std::string> cells)
 {
 	mCells.clear();
@@ -91,6 +97,28 @@ void Window::resetTurn(bool canPlay)
 {
 	mHasPlayed = !canPlay;
 	mSelectedCell = { -1, -1 };
+
+	//Init texts
+	mTexts.clear();
+
+	mFont.loadFromFile("arial.ttf");
+	sf::Text* text = new sf::Text();
+	text->setFont(mFont);
+	text->setCharacterSize(50);
+	text->setPosition(mWidth / 5.3, mLength / 9);
+
+	if (canPlay) text->setString("It's your turn to play !");
+	else text->setString("Waiting for your opponent...");
+
+	mTexts.push_back(text);
+
+	text = new sf::Text();
+	text->setFont(mFont);
+	text->setCharacterSize(10);
+	text->setPosition(0, 0);
+	text->setString(mTurns);
+
+	mTexts.push_back(text);
 }
 
 std::pair<int, int> Window::play()
@@ -113,13 +141,6 @@ void Window::addCell(std::pair<int, int> pos, sf::Shape* shape)
 	mCells[pos] = newCell;
 }
 
-void Window::Finito()
-{
-	endGame = true;
-	if (mTurn % 2 == 0)	mWindow->setTitle("Red Win !");
-	else mWindow->setTitle("Green Win !");
-}
-
 void Window::checkCollision(sf::Event e)
 {
 	if (!endGame)
@@ -133,9 +154,9 @@ void Window::checkCollision(sf::Event e)
 
 			if (bounds.contains(pos))
 			{
-				cell.second.player = mTurn % 2 == 0 ? 2 : 1; //Shape has now been selected
-				mSelectedCell = cell.second.pos;
+				cell.second.player = mPlayerId; //Shape has now been selected
 				addPlayerShape(bounds.getPosition(), cell.second.player);
+				mSelectedCell = cell.second.pos;
 				return;
 			}
 		}
@@ -147,61 +168,65 @@ void Window::addPlayerShape(sf::Vector2f position, std::string player)
 	sf::CircleShape* shape = new sf::CircleShape(75);
 	shape->setPosition(position);
 
-	if (player == mPlayerId)shape->setFillColor(sf::Color::Green);
+	if (player == mPlayerId)
+	{
+		shape->setFillColor(sf::Color::Green);
+	}
 	else shape->setFillColor(sf::Color::Red);
 
 	addShape(shape);
-	mTurn++;
 }
 
 int Window::checkTextClick()
 {
-	// Récupère la position du clic de souris
 	sf::Vector2f mousePosition = sf::Vector2f(sf::Mouse::getPosition(*mWindow));
 
-	// Parcours des textes pour vérifier si l'un d'eux a été cliqué
 	for (auto& text : mTextMenu)
 	{
 		if (text == nullptr) continue;
-		// Récupère les limites de la zone occupée par le texte
+
 		sf::FloatRect bounds = text->getGlobalBounds();
 
-		// Vérifie la collision avec la position du clic de souris
 		if (bounds.contains(mousePosition))
 		{
-			// Actions spécifiques au texte cliqué
-			if (text->getString() == "Quit")
+			const std::string& buttonText = text->getString();
+
+			if (buttonText == "Quit")
 			{
-				// Quitte le jeu
 				mWindow->close();
 				return 1;
 			}
-			else if (text->getString() == "Play" && mName.empty())
+			else if (buttonText == "Play")
 			{
-				// Lance le jeu
-				hasError = false;
-				changeScene(GAME);
-				break;
+				if (mName.empty()) hasError = true;
+				else {
+					hasError = false;
+					changeScene(WAITING);
+					return 0;
+				}
 			}
-			else if (text->getString() == "Play" && !mName.empty())
-			{
-				// Lance le jeu
-				changeScene(GAME);
-				break;
-			}
-			else if (text->getString() == "Menu")
+			else if (buttonText == "Menu" || buttonText == "Return")
 			{
 				changeScene(MAIN_MENU);
-				break;
+				return 0;
 			}
-			else if (text->getString() == "Join")
+			else if (buttonText == "Skins")
 			{
-				changeScene(JOIN);
-				break;
+				changeScene(SKINS);
+				return 0;
+			}
+			else if (buttonText == "Shapes")
+			{
+				shapesWindow();
+				return 0;
+			}
+			else if (buttonText == "Colors")
+			{
+				colorsWindow();
+				return 0;
 			}
 		}
 	}
-
 	return 0;
 }
 
@@ -218,16 +243,20 @@ void Window::changeScene(SceneState newState)
 
 	switch (currentScene)
 	{
-	case Window::MAIN_MENU:
+	case MAIN_MENU:
 		textMainMenu();
 		shapeMainMenu();
 		break;
-	case Window::JOIN:
-		break;
-	case Window::GAME:
+	case WAITING:
+		waitingScreen();
 		client->connectClientServer();
 		break;
-	case Window::END_GAME:
+	case SKINS:
+		skinsScreen();
+		break;
+	case GAME:
+		break;
+	case END_GAME:
 		screenEndGame();
 		break;
 	}
@@ -238,7 +267,9 @@ void Window::screenEndGame()
 	mFont.loadFromFile("arial.ttf");
 	sf::Text* text = new sf::Text();
 	text->setFont(mFont);
-	text->setString("The winner is ");
+	if (mWinner == "None") text->setString("IT'S A TIE !");
+	else if (mWinner == mPlayerId) text->setString("YOU WON !");
+	else text->setString("YOU LOST...");
 	text->setCharacterSize(80);
 	text->setPosition(mWidth / 5.3, mLength / 8);
 	text->setFillColor(sf::Color(245, 148, 0));
@@ -318,12 +349,12 @@ void Window::textMainMenu()
 	text->setFillColor(sf::Color::White);
 	mTextMenu.push_back(text);
 
-	// Join text
+	// Skins text
 	text = new sf::Text();
 	text->setFont(mFont);
-	text->setString("Join");
+	text->setString("Skins");
 	text->setCharacterSize(50);
-	text->setPosition(200, 670);
+	text->setPosition(190, 670);
 	text->setFillColor(sf::Color::White);
 	mTextMenu.push_back(text);
 
@@ -343,15 +374,13 @@ void Window::shapeMainMenu()
 
 	//Rectangle "Play"
 	button->setSize(sf::Vector2f(500.f, 100.f));
-	//button->setRadius(40.0);
 	button->setPosition(150, 500);
 	button->setFillColor(sf::Color(150, 50, 250));
 	mButton.push_back(button);
 
-	//Rectangle "Join"
+	//Rectangle "Skins"
 	button = new sf::RectangleShape();
 	button->setSize(sf::Vector2f(200.f, 100.f));
-	//button->setRadius(40.0);
 	button->setPosition(150, 650);
 	button->setFillColor(sf::Color(150, 50, 250));
 	mButton.push_back(button);
@@ -359,7 +388,6 @@ void Window::shapeMainMenu()
 	//Rectangle "Quit"
 	button = new sf::RectangleShape();
 	button->setSize(sf::Vector2f(200.f, 100.f));
-	//button->setRadius(40.0);
 	button->setPosition(450, 650);
 	button->setFillColor(sf::Color(150, 50, 250));
 	mButton.push_back(button);
@@ -376,7 +404,7 @@ void Window::menuNameEnter()
 					if (!mName.empty())
 					{
 						hasError = false;
-						changeScene(GAME);
+						changeScene(WAITING);
 					}
 				}
 				else if (inputChar == 8) // Touche "Backspace"
@@ -406,5 +434,238 @@ void Window::changeMenuColor()
 		auto gb = text->getGlobalBounds();
 		if (gb.contains(pos)) text->setFillColor(sf::Color(222, 31, 63));
 		else text->setFillColor(sf::Color::White);
+	}
+}
+
+void Window::waitingScreen()
+{
+	//Waiting text
+	mFont.loadFromFile("arial.ttf");
+	sf::Text* text = new sf::Text();
+	text->setFont(mFont);
+	text->setString("Waiting for players...");
+	text->setCharacterSize(50);
+	text->setPosition(mWidth / 4, mLength / 3);
+	text->setFillColor(sf::Color(255, 255, 255));
+	mTexts.push_back(text);
+}
+
+void Window::skinsScreen()
+{
+	shapesWindow();
+	colorsWindow();
+
+	mFont.loadFromFile("arial.ttf");
+	sf::Text* text = new sf::Text();
+
+	//Return Text
+	text = new sf::Text();
+	text->setFont(mFont);
+	text->setString("Return");
+	text->setCharacterSize(50);
+	text->setPosition(625, 20);
+	text->setFillColor(sf::Color::White);
+	mTextMenu.push_back(text);
+
+	//Shapes
+	sf::RectangleShape* button = new sf::RectangleShape();
+
+	//Button "Return"
+	button = new sf::RectangleShape();
+	button->setSize(sf::Vector2f(200.f, 100.f));
+	button->setPosition(600, 0);
+	button->setFillColor(sf::Color(150, 50, 50));
+	mButton.push_back(button);
+}
+
+//void Window::shapesWindow()
+//{
+//	int cote = 175.f;
+//	int col2 = ((mWidth/2) - (cote / 2));
+//	int col1 = ((col2 / 2) - (cote / 2));
+//	int col3 = ((col2 * 2) - (cote / 2));
+//
+//	//Texts
+//	mFont.loadFromFile("arial.ttf");
+//	sf::Text* text = new sf::Text();
+//
+//	//Sphapes Text
+//	text = new sf::Text();
+//	text->setFont(mFont);
+//	text->setString("Shapes");
+//	text->setCharacterSize(50);
+//	text->setPosition(10, 20);
+//	text->setFillColor(sf::Color::White);
+//	mTextMenu.push_back(text);
+//
+//	//Shapes
+//	sf::RectangleShape* button = new sf::RectangleShape();
+//
+//	//Button "Shapes"
+//	button = new sf::RectangleShape();
+//	button->setSize(sf::Vector2f(200.f, 100.f));
+//	button->setPosition(0, 0);
+//	button->setFillColor(sf::Color(150, 50, 250));
+//	mButton.push_back(button);
+//
+//	//Bg "Shapes"
+//	button = new sf::RectangleShape();
+//	button->setSize(sf::Vector2f(800.f, 700.f));
+//	button->setPosition(0, 100);
+//	button->setFillColor(sf::Color(150, 50, 250));
+//	mButton.push_back(button);
+//
+//	//Slot1
+//	button = new sf::RectangleShape();
+//	button->setSize(sf::Vector2f(cote, cote));
+//	button->setPosition(col1, 150);
+//	button->setFillColor(sf::Color(211, 211, 211));
+//	mButton.push_back(button);
+//
+//	//Slot2
+//	button = new sf::RectangleShape();
+//	button->setSize(sf::Vector2f(cote, cote));
+//	button->setPosition(col2, 150);
+//	button->setFillColor(sf::Color(211, 211, 211));
+//	mButton.push_back(button);
+//
+//	//Slot3
+//	button = new sf::RectangleShape();
+//	button->setSize(sf::Vector2f(cote, cote));
+//	button->setPosition(col3, 150);
+//	button->setFillColor(sf::Color(211, 211, 211));
+//	mButton.push_back(button);
+//
+//	//Slot4
+//	button = new sf::RectangleShape();
+//	button->setSize(sf::Vector2f(cote, cote));
+//	button->setPosition(col1, 375);
+//	button->setFillColor(sf::Color(211, 211, 211));
+//	mButton.push_back(button);
+//
+//	//Slot5
+//	button = new sf::RectangleShape();
+//	button->setSize(sf::Vector2f(cote, cote));
+//	button->setPosition(col2, 375);
+//	button->setFillColor(sf::Color(211, 211, 211));
+//	mButton.push_back(button);
+//
+//	//Slot6
+//	button = new sf::RectangleShape();
+//	button->setSize(sf::Vector2f(cote, cote));
+//	button->setPosition(col3, 375);
+//	button->setFillColor(sf::Color(211, 211, 211));
+//	mButton.push_back(button);
+//
+//	//Slot7
+//	button = new sf::RectangleShape();
+//	button->setSize(sf::Vector2f(cote, cote));
+//	button->setPosition(col1, 600);
+//	button->setFillColor(sf::Color(211, 211, 211));
+//	mButton.push_back(button);
+//
+//	//Slot8
+//	button = new sf::RectangleShape();
+//	button->setSize(sf::Vector2f(cote, cote));
+//	button->setPosition(col2, 600);
+//	button->setFillColor(sf::Color(211, 211, 211));
+//	mButton.push_back(button);
+//
+//	//Slot9
+//	button = new sf::RectangleShape();
+//	button->setSize(sf::Vector2f(cote, cote));
+//	button->setPosition(col3, 600);
+//	button->setFillColor(sf::Color(211, 211, 211));
+//	mButton.push_back(button);
+//}
+
+void Window::shapesWindow()
+{
+	//Texts
+	mFont.loadFromFile("arial.ttf");
+	sf::Text* text = new sf::Text();
+
+	//Shapes Text
+	text = new sf::Text();
+	text->setFont(mFont);
+	text->setString("Shapes");
+	text->setCharacterSize(50);
+	text->setPosition(10, 20);
+	text->setFillColor(sf::Color::White);
+	mTextMenu.push_back(text);
+
+	sf::RectangleShape* button = new sf::RectangleShape();
+
+	//Button "Shapes"
+	button = new sf::RectangleShape();
+	button->setSize(sf::Vector2f(200.f, 100.f));
+	button->setPosition(0, 0);
+	button->setFillColor(sf::Color(150, 50, 250));
+	mButton.push_back(button);
+
+	//Bg "Shapes"
+	button = new sf::RectangleShape();
+	button->setSize(sf::Vector2f(800.f, 700.f));
+	button->setPosition(0, 100);
+	button->setFillColor(sf::Color(150, 50, 250));
+	mButton.push_back(button);
+
+	// Slot shapes
+	for (int i = 0; i < 3; ++i)
+	{
+		for (int j = 0; j < 3; ++j)
+		{
+			sf::RectangleShape* button = new sf::RectangleShape();
+			button->setSize(sf::Vector2f(cote, cote));
+			button->setPosition(62.5 + j * 250, 150 + i * 225);
+			button->setFillColor(sf::Color(211, 211, 211));
+			mButton.push_back(button);
+		}
+	}
+}
+
+
+void Window::colorsWindow()
+{
+	mFont.loadFromFile("arial.ttf");
+	sf::Text* text = new sf::Text();
+
+	//Colors Text
+	text = new sf::Text();
+	text->setFont(mFont);
+	text->setString("Colors");
+	text->setCharacterSize(50);
+	text->setPosition(220, 20);
+	text->setFillColor(sf::Color::White);
+	mTextMenu.push_back(text);
+
+	//Shapes
+	sf::RectangleShape* button = new sf::RectangleShape();
+
+	//Button "Colors"
+	button = new sf::RectangleShape();
+	button->setSize(sf::Vector2f(200.f, 100.f));
+	button->setPosition(200, 0);
+	button->setFillColor(sf::Color(0, 97, 245));
+	mButton.push_back(button);
+
+	//Bg "Colors"
+	button = new sf::RectangleShape();
+	button->setSize(sf::Vector2f(800.f, 700.f));
+	button->setPosition(0, 100);
+	button->setFillColor(sf::Color(0, 97, 245));
+	mButton.push_back(button);
+
+	// Slot colors
+	for (int i = 0; i < 3; ++i)
+	{
+		for (int j = 0; j < 3; ++j)
+		{
+			sf::RectangleShape* button = new sf::RectangleShape();
+			button->setSize(sf::Vector2f(cote, cote));
+			button->setPosition(62.5 + j * 250, 150 + i * 225);
+			button->setFillColor(sf::Color(211, 211, 211));
+			mButton.push_back(button);
+		}
 	}
 }

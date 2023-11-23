@@ -34,7 +34,7 @@ void Server::initWSA()
 void Server::initSocket()
 {
 	// Resolve the server address and port
-	iResult = getaddrinfo(NULL, mPort.c_str(), &hints, &result);
+	iResult = getaddrinfo(ADDRESS, mPort.c_str(), &hints, &result);
 	if (iResult != 0) {
 		printf("%s getaddrinfo failed with error: %d\n", mName.c_str(), iResult);
 		WSACleanup();
@@ -66,6 +66,15 @@ void Server::listenClient()
 	}
 	printf("%s Bind successful.\n", mName.c_str());
 
+	sockaddr_in serverAddr;
+	int len = sizeof(serverAddr);
+	if (getsockname(ListenSocket, reinterpret_cast<sockaddr*>(&serverAddr), &len) == 0) {
+		char ipAddress[INET_ADDRSTRLEN];
+		if (inet_ntop(AF_INET, &serverAddr.sin_addr, ipAddress, INET_ADDRSTRLEN) != nullptr) {
+			printf("%s Server bound to IP address: %s\n", mName.c_str(), ipAddress);
+		}
+	}
+
 	freeaddrinfo(result);
 
 	iResult = listen(ListenSocket, SOMAXCONN);
@@ -89,7 +98,7 @@ void Server::listenClient()
 	while (true)
 	{
 		while (PeekMessage(&msg, hWnd, 0, 0, PM_REMOVE)) {
-			printf("%s Getting message\n", mName.c_str());
+			//printf("%s Getting message\n", mName.c_str());
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}

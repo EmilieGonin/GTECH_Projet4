@@ -194,21 +194,23 @@ void Client::handleJson(std::string dump)
 	switch (id)
 	{
 	case 3: //Get cells after connect or play
+		if (window->getCurrentScene() != GAME) window->changeScene(GAME);
 		if (error == 0)
 		{
+			window->initTurnsList(json["Cells"], json["LastCell"]);
 			window->initCells(json["Cells"]);
 			window->resetTurn(json["Player"] == mPlayerId);
 		}
 		break;
 	case 4: //Get cells and winner
 		window->initCells(json["Cells"]);
-		//TODO -> show winner
+		window->setWinner(json["Player"]);
+		window->changeScene(END_GAME);
 		break;
 	case 5: //Get session id
 		mPlayerId = json["Player"];
 		if (!IsDataExist()) WriteData(mPlayerId);
 		window->setPlayer(json["Player"]);
-		window->resetTurn(json["Player"] == mPlayerId);
 		break;
 	default:
 		break;

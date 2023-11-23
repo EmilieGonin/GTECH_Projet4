@@ -18,8 +18,8 @@ class JsonHandler
 {
 public:
 	JsonHandler();
-	JsonHandler(std::map<std::pair<int, int>, std::string>, std::string, bool); //3
-	JsonHandler(std::map<std::pair<int, int>, std::string>, std::string); //4
+	JsonHandler(std::map<std::pair<int, int>, std::string>, std::pair<int, int>, std::string, bool); //3
+	JsonHandler(std::map<std::pair<int, int>, std::string>, std::pair<int, int>, std::string); //4
 	JsonHandler(std::string); //5
 
 	inline json getJson() { return mJson; };

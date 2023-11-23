@@ -12,6 +12,14 @@ struct cell {
 	std::string player;
 };
 
+enum SceneState {
+	MAIN_MENU,
+	WAITING,
+	SKINS,
+	GAME,
+	END_GAME,
+};
+
 class Window
 {
 public:
@@ -22,7 +30,9 @@ public:
 	void initCells(std::map<std::pair<int, int>, std::string>);
 	std::pair<int, int> play();
 	void resetTurn(bool);
+	void initTurnsList(std::map<std::pair<int, int>, std::string>, std::pair<int, int>);
 
+	inline void setWinner(std::string winnerId) { mWinner = winnerId; };
 	inline void setPlayer(std::string playerId) { mPlayerId = playerId; };
 	inline std::string getPlayer() { return mPlayerId; };
 	inline bool hasPlayed() { return mHasPlayed; };
@@ -31,20 +41,18 @@ public:
 	inline int getTurn() { return mTurn; };
 	inline bool isOpen() { return mWindow->isOpen(); };
 
-	void Finito();
-	void textMainMenu();
-	void shapeMainMenu();
 	void menuNameEnter();
 	void changeMenuColor();
 	int checkTextClick();
-	void screenEndGame();
 
-	enum SceneState {
-		MAIN_MENU,
-		JOIN,
-		GAME,
-		END_GAME,
-	};
+	void textMainMenu();
+	void shapeMainMenu();
+	void screenEndGame();
+	void waitingScreen();
+	void skinsScreen();
+
+	void shapesWindow();
+	void colorsWindow();
 
 	void changeScene(SceneState newState);
 
@@ -57,6 +65,7 @@ private:
 	static Window* mInstance;
 
 	int mTurn = 1;
+	int cote = 175.f;
 
 	const unsigned int maxNameLength = 10;
 
@@ -92,6 +101,8 @@ private:
 	std::pair<int, int> mSelectedCell;
 	bool mHasPlayed;
 	std::string mPlayerId;
+	std::string mWinner;
+	std::string mTurns;
 
 	Client* client;
 };

@@ -22,18 +22,6 @@ int main(int ac, char const* av[])
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 
-		switch (w->getCurrentScene())
-		{
-		case Window::MAIN_MENU:
-			break;
-		case Window::JOIN:
-			break;
-		case Window::GAME:
-			break;
-		case Window::END_GAME:
-			break;
-		}
-
 		if (w->update() == 1) return 1;
 
 		if (!w->hasPlayed() && w->hasSelectedCell())
