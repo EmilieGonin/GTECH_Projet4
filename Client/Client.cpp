@@ -10,7 +10,7 @@ int Client::init()
 	if (initHWND() == 1) return 1;
 	if (initSocket() == 1) return 1;
 	//Sleep(2000);
-	if (connectClientServer() == 1) return 1;
+	//if (connectClientServer() == 1) return 1;
 	return 0;
 }
 
@@ -184,7 +184,7 @@ void Client::sendJson(std::string json)
 void Client::handleJson(std::string dump)
 {
 	JsonHandler response;
-	Window* window = Window::Instance();
+	Window* window = Window::Instance(this);
 	json json = json::parse(dump);
 	int id = json["Id"];
 	int error = json["ErrorCode"];

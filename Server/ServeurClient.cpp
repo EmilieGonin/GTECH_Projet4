@@ -1,12 +1,24 @@
 #include "ServerClient.h"
 
+ServerClient* ServerClient::mInstance = nullptr;
+
 ServerClient::ServerClient() {}
+
+ServerClient::~ServerClient()
+{
+	UnregisterClass(L"AsyncSelectWindowClassA", GetModuleHandle(NULL));
+}
+
+ServerClient* ServerClient::Instance()
+{
+	if (mInstance == nullptr) mInstance = new ServerClient();
+	return mInstance;
+}
 
 void ServerClient::init()
 {
 	mPort = "1027";
 	mName = "Serveur du jeu -";
-
 	Server::init();
 }
 
@@ -29,13 +41,13 @@ void ServerClient::initHWND()
 		return;
 	}
 
-	SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
-
 	ShowWindow(hWnd, SW_NORMAL);
 	UpdateWindow(hWnd);
-	pServer = reinterpret_cast<Server*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
 
 	printf("%s HWND created\n", mName.c_str());
+
+	//SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
+	//mInstance = reinterpret_cast<ServerClient*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
 }
 
 void ServerClient::accepteClient(SOCKET client)
@@ -126,30 +138,90 @@ void ServerClient::DispatchClient(Game* game, SOCKET client)
 	}
 }
 
-void ServerClient::handleClient(UINT uMsg, WPARAM wParam, LPARAM lParam)
+void ServerClient::HandleReadEvent(WPARAM socket)
 {
-	//if (iResult > 0)
-	//{
-	//	printf("Bytes received: %d\n", uMsg);
+	memset(recvbuf, 0, recvbuflen);
+	iResult = recv(socket, recvbuf, recvbuflen, 0);
+	printf("%s Read event :\n %s\n", mName.c_str(), recvbuf);
+	handleJson(socket, recvbuf);
+}
 
-	//	// Echo the buffer back to the sender
-	//	iSendResult = send(ClientSocket, recvbuf, iResult, 0);
-	//	if (iSendResult == SOCKET_ERROR)
-	//	{
-	//		printf("send failed with error: %d\n", WSAGetLastError());
-	//		closesocket(ClientSocket);
-	//		WSACleanup();
-	//	}
-	//	printf("Bytes sent: %d\n", iSendResult);
-	//}
-	//else if (iResult == 0)
-	//{
-	//	//printf("Connection closing from server...\n");
+void ServerClient::handleJson(SOCKET client, std::string dump)
+{
+	JsonHandler response;
+	Game* game = Game::Instance();
+	json json = json::parse(dump);
+	int id = json["Id"];
+	std::string playerId = json["Player"];
+	std::pair<int, int> cell = json["Cell"];
 
-	//}
-	///*else
-	//{
-	//	printf("recv failed with error: %d\n", WSAGetLastError());
+	switch (id)
+	{
+	case 1: //Play cell
+	{
+		//Check if it's player turn
+		bool error = game->getPlayerTurn() != playerId;
+		if (!error)
+		{
+			game->updateCells(cell, playerId);
 
-	//}*/
+			//Check if player has win
+			if (game->hasWin()) response = JsonHandler(game->getCells(), playerId);
+			else response = JsonHandler(game->getCells(), game->getPlayerTurn(), error);
+
+			ServerWeb* w = ServerWeb::Instance();
+			w->showHTML();
+		}
+
+		for (auto& player : mPlayers)
+		{
+			if (player.second != playerId && error) continue;
+			sendJson(player.first, response.getDump());
+		}
+	}
+	break;
+	case 2: //Get cells after reconnect
+		response = JsonHandler(game->getCells(), game->getPlayerTurn(), false);
+		sendJson(client, response.getDump());
+		break;
+	default:
+		break;
+	}
+}
+
+void ServerClient::sendJson(SOCKET client, std::string json)
+{
+	send(client, json.c_str(), json.size(), 0);
+}
+
+LRESULT ServerClient::WindowProc(HWND hWnd, UINT uMsg, WPARAM socket, LPARAM lParam) //static
+{
+	if (mInstance == nullptr) return 1;
+
+	switch (uMsg) {
+	case WM_SOCKET:
+	{
+		switch (LOWORD(lParam))
+		{
+		case FD_READ:
+			mInstance->HandleReadEvent(socket);
+			break;
+		case FD_ACCEPT:
+			mInstance->accepteClient(socket);
+			break;
+		case FD_CLOSE:
+			mInstance->HandleCloseEvent(socket);
+			break;
+		default:
+			break;
+		}
+		return 0; // Indique que le message a été traité
+	}}
+
+	return DefWindowProc(hWnd, uMsg, socket, lParam);
+}
+
+void ServerClient::HandleCloseEvent(WPARAM wParam)
+{
+	//printf("Close event\n %lu\n", wParam);
 }
