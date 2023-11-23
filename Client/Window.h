@@ -32,6 +32,7 @@ public:
 	std::pair<int, int> play();
 	void resetTurn(bool);
 
+	inline void setWinner(std::string winnerId) { mWinner = winnerId; };
 	inline void setPlayer(std::string playerId) { mPlayerId = playerId; };
 	inline std::string getPlayer() { return mPlayerId; };
 	inline bool hasPlayed() { return mHasPlayed; };
@@ -101,6 +102,7 @@ private:
 	std::pair<int, int> mSelectedCell;
 	bool mHasPlayed;
 	std::string mPlayerId;
+	std::string mWinner;
 
 	Client* client;
 };

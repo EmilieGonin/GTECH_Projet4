@@ -20,6 +20,7 @@
 
 #define DEFAULT_PORT "1027"
 #define ADDRESS "localhost"
+//#define ADDRESS "192.168.1.72"
 #define DEFAULT_BUFLEN 1000
 #define WM_SOCKET (WM_USER + 1)
 

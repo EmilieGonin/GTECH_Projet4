@@ -256,7 +256,9 @@ void Window::screenEndGame()
 	mFont.loadFromFile("arial.ttf");
 	sf::Text* text = new sf::Text();
 	text->setFont(mFont);
-	text->setString("The winner is ");
+	if (mWinner == "None") text->setString("IT'S A TIE !");
+	else if (mWinner == mPlayerId) text->setString("YOU WON !");
+	else text->setString("YOU LOST...");
 	text->setCharacterSize(80);
 	text->setPosition(mWidth / 5.3, mLength / 8);
 	text->setFillColor(sf::Color(245, 148, 0));
