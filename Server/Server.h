@@ -31,7 +31,6 @@ private:
     void shutdownClient(SOCKET clientSocket);
     void initWSA();
     void initSocket();
-    int initHWND();
     void listenClient();
     virtual void accepteClient(SOCKET);
 

@@ -9,6 +9,7 @@ protected:
 
 public:
 	ServerClient();
+	~ServerClient();
 	void init() override;
 	void HandleReadEvent(WPARAM wParam) override;
 };

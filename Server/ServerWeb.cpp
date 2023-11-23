@@ -1,6 +1,14 @@
 #include "ServerWeb.h"
 
+ServerWeb* ServerWeb::mInstance = nullptr;
+
 ServerWeb::ServerWeb() { };
+
+ServerWeb* ServerWeb::Instance()
+{
+	if (mInstance == nullptr) mInstance = new ServerWeb();
+	return mInstance;
+}
 
 void ServerWeb::init()
 {
@@ -23,13 +31,13 @@ void ServerWeb::init()
 		return;
 	}
 
-	SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
-
 	ShowWindow(hWnd, SW_NORMAL);
 	UpdateWindow(hWnd);
-	pServer = reinterpret_cast<Server*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
 
 	printf("%s HWND created\n", mName.c_str());
+
+	SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pServer));
+	pServer = reinterpret_cast<Server*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
 
 	Server::init();
 }
@@ -45,6 +53,8 @@ void ServerWeb::accepteClient(SOCKET client)
 		return;
 	}
 	printf("%s Client accepted.\n", mName.c_str());
+
+	mPlayers[client] = generateSessionID(); //Replace with spectators map
 
 	WSAAsyncSelect(client, hWnd, WM_SOCKET, FD_READ | FD_CLOSE);
 }
@@ -64,14 +74,14 @@ std::string ServerWeb::processHttpRequest()
 	return html;
 }
 
-void ServerWeb::showHTML(SOCKET client)
+void ServerWeb::showHTML()
 {
-	send(client, processHttpRequest().c_str(), processHttpRequest().size(), 0);
+	for (auto& client : mPlayers) send(client.first, processHttpRequest().c_str(), processHttpRequest().size(), 0);
 }
 
 void ServerWeb::HandleReadEvent(WPARAM socket)
 {
 	iResult = recv(socket, recvbuf, recvbuflen, 0);
 	printf("%s Read event :\n %s\n", mName.c_str(), recvbuf);
-	showHTML(socket);
+	showHTML();
 }

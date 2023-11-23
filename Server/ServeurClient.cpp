@@ -2,6 +2,11 @@
 
 ServerClient::ServerClient() {}
 
+ServerClient::~ServerClient()
+{
+	UnregisterClass(L"AsyncSelectWindowClassA", GetModuleHandle(NULL));
+}
+
 void ServerClient::init()
 {
 	mPort = "1027";
@@ -24,13 +29,13 @@ void ServerClient::init()
 		return ;
 	}
 
-	SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
-
 	ShowWindow(hWnd, SW_NORMAL);
 	UpdateWindow(hWnd);
-	pServer = reinterpret_cast<Server*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
 
 	printf("%s HWND created\n", mName.c_str());
+
+	SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pServer));
+	pServer = reinterpret_cast<Server*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
 
 	Server::init();
 }
@@ -85,6 +90,7 @@ void ServerClient::accepteClient(SOCKET client)
 
 void ServerClient::HandleReadEvent(WPARAM socket)
 {
+	memset(recvbuf, 0, recvbuflen);
 	iResult = recv(socket, recvbuf, recvbuflen, 0);
 	printf("%s Read event :\n %s\n", mName.c_str(), recvbuf);
 	handleJson(socket, recvbuf);
@@ -112,6 +118,9 @@ void ServerClient::handleJson(SOCKET client, std::string dump)
 			//Check if player has win
 			if (game->hasWin()) response = JsonHandler(game->getCells(), playerId);
 			else response = JsonHandler(game->getCells(), game->getPlayerTurn(), error);
+
+			//ServerWeb* w = ServerWeb::Instance();
+			//w->showHTML();
 		}
 
 		for (auto& player : mPlayers)

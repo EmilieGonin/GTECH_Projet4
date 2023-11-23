@@ -22,34 +22,6 @@ void Server::init()
 	//WSACleanup();
 }
 
-int Server::initHWND()
-{
-	//WNDCLASS wc = { 0 };
-	//wc.lpfnWndProc = WindowProc;
-	//wc.hInstance = GetModuleHandle(NULL);
-	//wc.lpszClassName = L"AsyncSelectWindowClass";
-	//
-	//if (!RegisterClass(&wc)) {
-	//	printf("RegisterClass failed: %d\n", GetLastError());
-	//	return 1;
-	//}
-	//
-	//hWnd = CreateWindowEx(0, L"AsyncSelectWindowClass", L"AsyncSelectWindow", 0, 0, 0, 0, 0, HWND_MESSAGE, NULL, GetModuleHandle(NULL), NULL);
-	//if (hWnd == NULL) {
-	//	printf("CreateWindowEx failed: %d\n", GetLastError());
-	//	return 1;
-	//}
-	//
-	//SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
-	//
-	//ShowWindow(hWnd, SW_NORMAL);
-	//UpdateWindow(hWnd);
-	//pServer = reinterpret_cast<Server*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
-	//
-	//printf("HWND created\n");
-	return 1;
-}
-
 void Server::initWSA()
 {
 	// Initialize Winsock
@@ -113,10 +85,19 @@ void Server::listenClient()
 	WSAAsyncSelect(ListenSocket, hWnd, WM_SOCKET, FD_ACCEPT | FD_CLOSE);
 
 	MSG msg;
-	while (GetMessage(&msg, NULL, 0, 0))
+	/*while (GetMessage(&msg, hWnd, 0, 0))
 	{
+		printf("%s Getting message\n", mName.c_str());
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
+	}*/
+	while (true)
+	{
+		while (PeekMessage(&msg, hWnd, 0, 0, PM_REMOVE)) {
+			printf("%s Getting message\n", mName.c_str());
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
 	}
 }
 
@@ -125,8 +106,12 @@ void Server::accepteClient(SOCKET client) {}
 LRESULT Server::WindowProc(HWND hWnd, UINT uMsg, WPARAM socket, LPARAM lParam) //static
 {
 	//pServer = reinterpret_cast<Server*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
-	//if (pServer)
-	//	pServer->HandleWindowMessage(uMsg, wParam, lParam);
+
+	if (pServer == nullptr)
+	{
+		printf("Failed to retrieve pServer\n");
+		return 1;
+	}
 
 	switch (uMsg)
 	{

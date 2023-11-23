@@ -14,10 +14,10 @@ DWORD WINAPI startClientServer(LPVOID lpParam)
 	return 0;
 }
 
-DWORD WINAPI startWebServer(LPVOID lpParam) 
+DWORD WINAPI startWebServer(LPVOID lpParam)
 {
-	ServerWeb serverWeb;
-	serverWeb.init();
+	ServerWeb* serverWeb = ServerWeb::Instance();
+	serverWeb->init();
 	return 0;
 }
 
