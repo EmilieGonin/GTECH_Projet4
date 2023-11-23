@@ -67,6 +67,7 @@ void ServerWeb::accepteClient(SOCKET client)
 
 std::string ServerWeb::processHttpRequest()
 {
+	Game* g = Game::Instance();
 	std::ifstream file(imagePath, std::ios::binary);
 
 	std::ostringstream imageStream;
@@ -82,7 +83,9 @@ std::string ServerWeb::processHttpRequest()
 	html += "<script>";
 	html += "setTimeout(function() { location.reload(); }, 1000);";
 	html += "</script>";
-	html += "<div id=\"content\"><h1>Tic-Tac-Toe</h1><img src=\"data:image/png;base64," + base64 + "\" /></div>";
+	html += "<div id=\"content\" style=\"text-align:center\"><h1>Tic - Tac - Toe</h1>";
+	if (!g->getPlayerTurn().empty()) html += "<h2>Waiting for " + g->getPlayerTurn() + "</h2>";
+	html += "<img src=\"data:image/png;base64," + base64 + "\" /></div>";
 	return html;
 }
 
