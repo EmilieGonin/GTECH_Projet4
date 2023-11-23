@@ -192,6 +192,7 @@ void Client::handleJson(std::string dump)
 	switch (id)
 	{
 	case 3: //Get cells after connect or play
+		if (window->getCurrentScene() != GAME) window->changeScene(GAME);
 		if (error == 0)
 		{
 			window->initCells(json["Cells"]);
