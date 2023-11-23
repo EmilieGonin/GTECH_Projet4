@@ -180,8 +180,6 @@ int Window::checkTextClick()
 			{
 				// Lance le jeu
 				hasError = false;
-				changeScene(GAME);
-				break;
 			}
 			else if (text->getString() == "Play" && !mName.empty())
 			{
