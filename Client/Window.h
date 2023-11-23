@@ -41,7 +41,6 @@ public:
 	inline int getTurn() { return mTurn; };
 	inline bool isOpen() { return mWindow->isOpen(); };
 
-	void Finito();
 	void menuNameEnter();
 	void namePlayerWin();
 	void changeMenuColor();

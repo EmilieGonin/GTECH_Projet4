@@ -50,8 +50,6 @@ int Game::hasWin()
 {
 	std::string previousPlayer = mTurnPlayer == mPlayers[0] ? mPlayers[1] : mPlayers[0];
 
-	return 0;
-
 	for (size_t i = 0; i < 3; i++)
 	{
 		//Columns
