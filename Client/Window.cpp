@@ -162,10 +162,9 @@ int Window::checkTextClick()
 	// Parcours des textes pour vérifier si l'un d'eux a été cliqué
 	for (auto& text : mTextMenu)
 	{
-		if (text != nullptr)
-		{
-			// Récupère les limites de la zone occupée par le texte
-			sf::FloatRect bounds = text->getGlobalBounds();
+		if (text == nullptr) continue;
+		// Récupère les limites de la zone occupée par le texte
+		sf::FloatRect bounds = text->getGlobalBounds();
 
 		// Vérifie la collision avec la position du clic de souris
 		if (bounds.contains(mousePosition))
@@ -175,63 +174,30 @@ int Window::checkTextClick()
 			{
 				// Quitte le jeu
 				mWindow->close();
-				//std::exit(0);
+				return 1;
 			}
 			else if (text->getString() == "Play" && mName.empty())
 			{
-				// Affiche message d'erreur
-				//for (auto& errorMessage : mErrorMessage)
-				//{
-				//	mWindow->draw(*errorMessage);
-				//}
+				// Lance le jeu
+				hasError = false;
+				changeScene(GAME);
+				break;
 			}
 			else if (text->getString() == "Play" && !mName.empty())
 			{
 				// Lance le jeu
 				changeScene(GAME);
+				break;
 			}
 			else if (text->getString() == "Menu")
 			{
 				changeScene(MAIN_MENU);
+				break;
 			}
 			else if (text->getString() == "Join")
 			{
 				changeScene(JOIN);
-			}
-		}
-	}
-}
-			// Vérifie la collision avec la position du clic de souris
-			if (bounds.left >= 0 && bounds.top >= 0 && bounds.contains(mousePosition))
-			{
-				// Actions spécifiques au texte cliqué
-				if (text->getString() == "Quit")
-				{
-					// Quitte le jeu
-					mWindow->close();
-					return 1;
-				}
-				else if (text->getString() == "Play" && !mName.empty())
-				{
-					// Lance le jeu
-					hasError = false;
-					changeScene(GAME);
-					break;
-				}
-				else if (text->getString() == "Play" && mName.empty())
-				{
-					hasError = true;
-				}
-				else if (text->getString() == "Menu")
-				{
-					changeScene(MAIN_MENU);
-					break;
-				}
-				else if (text->getString() == "Join")
-				{
-					changeScene(JOIN);
-					break;
-				}
+				break;
 			}
 		}
 	}

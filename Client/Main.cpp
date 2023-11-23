@@ -3,8 +3,8 @@
 
 int main(int ac, char const* av[])
 {
-	Window* w = Window::Instance();
 	Client c;
+	Window* w = Window::Instance(&c);
 
 	if (c.init() == 1)
 	{
