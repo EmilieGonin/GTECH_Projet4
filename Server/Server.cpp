@@ -34,7 +34,7 @@ void Server::initWSA()
 void Server::initSocket()
 {
 	// Resolve the server address and port
-	iResult = getaddrinfo(NULL, mPort.c_str(), &hints, &result);
+	iResult = getaddrinfo(ADDRESS, mPort.c_str(), &hints, &result);
 	if (iResult != 0) {
 		printf("%s getaddrinfo failed with error: %d\n", mName.c_str(), iResult);
 		WSACleanup();
