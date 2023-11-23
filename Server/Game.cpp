@@ -46,24 +46,28 @@ void Game::reset()
 	mInstance = NULL;
 }
 
-bool Game::hasWin()
+int Game::hasWin()
 {
 	std::string previousPlayer = mTurnPlayer == mPlayers[0] ? mPlayers[1] : mPlayers[0];
+
+	return 0;
 
 	for (size_t i = 0; i < 3; i++)
 	{
 		//Columns
-		if (mCells[{i, 0}] == previousPlayer && mCells[{i, 1}] == previousPlayer && mCells[{i, 2}] == previousPlayer) return true;
+		if (mCells[{i, 0}] == previousPlayer && mCells[{i, 1}] == previousPlayer && mCells[{i, 2}] == previousPlayer) return 1;
 
 		//Lines
-		if (mCells[{0, i}] == previousPlayer && mCells[{1, i}] == previousPlayer && mCells[{2, i}] == previousPlayer) return true;
+		if (mCells[{0, i}] == previousPlayer && mCells[{1, i}] == previousPlayer && mCells[{2, i}] == previousPlayer) return 1;
 
 		//Diagonales
-		if (mCells[{0, 0}] == previousPlayer && mCells[{1, 1}] == previousPlayer && mCells[{2, 2}] == previousPlayer) return true;
-		if (mCells[{0, 2}] == previousPlayer && mCells[{1, 1}] == previousPlayer && mCells[{2, 0}] == previousPlayer) return true;
+		if (mCells[{0, 0}] == previousPlayer && mCells[{1, 1}] == previousPlayer && mCells[{2, 2}] == previousPlayer) return 1;
+		if (mCells[{0, 2}] == previousPlayer && mCells[{1, 1}] == previousPlayer && mCells[{2, 0}] == previousPlayer) return 1;
 	}
 
-	return false;
+	if (mShapes.size() == 9) return 0;
+
+	return -1;
 }
 
 void Game::updateCells(std::pair<int, int> cell, std::string player)
