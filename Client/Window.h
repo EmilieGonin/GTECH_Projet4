@@ -5,6 +5,7 @@
 #include <string>
 #include <iostream>
 #include "Client.h"
+#include "Sound.h"
 
 struct cell {
 	sf::Shape* shape;

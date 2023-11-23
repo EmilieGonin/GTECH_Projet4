@@ -159,6 +159,8 @@ int Window::checkTextClick()
 	// Récupère la position du clic de souris
 	sf::Vector2f mousePosition = sf::Vector2f(sf::Mouse::getPosition(*mWindow));
 
+	Sound s;
+
 	// Parcours des textes pour vérifier si l'un d'eux a été cliqué
 	for (auto& text : mTextMenu)
 	{
@@ -191,6 +193,7 @@ int Window::checkTextClick()
 			}
 			else if (text->getString() == "Menu")
 			{
+				s.playSound();
 				changeScene(MAIN_MENU);
 				break;
 			}

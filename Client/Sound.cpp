@@ -13,8 +13,9 @@ Sound::~Sound()
 void Sound::playSound()
 {
 	sf::SoundBuffer soundBuffer;
-	soundBuffer.loadFromFile("");
+
+	soundBuffer.loadFromFile("clic.mp3");
 	mSound.setBuffer(soundBuffer);
 	mSound.play();
 
-};
+}
