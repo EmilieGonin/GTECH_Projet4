@@ -117,7 +117,7 @@ void ServerClient::DispatchClient(Game* game, SOCKET client)
 		}
 	}
 
-	//Si le Joueur n'�tait pas d�ja enregistr�
+	//Si le Joueur n'etait pas deja enregistr�
 	if (!enregistre)
 	{
 		//Genere un ID et l'envoi au client
