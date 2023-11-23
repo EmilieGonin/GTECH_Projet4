@@ -222,6 +222,9 @@ void Window::changeScene(SceneState newState)
 		textMainMenu();
 		shapeMainMenu();
 		break;
+	case Window::WAITING:
+		waitingScreen();
+		break;
 	case Window::JOIN:
 		break;
 	case Window::GAME:
@@ -407,4 +410,17 @@ void Window::changeMenuColor()
 		if (gb.contains(pos)) text->setFillColor(sf::Color(222, 31, 63));
 		else text->setFillColor(sf::Color::White);
 	}
+}
+
+void Window::waitingScreen()
+{
+	//Waiting text
+	mFont.loadFromFile("arial.ttf");
+	sf::Text* text = new sf::Text();
+	text->setFont(mFont);
+	text->setString("Waiting for players...");
+	text->setCharacterSize(50);
+	text->setPosition(mWidth/4 , mLength / 3);
+	text->setFillColor(sf::Color(255, 255, 255));
+	mTexts.push_back(text);
 }

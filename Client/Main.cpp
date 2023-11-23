@@ -14,7 +14,7 @@ int main(int ac, char const* av[])
 
 	//c.clientDisconnect();
 
-	w->changeScene(Window::END_GAME);
+	w->changeScene(Window::WAITING);
 
 	MSG msg;
 	while (GetMessage(&msg, NULL, 0, 0))
@@ -25,6 +25,8 @@ int main(int ac, char const* av[])
 		switch (w->getCurrentScene())
 		{
 		case Window::MAIN_MENU:
+			break;
+		case Window::WAITING:
 			break;
 		case Window::JOIN:
 			break;
