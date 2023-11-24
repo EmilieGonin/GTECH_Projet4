@@ -17,6 +17,13 @@ Window::~Window()
 	for (auto& cell : mCells) delete cell.second.shape;
 }
 
+void Window::restart()
+{
+	mSelectedCell = { -1, -1 };
+	mHasPlayed = false;
+	mTurns = "";
+}
+
 Window* Window::Instance(Client* mClient)
 {
 	if (mInstance == nullptr) mInstance = new Window();

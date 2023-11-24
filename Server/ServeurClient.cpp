@@ -158,6 +158,7 @@ void ServerClient::handleJson(SOCKET client, std::string dump)
 		//Check if it's player turn
 		std::string playerTurn = game->getPlayerTurn();
 		bool error = game->getPlayerTurn() != playerId;
+		bool end = false;
 		if (!error)
 		{
 			std::pair<int, int> cell = json["Cell"];
@@ -170,9 +171,11 @@ void ServerClient::handleJson(SOCKET client, std::string dump)
 				break;
 			case 0: //Tie
 				response = JsonHandler(game->getCells(), game->getLastCell(), "None");
+				end = true;
 				break;
 			case 1: //Win
 				response = JsonHandler(game->getCells(), game->getLastCell(), playerId);
+				end = true;
 				break;
 			}
 		}
@@ -181,6 +184,15 @@ void ServerClient::handleJson(SOCKET client, std::string dump)
 		{
 			if (player.second != playerId && error) continue;
 			sendJson(player.first, response.getDump());
+		}
+
+		if (end)
+		{
+			mHasGameStarted = false;
+			mPlayers.clear();
+			mAllClient.clear();
+			mSpectate.clear();
+			game->restart();
 		}
 	}
 	break;
@@ -241,7 +253,8 @@ LRESULT ServerClient::WindowProc(HWND hWnd, UINT uMsg, WPARAM socket, LPARAM lPa
 	return DefWindowProc(hWnd, uMsg, socket, lParam);
 }
 
-void ServerClient::HandleCloseEvent(WPARAM wParam)
+void ServerClient::HandleCloseEvent(WPARAM socket)
 {
-	//printf("Close event\n %lu\n", wParam);
+	printf("Close event\n %lu\n", socket);
+	closesocket(socket);
 }
