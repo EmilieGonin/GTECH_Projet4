@@ -106,4 +106,8 @@ private:
 	std::string mTurns;
 
 	Client* client;
+
+	std::map<std::pair<int, int>, sf::Shape*> mSkinsCells;
+	std::map<std::pair<int, int>, sf::Shape*> skins;
+
 };
