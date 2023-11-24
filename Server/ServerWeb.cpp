@@ -45,9 +45,6 @@ void ServerWeb::initHWND()
 	UpdateWindow(hWnd);
 
 	printf("%s HWND created\n", mName.c_str());
-
-	//SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
-	//mInstance = reinterpret_cast<ServerWeb*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
 }
 
 void ServerWeb::accepteClient(SOCKET client)
@@ -60,7 +57,6 @@ void ServerWeb::accepteClient(SOCKET client)
 		WSACleanup();
 		return;
 	}
-	//printf("%s Client accepted.\n", mName.c_str());
 
 	WSAAsyncSelect(client, hWnd, WM_SOCKET, FD_READ | FD_CLOSE);
 }
@@ -96,7 +92,6 @@ void ServerWeb::showHTML(SOCKET client)
 void ServerWeb::HandleReadEvent(WPARAM socket)
 {
 	iResult = recv(socket, recvbuf, recvbuflen, 0);
-	//printf("%s Read event :\n %s\n", mName.c_str(), recvbuf);
 	showHTML(socket);
 }
 

@@ -15,12 +15,14 @@
 #include <stdio.h>
 #include <thread>
 #include "JsonHandler.h"
+#include <fstream>
+#include <io.h>
 
 #pragma comment(lib, "Ws2_32.lib")
 
 #define DEFAULT_PORT "1027"
-#define ADDRESS "localhost"
-//#define ADDRESS "192.168.1.72"
+//#define ADDRESS "localhost"
+#define ADDRESS "192.168.1.72"
 #define DEFAULT_BUFLEN 1000
 #define WM_SOCKET (WM_USER + 1)
 
@@ -35,7 +37,7 @@ public:
 	int initSocket();
 	int connectClientServer();
 	int clientSendData(std::string);
-	//int clientDisconnect();
+	int clientDisconnect();
 
 	static LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	LRESULT HandleWindowMessage(UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -58,5 +60,11 @@ private:
 	int iResult;
 	HWND hWnd;
 	std::string mPlayerId;
+
+	void WriteData(std::string sessionID);
+	json ReadData();
+	void DeleteData();
+	bool IsDataExist();
+	void reset();
 };
 

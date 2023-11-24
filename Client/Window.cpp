@@ -17,6 +17,13 @@ Window::~Window()
 	for (auto& cell : mCells) delete cell.second.shape;
 }
 
+void Window::restart()
+{
+	mSelectedCell = { -1, -1 };
+	mHasPlayed = false;
+	mTurns = "";
+}
+
 Window* Window::Instance(Client* mClient)
 {
 	if (mInstance == nullptr) mInstance = new Window();
@@ -544,7 +551,6 @@ void Window::shapesWindow()
 	mShapes.push_back(triangle);  // Ajoute le triangle à votre vecteur de formes
 
 }
-
 
 void Window::colorsWindow()
 {

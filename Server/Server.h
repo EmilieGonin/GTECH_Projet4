@@ -5,6 +5,7 @@
 #define FD_READ_EVENT   FD_READ | FD_WRITE | FD_OOB | FD_ACCEPT | FD_CONNECT | FD_CLOSE
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 #define ADDRESS "192.168.1.72"
+//#define ADDRESS "localhost"
 
 #include <windows.h>
 #include <winsock2.h>
@@ -64,6 +65,8 @@ protected:
     virtual void HandleReadEvent(WPARAM wParam);
     virtual void HandleCloseEvent(WPARAM wParam);
     //static LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+
+    bool mHasGameStarted;
 
 public:
     Server();

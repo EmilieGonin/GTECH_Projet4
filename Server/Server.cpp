@@ -7,6 +7,7 @@ Server::~Server() {}
 
 void Server::init()
 {
+	mHasGameStarted = false;
 	initHWND();
 	initWSA();
 	initSocket();

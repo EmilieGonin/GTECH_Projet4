@@ -48,6 +48,19 @@ void Game::reset()
 	mInstance = NULL;
 }
 
+void Game::restart()
+{
+	mShapes.clear();
+	mCells.clear();
+	mCellShapes.clear();
+	mWinner = 0;
+	mTurnPlayer = "";
+	mTurns = "";
+	mTexture = new sf::Texture();
+	mLastCell = { -1, -1 };
+	mPlayers.clear();
+}
+
 int Game::hasWin()
 {
 	std::string previousPlayer = mTurnPlayer == mPlayers[0] ? mPlayers[1] : mPlayers[0];

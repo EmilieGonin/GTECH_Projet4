@@ -5,6 +5,21 @@ Client::Client() {}
 
 Client::~Client() {}
 
+void Client::reset()
+{
+	Window* w = Window::Instance(this);
+	w->restart();
+
+	DestroyWindow(hWnd);
+
+	if (!UnregisterClass(L"AsyncSelectWindowClassC", GetModuleHandle(NULL))) {
+		printf("UnregisterClass failed: %d\n", GetLastError());
+		return;
+	}
+
+	printf("HWND destroyed and class unregistered\n");
+}
+
 int Client::init()
 {
 	if (initHWND() == 1) return 1;
@@ -108,28 +123,21 @@ int Client::clientSendData(std::string data)
 	printf("Bytes Sent: %ld\n", res);
 }
 
-//int Client::clientDisconnect()
-//{
-//	/*if (res = shutdown(ClientSocket, SD_SEND) == SOCKET_ERROR)
-//	{
-//		printf("shutdown failed: %d\n", WSAGetLastError());
-//		closesocket(ClientSocket);
-//		WSACleanup();
-//		return 1;
-//	}*/
-//
-//	//do {
-//		res = recv(ClientSocket, recvbuf, recvbuflen, 0);
-//		if (res > 0)
-//			printf("Bytes received: %s\n", recvbuf);
-//		else if (res == 0)
-//			printf("Connection closed\n");
-//		//else
-//			//printf("recv failed: %d\n", WSAGetLastError());
-//	//} while (true);
-//
-//	return 0;
-//}
+int Client::clientDisconnect()
+{
+	if (res = shutdown(ClientSocket, SD_SEND) == SOCKET_ERROR)
+	{
+		printf("shutdown failed: %d\n", WSAGetLastError());
+		closesocket(ClientSocket);
+		WSACleanup();
+		return 1;
+	}
+
+	closesocket(ClientSocket);
+	reset();
+	init();
+	return 0;
+}
 
 LRESULT Client::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) //static
 {
@@ -185,9 +193,9 @@ void Client::handleJson(std::string dump)
 {
 	JsonHandler response;
 	Window* window = Window::Instance(this);
-	json json = json::parse(dump);
-	int id = json["Id"];
-	int error = json["ErrorCode"];
+	json j = json::parse(dump);
+	int id = j["Id"];
+	int error = j["ErrorCode"];
 
 	switch (id)
 	{
@@ -195,21 +203,95 @@ void Client::handleJson(std::string dump)
 		if (window->getCurrentScene() != GAME) window->changeScene(GAME);
 		if (error == 0)
 		{
-			window->initTurnsList(json["Cells"], json["LastCell"]);
-			window->initCells(json["Cells"]);
-			window->resetTurn(json["Player"] == mPlayerId);
+			window->initTurnsList(j["Cells"], j["LastCell"]);
+			window->initCells(j["Cells"]);
+			window->resetTurn(j["Player"] == mPlayerId);
 		}
 		break;
 	case 4: //Get cells and winner
-		window->initCells(json["Cells"]);
-		window->setWinner(json["Player"]);
+		window->initCells(j["Cells"]);
+		window->setWinner(j["Player"]);
 		window->changeScene(END_GAME);
+		DeleteData();
+		clientDisconnect();
 		break;
 	case 5: //Get session id
-		mPlayerId = json["Player"];
-		window->setPlayer(json["Player"]);
+		mPlayerId = j["Player"];
+		if (IsDataExist())
+		{
+			printf("Datas already exist.\n");
+			json data = ReadData();
+			mPlayerId = data["Player"];
+			sendJson(data.dump());
+		}
+		else WriteData(j["Player"]);
+
+		window->setPlayer(mPlayerId);
 		break;
 	default:
 		break;
 	}
+}
+
+void Client::WriteData(std::string sessionID)
+{
+	printf("Writing new datas...\n");
+	json mJson;
+	std::string mDump;
+
+	mJson["ErrorCode"] = 0;
+	mJson["JsonType"] = NOTIF;
+	mJson["Id"] = 6;
+	mJson["Player"] = sessionID;
+
+	mDump = mJson.dump();
+
+	// Ouvrir un fichier en écriture
+	std::ofstream fichier("donnees.json");
+
+	// Écrire l'objet JSON dans le fichier
+	fichier << mDump;
+
+	// Fermer le fichier
+	fichier.close();
+
+	printf("New datas saved.\n");
+}
+
+json Client::ReadData()
+{
+	printf("Reading existing datas...\n");
+
+	// Ouvrir un fichier en lecture
+	std::ifstream fichier("donnees.json");
+
+	// Créer un objet JSON
+	json donnees;
+
+	// Vérifier si le fichier est bien ouvert
+	if (fichier.is_open()) {
+		// Lire l'objet JSON depuis le fichier
+		donnees = json::parse(fichier);
+		//fichier >> donnees;
+
+		// Fermer le fichier
+		fichier.close();
+	}
+	else {
+		std::cerr << "Erreur lors de l'ouverture du fichier." << std::endl;
+	}
+
+	return donnees;
+}
+
+void Client::DeleteData()
+{
+	if (std::remove("donnees.json") == 0) puts("Fichier supprime avec succes");
+	else perror("Erreur lors de la suppression du fichier");
+}
+
+bool Client::IsDataExist()
+{
+	std::ifstream fichier("donnees.json");
+	return (bool)fichier;
 }

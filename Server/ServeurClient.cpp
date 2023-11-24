@@ -45,9 +45,6 @@ void ServerClient::initHWND()
 	UpdateWindow(hWnd);
 
 	printf("%s HWND created\n", mName.c_str());
-
-	//SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
-	//mInstance = reinterpret_cast<ServerClient*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
 }
 
 void ServerClient::accepteClient(SOCKET client)
@@ -67,9 +64,9 @@ void ServerClient::accepteClient(SOCKET client)
 	//Regarde si le client est d�ja enregistr� et le met en jeu ou spectate
 	DispatchClient(game, client);
 
-	//TODO -> check if game has started
-	if (mPlayers.size() == 2)
+	if (!mHasGameStarted && mPlayers.size() == 2)
 	{
+		mHasGameStarted = true;
 		game->init();
 
 		JsonHandler j(game->getCells(), game->getLastCell(), game->getPlayerTurn(), false);
@@ -153,7 +150,6 @@ void ServerClient::handleJson(SOCKET client, std::string dump)
 	json json = json::parse(dump);
 	int id = json["Id"];
 	std::string playerId = json["Player"];
-	std::pair<int, int> cell = json["Cell"];
 
 	switch (id)
 	{
@@ -162,8 +158,10 @@ void ServerClient::handleJson(SOCKET client, std::string dump)
 		//Check if it's player turn
 		std::string playerTurn = game->getPlayerTurn();
 		bool error = game->getPlayerTurn() != playerId;
+		bool end = false;
 		if (!error)
 		{
+			std::pair<int, int> cell = json["Cell"];
 			game->updateCells(cell, playerId);
 
 			//Check if player has win
@@ -173,9 +171,11 @@ void ServerClient::handleJson(SOCKET client, std::string dump)
 				break;
 			case 0: //Tie
 				response = JsonHandler(game->getCells(), game->getLastCell(), "None");
+				end = true;
 				break;
 			case 1: //Win
 				response = JsonHandler(game->getCells(), game->getLastCell(), playerId);
+				end = true;
 				break;
 			}
 		}
@@ -185,12 +185,37 @@ void ServerClient::handleJson(SOCKET client, std::string dump)
 			if (player.second != playerId && error) continue;
 			sendJson(player.first, response.getDump());
 		}
+
+		if (end)
+		{
+			mHasGameStarted = false;
+			mPlayers.clear();
+			mAllClient.clear();
+			mSpectate.clear();
+			game->restart();
+		}
 	}
 	break;
 	case 2: //Get cells after reconnect
 		response = JsonHandler(game->getCells(), game->getLastCell(), game->getPlayerTurn(), false);
 		sendJson(client, response.getDump());
 		break;
+	case 6: //Reconnect player
+	{
+		std::map<SOCKET, std::string> newMap;
+
+		for (auto& player : mPlayers)
+		{
+			if (player.second == json["Player"]) newMap[client] = json["Player"];
+			else newMap[player.first] = player.second;
+		}
+
+		mPlayers = newMap;
+
+		response = JsonHandler(game->getCells(), game->getLastCell(), game->getPlayerTurn(), false);
+		sendJson(client, response.getDump());
+	}
+	break;
 	default:
 		break;
 	}
@@ -228,7 +253,8 @@ LRESULT ServerClient::WindowProc(HWND hWnd, UINT uMsg, WPARAM socket, LPARAM lPa
 	return DefWindowProc(hWnd, uMsg, socket, lParam);
 }
 
-void ServerClient::HandleCloseEvent(WPARAM wParam)
+void ServerClient::HandleCloseEvent(WPARAM socket)
 {
-	//printf("Close event\n %lu\n", wParam);
+	printf("Close event\n %lu\n", socket);
+	closesocket(socket);
 }

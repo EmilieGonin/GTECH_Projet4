@@ -31,6 +31,7 @@ public:
 	std::pair<int, int> play();
 	void resetTurn(bool);
 	void initTurnsList(std::map<std::pair<int, int>, std::string>, std::pair<int, int>);
+	void restart();
 
 	inline void setWinner(std::string winnerId) { mWinner = winnerId; };
 	inline void setPlayer(std::string playerId) { mPlayerId = playerId; };
