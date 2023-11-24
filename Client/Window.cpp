@@ -624,7 +624,6 @@ void Window::shapesWindow()
 	}
 }
 
-
 void Window::colorsWindow()
 {
 	mFont.loadFromFile("arial.ttf");

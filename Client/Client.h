@@ -15,6 +15,8 @@
 #include <stdio.h>
 #include <thread>
 #include "JsonHandler.h"
+#include <fstream>
+#include <io.h>
 
 #pragma comment(lib, "Ws2_32.lib")
 
@@ -58,5 +60,10 @@ private:
 	int iResult;
 	HWND hWnd;
 	std::string mPlayerId;
+
+	void WriteData(std::string sessionID);
+	json ReadData();
+	void DeleteData();
+	bool IsDataExist();
 };
 
