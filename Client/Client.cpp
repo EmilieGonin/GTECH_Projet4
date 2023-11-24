@@ -204,6 +204,7 @@ void Client::handleJson(std::string dump)
 		window->initCells(j["Cells"]);
 		window->setWinner(j["Player"]);
 		window->changeScene(END_GAME);
+		DeleteData();
 		break;
 	case 5: //Get session id
 		mPlayerId = j["Player"];
@@ -276,7 +277,7 @@ json Client::ReadData()
 
 void Client::DeleteData()
 {
-	if (std::remove("donnees.txt") == 0) puts("Fichier supprime avec succes");
+	if (std::remove("donnees.json") == 0) puts("Fichier supprime avec succes");
 	else perror("Erreur lors de la suppression du fichier");
 }
 
