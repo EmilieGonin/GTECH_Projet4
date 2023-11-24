@@ -44,6 +44,7 @@ int Window::update()
 	{
 		mWindow->clear();
 		for (auto& cell : mCells) mWindow->draw(*cell.second.shape);
+		for (auto& button : mButton) mWindow->draw(*button);
 		for (auto& shape : mShapes) mWindow->draw(*shape);
 		if (mEnterName != nullptr) {
 			mEnterName->setString("Enter your name: " + mName);
@@ -51,7 +52,6 @@ int Window::update()
 		}
 		if (hasError) mWindow->draw(*mErrorMessage);
 		for (auto& text : mTexts) mWindow->draw(*text);
-		for (auto& button : mButton) mWindow->draw(*button);
 		for (auto& text : mTextMenu) mWindow->draw(*text);
 
 		mWindow->display();
@@ -478,107 +478,6 @@ void Window::skinsScreen()
 	mButton.push_back(button);
 }
 
-//void Window::shapesWindow()
-//{
-//	int cote = 175.f;
-//	int col2 = ((mWidth/2) - (cote / 2));
-//	int col1 = ((col2 / 2) - (cote / 2));
-//	int col3 = ((col2 * 2) - (cote / 2));
-//
-//	//Texts
-//	mFont.loadFromFile("arial.ttf");
-//	sf::Text* text = new sf::Text();
-//
-//	//Sphapes Text
-//	text = new sf::Text();
-//	text->setFont(mFont);
-//	text->setString("Shapes");
-//	text->setCharacterSize(50);
-//	text->setPosition(10, 20);
-//	text->setFillColor(sf::Color::White);
-//	mTextMenu.push_back(text);
-//
-//	//Shapes
-//	sf::RectangleShape* button = new sf::RectangleShape();
-//
-//	//Button "Shapes"
-//	button = new sf::RectangleShape();
-//	button->setSize(sf::Vector2f(200.f, 100.f));
-//	button->setPosition(0, 0);
-//	button->setFillColor(sf::Color(150, 50, 250));
-//	mButton.push_back(button);
-//
-//	//Bg "Shapes"
-//	button = new sf::RectangleShape();
-//	button->setSize(sf::Vector2f(800.f, 700.f));
-//	button->setPosition(0, 100);
-//	button->setFillColor(sf::Color(150, 50, 250));
-//	mButton.push_back(button);
-//
-//	//Slot1
-//	button = new sf::RectangleShape();
-//	button->setSize(sf::Vector2f(cote, cote));
-//	button->setPosition(col1, 150);
-//	button->setFillColor(sf::Color(211, 211, 211));
-//	mButton.push_back(button);
-//
-//	//Slot2
-//	button = new sf::RectangleShape();
-//	button->setSize(sf::Vector2f(cote, cote));
-//	button->setPosition(col2, 150);
-//	button->setFillColor(sf::Color(211, 211, 211));
-//	mButton.push_back(button);
-//
-//	//Slot3
-//	button = new sf::RectangleShape();
-//	button->setSize(sf::Vector2f(cote, cote));
-//	button->setPosition(col3, 150);
-//	button->setFillColor(sf::Color(211, 211, 211));
-//	mButton.push_back(button);
-//
-//	//Slot4
-//	button = new sf::RectangleShape();
-//	button->setSize(sf::Vector2f(cote, cote));
-//	button->setPosition(col1, 375);
-//	button->setFillColor(sf::Color(211, 211, 211));
-//	mButton.push_back(button);
-//
-//	//Slot5
-//	button = new sf::RectangleShape();
-//	button->setSize(sf::Vector2f(cote, cote));
-//	button->setPosition(col2, 375);
-//	button->setFillColor(sf::Color(211, 211, 211));
-//	mButton.push_back(button);
-//
-//	//Slot6
-//	button = new sf::RectangleShape();
-//	button->setSize(sf::Vector2f(cote, cote));
-//	button->setPosition(col3, 375);
-//	button->setFillColor(sf::Color(211, 211, 211));
-//	mButton.push_back(button);
-//
-//	//Slot7
-//	button = new sf::RectangleShape();
-//	button->setSize(sf::Vector2f(cote, cote));
-//	button->setPosition(col1, 600);
-//	button->setFillColor(sf::Color(211, 211, 211));
-//	mButton.push_back(button);
-//
-//	//Slot8
-//	button = new sf::RectangleShape();
-//	button->setSize(sf::Vector2f(cote, cote));
-//	button->setPosition(col2, 600);
-//	button->setFillColor(sf::Color(211, 211, 211));
-//	mButton.push_back(button);
-//
-//	//Slot9
-//	button = new sf::RectangleShape();
-//	button->setSize(sf::Vector2f(cote, cote));
-//	button->setPosition(col3, 600);
-//	button->setFillColor(sf::Color(211, 211, 211));
-//	mButton.push_back(button);
-//}
-
 void Window::shapesWindow()
 {
 	//Texts
@@ -620,8 +519,30 @@ void Window::shapesWindow()
 			button->setPosition(62.5 + j * 250, 150 + i * 225);
 			button->setFillColor(sf::Color(211, 211, 211));
 			mButton.push_back(button);
+			std::pair<int, int> p = { i, j };
+			mSkinsCells[p] = button;
 		}
 	}
+
+	//Cercle
+	sf::CircleShape* circle = new sf::CircleShape(75.f);  // Crée un cercle de rayon 50
+	circle->setPosition(mSkinsCells[{0, 0}]->getPosition());  // Définit la position du cercle
+	circle->setFillColor(sf::Color::Black);  // Définit la couleur de remplissage
+	skins[{0, 0}] = circle;
+	mShapes.push_back(circle);  // Ajoute le cercle à votre vecteur de formes
+
+	//Triangle
+	sf::ConvexShape* triangle = new sf::ConvexShape(3);  // Crée un triangle avec 3 points
+	float sideLength = 100.0f;  // Longueur des côtés du triangle
+	float height = (sqrt(3.0f) / 2.0f) * sideLength;  // Hauteur du triangle
+	triangle->setPoint(0, sf::Vector2f(0.5f * cote, 0.5f * cote + height));  // Centre en x: 0.5f * cote, Centre en y: 0.5f * cote + height
+	triangle->setPoint(1, sf::Vector2f(0.5f * cote + sideLength / 2.0f, 0.5f * cote));  // Centre en x: 0.5f * cote + sideLength / 2.0f, Centre en y: 0.5f * cote
+	triangle->setPoint(2, sf::Vector2f(0.5f * cote + sideLength, 0.5f * cote + height));  // Centre en x: 0.5f * cote + sideLength, Centre en y: 0.5f * cote + height
+	triangle->setPosition(mSkinsCells[{0, 1}]->getPosition());  // Définit la position du cercle
+	triangle->setFillColor(sf::Color::Black);  // Définit la couleur de remplissage
+	skins[{0, 1}] = triangle;
+	mShapes.push_back(triangle);  // Ajoute le triangle à votre vecteur de formes
+
 }
 
 
@@ -666,6 +587,71 @@ void Window::colorsWindow()
 			button->setPosition(62.5 + j * 250, 150 + i * 225);
 			button->setFillColor(sf::Color(211, 211, 211));
 			mButton.push_back(button);
+			std::pair<int, int> p = { i, j };
+			mSkinsCells[p] = button;
 		}
 	}
+
+	//Pink
+	sf::CircleShape* Pink = new sf::CircleShape(75.f);  // Crée un cercle de rayon 50
+	Pink->setPosition(mSkinsCells[{0, 0}]->getPosition());  // Définit la position du cercle
+	Pink->setFillColor(sf::Color(255, 182, 193));  // Définit la couleur de remplissage
+	skins[{0, 0}] = Pink;
+	mShapes.push_back(Pink);  // Ajoute le cercle à votre vecteur de formes
+
+	//Mint
+	sf::CircleShape* Mint = new sf::CircleShape(75.f);  // Crée un cercle de rayon 50
+	Mint->setPosition(mSkinsCells[{0, 1}]->getPosition());  // Définit la position du cercle
+	Mint->setFillColor(sf::Color(152, 255, 152));  // Définit la couleur de remplissage
+	skins[{0, 1}] = Mint;
+	mShapes.push_back(Mint);  // Ajoute le cercle à votre vecteur de formes
+
+	//Magenta
+	sf::CircleShape* Magenta = new sf::CircleShape(75.f);  // Crée un cercle de rayon 50
+	Magenta->setPosition(mSkinsCells[{0, 2}]->getPosition());  // Définit la position du cercle
+	Magenta->setFillColor(sf::Color::Magenta);  // Définit la couleur de remplissage
+	skins[{0, 2}] = Magenta;
+	mShapes.push_back(Magenta);  // Ajoute le cercle à votre vecteur de formes
+
+	//Yellow
+	sf::CircleShape* Yellow = new sf::CircleShape(75.f);  // Crée un cercle de rayon 50
+	Yellow->setPosition(mSkinsCells[{1, 0}]->getPosition());  // Définit la position du cercle
+	Yellow->setFillColor(sf::Color::Yellow);  // Définit la couleur de remplissage
+	skins[{1, 0}] = Yellow;
+	mShapes.push_back(Yellow);  // Ajoute le cercle à votre vecteur de formes
+
+	//Orange
+	sf::CircleShape* Orange = new sf::CircleShape(75.f);  // Crée un cercle de rayon 50
+	Orange->setPosition(mSkinsCells[{1, 1}]->getPosition());  // Définit la position du cercle
+	Orange->setFillColor(sf::Color(255, 165, 79));  // Définit la couleur de remplissage
+	skins[{1, 1}] = Orange;
+	mShapes.push_back(Orange);  // Ajoute le cercle à votre vecteur de formes
+
+	//Marron
+	sf::CircleShape* Marron = new sf::CircleShape(75.f);  // Crée un cercle de rayon 50
+	Marron->setPosition(mSkinsCells[{1, 2}]->getPosition());  // Définit la position du cercle
+	Marron->setFillColor(sf::Color(139, 69, 19));  // Définit la couleur de remplissage
+	skins[{1, 2}] = Marron;
+	mShapes.push_back(Marron);  // Ajoute le cercle à votre vecteur de formes
+
+	//Red
+	sf::CircleShape* Red = new sf::CircleShape(75.f);  // Crée un cercle de rayon 50
+	Red->setPosition(mSkinsCells[{2, 0}]->getPosition());  // Définit la position du cercle
+	Red->setFillColor(sf::Color::Red);  // Définit la couleur de remplissage
+	skins[{2, 0}] = Red;
+	mShapes.push_back(Red);  // Ajoute le cercle à votre vecteur de formes
+
+	//Green
+	sf::CircleShape* Green = new sf::CircleShape(75.f);  // Crée un cercle de rayon 50
+	Green->setPosition(mSkinsCells[{2, 1}]->getPosition());  // Définit la position du cercle
+	Green->setFillColor(sf::Color::Green);  // Définit la couleur de remplissage
+	skins[{2, 1}] = Green;
+	mShapes.push_back(Green);  // Ajoute le cercle à votre vecteur de formes
+
+	//Ligt Blue
+	sf::CircleShape* LightBlue = new sf::CircleShape(75.f);  // Crée un cercle de rayon 50
+	LightBlue->setPosition(mSkinsCells[{2, 2}]->getPosition());  // Définit la position du cercle
+	LightBlue->setFillColor(sf::Color(135, 206, 250));  // Définit la couleur de remplissage
+	skins[{2, 2}] = LightBlue;
+	mShapes.push_back(LightBlue);  // Ajoute le cercle à votre vecteur de formes
 }
